@@ -1,6 +1,11 @@
 package homeSphere.domain.devices;
 
-interface OnlineStatus {
+public interface OnlineStatus {
     void connect();
     void disconnect();
+
+    enum OnlineStatusType {
+        ONLINE,
+        OUTLINE
+    }
 }

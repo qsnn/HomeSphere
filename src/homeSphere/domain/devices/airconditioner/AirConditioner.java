@@ -3,7 +3,7 @@ package homeSphere.domain.devices.airconditioner;
 import homeSphere.domain.devices.Device;
 import homeSphere.domain.houseSystem.Room;
 import homeSphere.runningLog.DeviceLog;
-import homeSphere.runningLog.LogType;
+import homeSphere.runningLog.Log;
 import homeSphere.service.connectService.Bluetooth;
 import homeSphere.service.connectService.WiFi;
 import homeSphere.service.manufacturer.Manufacturer;
@@ -34,7 +34,7 @@ public class AirConditioner extends Device implements MainsPower,
 
     @Override
     public void setModel(AirConditionerModelType model) {
-        new DeviceLog(this, power,"设置空调模式：" + model, LogType.INFO, this.model + "->" + model);
+        new DeviceLog(this, power,"设置空调模式：" + model, Log.LogType.INFO, this.model + "->" + model);
         this.model = model;
     }
 
@@ -46,10 +46,10 @@ public class AirConditioner extends Device implements MainsPower,
     @Override
     public void setTemperature(int temperature) {
         if(temperature < 16 || temperature > 30){
-            new DeviceLog(this, power,"设置空调温度：" + temperature, LogType.WARNING, "设置温度超出范围16-30，当前设置温度：" + temperature);
+            new DeviceLog(this, power,"设置空调温度：" + temperature, Log.LogType.WARNING, "设置温度超出范围16-30，当前设置温度：" + temperature);
             return;
         }
-        new DeviceLog(this, power,"设置空调温度：" + temperature, LogType.INFO, this.temperature + "->" + temperature);
+        new DeviceLog(this, power,"设置空调温度：" + temperature, Log.LogType.INFO, this.temperature + "->" + temperature);
         this.temperature = temperature;
     }
 

@@ -1,6 +1,11 @@
 package homeSphere.domain.devices;
 
-interface PowerStatus {
+public interface PowerStatus {
     void open();
     void close();
+
+    enum PowerStatusType {
+        POWERED,
+        UNPOWERED
+    }
 }

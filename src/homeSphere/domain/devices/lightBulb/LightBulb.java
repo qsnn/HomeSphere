@@ -3,7 +3,7 @@ package homeSphere.domain.devices.lightBulb;
 import homeSphere.domain.devices.Device;
 import homeSphere.domain.houseSystem.Room;
 import homeSphere.runningLog.DeviceLog;
-import homeSphere.runningLog.LogType;
+import homeSphere.runningLog.Log;
 import homeSphere.service.connectService.Bluetooth;
 import homeSphere.service.connectService.WiFi;
 import homeSphere.service.manufacturer.Manufacturer;
@@ -37,7 +37,7 @@ public class LightBulb extends Device
     @Override
     public void setLuminance(int luminance) {
         if(luminance < 0 || luminance > 100) {
-            new DeviceLog(this, power,"设置亮度：" + luminance, LogType.WARNING, "设置亮度超出范围0-100，当前设置亮度：" + luminance);
+            new DeviceLog(this, power,"设置亮度：" + luminance, Log.LogType.WARNING, "设置亮度超出范围0-100，当前设置亮度：" + luminance);
             return;
         }
         this.luminance = luminance;

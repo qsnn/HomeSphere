@@ -60,4 +60,10 @@ public abstract class Log {
     public void writeLog(){
         System.out.println(this);
     }
+
+    public enum LogType {
+        INFO,
+        WARNING,
+        ERROR
+    }
 }

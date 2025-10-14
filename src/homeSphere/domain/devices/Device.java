@@ -3,7 +3,7 @@ package homeSphere.domain.devices;
 import homeSphere.domain.houseSystem.Room;
 import homeSphere.domain.users.User;
 import homeSphere.runningLog.DeviceLog;
-import homeSphere.runningLog.LogType;
+import homeSphere.runningLog.Log;
 import homeSphere.service.manufacturer.Manufacturer;
 
 import java.time.Duration;
@@ -33,7 +33,7 @@ public abstract class Device implements OnlineStatus, PowerStatus{
         powerStatus = PowerStatusType.UNPOWERED;
         this.power = power;
         this.room = room;
-        new DeviceLog(this, power,"创建设备：" + name, LogType.INFO, "null");
+        new DeviceLog(this, power,"创建设备：" + name, Log.LogType.INFO, "null");
     }
 
     public String getDeviceID() {
@@ -115,16 +115,16 @@ public abstract class Device implements OnlineStatus, PowerStatus{
     }
 
     public void connect(){
-        new DeviceLog(this, this.getPower(),"连接网络", LogType.INFO, "null");
+        new DeviceLog(this, this.getPower(),"连接网络", Log.LogType.INFO, "null");
         this.onlineStatus = OnlineStatusType.ONLINE;
     }
     public void disconnect(){
-        new DeviceLog(this, this.getPower(),"断开网络", LogType.INFO, "null");
+        new DeviceLog(this, this.getPower(),"断开网络", Log.LogType.INFO, "null");
         this.onlineStatus = OnlineStatusType.OUTLINE;
     }
 
     public void open(){
-        new DeviceLog(this, this.getPower(),"连接电源", LogType.INFO, "null");
+        new DeviceLog(this, this.getPower(),"连接电源", Log.LogType.INFO, "null");
         if(this.powerStatus == PowerStatusType.UNPOWERED){
             lastOpenTime = LocalDateTime.now();
         }
@@ -136,7 +136,7 @@ public abstract class Device implements OnlineStatus, PowerStatus{
             deviceUsages.add(u);
         }
         this.powerStatus = PowerStatusType.UNPOWERED;
-        new DeviceLog(this, this.getPower(),"断开电源", LogType.INFO, u.toString());
+        new DeviceLog(this, this.getPower(),"断开电源", Log.LogType.INFO, u.toString());
     }
 
     public static double calculatePowerConsumption(Set<Usage> usages, LocalDateTime startTime, LocalDateTime endTime) {

@@ -1,8 +1,8 @@
 package homeSphere;
 
 import homeSphere.domain.automationScene.AutomationScene;
-import homeSphere.domain.devices.OnlineStatusType;
-import homeSphere.domain.devices.PowerStatusType;
+import homeSphere.domain.devices.OnlineStatus;
+import homeSphere.domain.devices.PowerStatus;
 import homeSphere.domain.devices.airconditioner.AirConditioner;
 import homeSphere.domain.devices.airconditioner.AirConditionerModelController;
 import homeSphere.domain.houseSystem.HomeSphere;
@@ -27,12 +27,12 @@ public class Test {
         h.getUsers().forEach(System.out::println);
         u1.getHouseholds().forEach(System.out::println);
 
-        AirConditioner ac = new AirConditioner("格力21843687", "空调", "Android", new Manufacturer("格力"), "Green", 1000);
+        AirConditioner ac = new AirConditioner("格力21843687", "空调", "Android", new Manufacturer("格力"), "Green", 1000, kt);
         kt.addDevice(ac);
         AutomationScene ams = new AutomationScene("睡眠模式");
         Map<String, Object> operations =  new HashMap<>();
-        operations.put("onlineStatus", OnlineStatusType.ONLINE);
-        operations.put("powerStatus", PowerStatusType.POWERED);
+        operations.put("onlineStatus", OnlineStatus.OnlineStatusType.ONLINE);
+        operations.put("powerStatus", PowerStatus.PowerStatusType.POWERED);
         operations.put("model", AirConditionerModelController.AirConditionerModelType.AUTO);
         operations.put("temperature", 26);
         ams.addOperator(ac, operations);
