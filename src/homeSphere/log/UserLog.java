@@ -1,4 +1,4 @@
-package homeSphere.runningLog;
+package homeSphere.log;
 
 import homeSphere.domain.users.User;
 

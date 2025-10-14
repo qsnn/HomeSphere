@@ -1,9 +1,9 @@
 package homeSphere.domain.devices;
 
-import homeSphere.domain.houseSystem.Room;
+import homeSphere.domain.house.Room;
 import homeSphere.domain.users.User;
-import homeSphere.runningLog.DeviceLog;
-import homeSphere.runningLog.Log;
+import homeSphere.log.DeviceLog;
+import homeSphere.log.Log;
 import homeSphere.service.manufacturer.Manufacturer;
 
 import java.time.Duration;

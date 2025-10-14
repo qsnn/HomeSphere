@@ -1,9 +1,9 @@
 package homeSphere.domain.devices.airconditioner;
 
 import homeSphere.domain.devices.Device;
-import homeSphere.domain.houseSystem.Room;
-import homeSphere.runningLog.DeviceLog;
-import homeSphere.runningLog.Log;
+import homeSphere.domain.house.Room;
+import homeSphere.log.DeviceLog;
+import homeSphere.log.Log;
 import homeSphere.service.connectService.Bluetooth;
 import homeSphere.service.connectService.WiFi;
 import homeSphere.service.manufacturer.Manufacturer;

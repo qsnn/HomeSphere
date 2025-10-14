@@ -1,8 +1,8 @@
 package homeSphere.domain.users;
 
 import homeSphere.domain.devices.Device;
-import homeSphere.domain.houseSystem.Household;
-import homeSphere.domain.houseSystem.Room;
+import homeSphere.domain.house.Household;
+import homeSphere.domain.house.Room;
 
 import java.util.HashSet;
 import java.util.Set;

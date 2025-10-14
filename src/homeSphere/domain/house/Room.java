@@ -1,4 +1,4 @@
-package homeSphere.domain.houseSystem;
+package homeSphere.domain.house;
 
 import homeSphere.domain.devices.Device;
 import homeSphere.domain.devices.Usage;

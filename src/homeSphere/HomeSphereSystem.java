@@ -1,5 +1,6 @@
-package homeSphere.domain.houseSystem;
+package homeSphere;
 
+import homeSphere.domain.house.Household;
 import homeSphere.domain.users.User;
 
 import java.util.HashMap;
@@ -7,7 +8,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-public class HomeSphere {
+public class HomeSphereSystem {
     private final String version = "v1.0";
     private final Map<Integer, Household> households = new HashMap<>();
     private final Map<Integer, User> users = new HashMap<>();

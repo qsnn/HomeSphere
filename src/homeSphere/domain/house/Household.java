@@ -1,4 +1,4 @@
-package homeSphere.domain.houseSystem;
+package homeSphere.domain.house;
 
 import homeSphere.domain.devices.Device;
 import homeSphere.domain.devices.Usage;
@@ -7,8 +7,8 @@ import homeSphere.domain.users.User;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static homeSphere.domain.houseSystem.HouseholdMembershipType.ADMIN;
-import static homeSphere.domain.houseSystem.HouseholdMembershipType.MEMBER;
+import static homeSphere.domain.house.HouseholdMembershipType.ADMIN;
+import static homeSphere.domain.house.HouseholdMembershipType.MEMBER;
 
 public class Household {
     private final int householdID;

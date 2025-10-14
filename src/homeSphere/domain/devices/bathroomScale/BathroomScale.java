@@ -1,7 +1,7 @@
 package homeSphere.domain.devices.bathroomScale;
 
 import homeSphere.domain.devices.Device;
-import homeSphere.domain.houseSystem.Room;
+import homeSphere.domain.house.Room;
 import homeSphere.service.connectService.WiFi;
 import homeSphere.service.manufacturer.Manufacturer;
 import homeSphere.service.powerService.Battery;

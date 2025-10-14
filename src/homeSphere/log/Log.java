@@ -1,4 +1,4 @@
-package homeSphere.runningLog;
+package homeSphere.log;
 
 import java.time.LocalDateTime;
 import java.util.Random;

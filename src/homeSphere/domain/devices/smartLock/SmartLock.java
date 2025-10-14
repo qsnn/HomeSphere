@@ -1,7 +1,7 @@
 package homeSphere.domain.devices.smartLock;
 
 import homeSphere.domain.devices.Device;
-import homeSphere.domain.houseSystem.Room;
+import homeSphere.domain.house.Room;
 import homeSphere.service.connectService.Zigbee;
 import homeSphere.service.manufacturer.Manufacturer;
 import homeSphere.service.powerService.Battery;
