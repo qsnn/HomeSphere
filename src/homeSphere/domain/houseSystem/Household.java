@@ -1,6 +1,7 @@
 package homeSphere.domain.houseSystem;
 
 import homeSphere.domain.devices.Device;
+import homeSphere.domain.devices.Usage;
 import homeSphere.domain.users.User;
 
 import java.util.*;
@@ -84,6 +85,12 @@ public class Household {
         return rooms.stream()
                 .flatMap(r -> r.getDevices().stream())
                 .collect(Collectors.toSet());
+    }
+
+    public Set<Usage> getAllDeviceUsagesInHousehold(){
+        return getDevices().stream()
+                .flatMap(r -> r.getDeviceUsages().stream())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public Map<User, HouseholdMembershipType> getHouseholdMembership() {

@@ -1,6 +1,7 @@
 package homeSphere.domain.devices.airconditioner;
 
 import homeSphere.domain.devices.Device;
+import homeSphere.domain.houseSystem.Room;
 import homeSphere.runningLog.DeviceLog;
 import homeSphere.runningLog.LogType;
 import homeSphere.service.connectService.Bluetooth;
@@ -16,8 +17,8 @@ public class AirConditioner extends Device implements MainsPower,
     private AirConditionerModelType model;  //空调模式
     private int temperature = 26;    //温度
 
-    public AirConditioner(String ID, String name, String OS, Manufacturer manufacturer, String brand, double powerConsumption) {
-        super(ID, name, OS, manufacturer, brand, powerConsumption);
+    public AirConditioner(String ID, String name, String OS, Manufacturer manufacturer, String brand, double powerConsumption, Room room) {
+        super(ID, name, OS, manufacturer, brand, powerConsumption, room);
         model = AirConditionerModelType.COOL;
     }
 

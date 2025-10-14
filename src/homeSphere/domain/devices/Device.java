@@ -8,9 +8,7 @@ import homeSphere.service.manufacturer.Manufacturer;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Device implements OnlineStatus, PowerStatus{
     protected final String deviceID;
@@ -18,13 +16,14 @@ public abstract class Device implements OnlineStatus, PowerStatus{
     protected String OS;
     protected Manufacturer manufacturer;
     protected String brand;
+    protected Room room;
     protected OnlineStatusType onlineStatus;
     protected PowerStatusType powerStatus;
     protected final double power;
     protected LocalDateTime lastOpenTime;
-    protected final Set<Usage> usages = new LinkedHashSet<>();
+    protected final Set<Usage> deviceUsages = new TreeSet<>(Comparator.comparing(Usage::getCloseTime));
 
-    public Device(String deviceID, String name, String OS, Manufacturer manufacturer, String brand, double power) {
+    public Device(String deviceID, String name, String OS, Manufacturer manufacturer, String brand, double power, Room room) {
         this.deviceID = deviceID;
         this.name = name;
         this.OS = OS;
@@ -33,6 +32,7 @@ public abstract class Device implements OnlineStatus, PowerStatus{
         onlineStatus = OnlineStatusType.OUTLINE;
         powerStatus = PowerStatusType.UNPOWERED;
         this.power = power;
+        this.room = room;
         new DeviceLog(this, power,"创建设备：" + name, LogType.INFO, "null");
     }
 
@@ -86,20 +86,29 @@ public abstract class Device implements OnlineStatus, PowerStatus{
         return power;
     }
 
-    public Set<Usage> getUsages() {
-        return usages;
+    public Set<Usage> getDeviceUsages() {
+        return deviceUsages;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     public void move(User operator, Room from, Room to){
         if(from == null){
             throw new IllegalArgumentException("该房间不存在！");
-        } else if(!from.getDevices().contains(this)) {
+        } else if(room != from) {
             throw new IllegalArgumentException("该物品不在该房间内！");
         }else if(!from.getHousehold().getUsers().contains(operator)){
             throw new IllegalArgumentException("权限不足：只有家庭成员方可移动！");
         } else if (!from.getHousehold().getRooms().contains(to)) {
             throw new IllegalArgumentException("目标房间不存在！");
         }else{
+            room = to;
             from.removeDevice(operator, this);
             to.addDevice(this);
         }
@@ -122,22 +131,21 @@ public abstract class Device implements OnlineStatus, PowerStatus{
         this.powerStatus = PowerStatusType.POWERED;
     }
     public void close(){
-        Usage u = new Usage(deviceID + usages.size(),this, lastOpenTime, LocalDateTime.now());
+        Usage u = new Usage(deviceID + deviceUsages.size(),this, lastOpenTime, LocalDateTime.now());
         if(this.powerStatus == PowerStatusType.POWERED){
-            usages.add(u);
+            deviceUsages.add(u);
         }
         this.powerStatus = PowerStatusType.UNPOWERED;
         new DeviceLog(this, this.getPower(),"断开电源", LogType.INFO, u.toString());
     }
 
-    public static double calculatePowerConsumption(Device d, LocalDateTime startTime, LocalDateTime endTime) {
-        Set<Usage> usages = d.getUsages();
+    public static double calculatePowerConsumption(Set<Usage> usages, LocalDateTime startTime, LocalDateTime endTime) {
         double totalEnergy = 0.0;
 
         for (Usage usage : usages) {
             LocalDateTime powerOnTime = usage.getOpenTime();
             LocalDateTime powerOffTime = usage.getCloseTime();
-            double power = d.getPower();
+            double power = usage.getDevice().getPower();
 
             // 检查这个使用记录是否在查询时间范围内有重叠
             if (isUsageInTimeRange(powerOnTime, powerOffTime, startTime, endTime)) {
@@ -155,6 +163,15 @@ public abstract class Device implements OnlineStatus, PowerStatus{
         }
 
         return totalEnergy;
+    }
+
+
+    public static double calculatePowerConsumption(Set<Usage> usages) {
+        double sum = 0;
+        for (Usage usage : usages) {
+            sum += usage.getPowerConsumption();
+        }
+        return sum;
     }
 
     /**

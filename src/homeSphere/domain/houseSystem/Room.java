@@ -1,11 +1,11 @@
 package homeSphere.domain.houseSystem;
 
 import homeSphere.domain.devices.Device;
+import homeSphere.domain.devices.Usage;
 import homeSphere.domain.users.User;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Room {
     private final String roomID;
@@ -75,6 +75,12 @@ public class Room {
 
     public void setHousehold(Household household) {
         this.household = household;
+    }
+
+    public Set<Usage> getAllDeviceUsagesInRoom() {
+        return devices.stream()
+                .flatMap(s -> s.getDeviceUsages().stream())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package homeSphere.domain.devices.lightBulb;
 
 import homeSphere.domain.devices.Device;
+import homeSphere.domain.houseSystem.Room;
 import homeSphere.runningLog.DeviceLog;
 import homeSphere.runningLog.LogType;
 import homeSphere.service.connectService.Bluetooth;
@@ -17,8 +18,8 @@ public class LightBulb extends Device
     private ColorTemperatureType colorTemperature;  //色温
     private int luminance;  //亮度 1-100
 
-    public LightBulb(String ID, String name, String OS, Manufacturer manufacturer, String brand, double powerConsumption) {
-        super(ID, name, OS, manufacturer, brand, powerConsumption);
+    public LightBulb(String ID, String name, String OS, Manufacturer manufacturer, String brand, double powerConsumption, Room room) {
+        super(ID, name, OS, manufacturer, brand, powerConsumption, room);
         colorTemperature = ColorTemperatureType.AUTO;
         luminance = 50;
     }

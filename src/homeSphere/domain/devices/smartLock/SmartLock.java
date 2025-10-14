@@ -1,6 +1,7 @@
 package homeSphere.domain.devices.smartLock;
 
 import homeSphere.domain.devices.Device;
+import homeSphere.domain.houseSystem.Room;
 import homeSphere.service.connectService.Zigbee;
 import homeSphere.service.manufacturer.Manufacturer;
 import homeSphere.service.powerService.Battery;
@@ -16,8 +17,8 @@ public class SmartLock extends Device
     private LockStatusType lockStatus;
     private PowerMode powerMode = PowerMode.MAINSPOWER;
 
-    public SmartLock(String ID, String name, String OS, Manufacturer manufacturer, String brand, double powerConsumption) {
-        super(ID, name, OS, manufacturer, brand, powerConsumption);
+    public SmartLock(String ID, String name, String OS, Manufacturer manufacturer, String brand, double powerConsumption, Room room) {
+        super(ID, name, OS, manufacturer, brand, powerConsumption, room);
         lockStatus = LockStatusType.LOCK;
     }
 
