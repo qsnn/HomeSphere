@@ -1,29 +1,27 @@
 package homeSphere.domain.devices;
 
-import homeSphere.domain.house.Room;
-import homeSphere.domain.users.User;
 import homeSphere.log.DeviceLog;
 import homeSphere.log.Log;
 import homeSphere.service.manufacturer.Manufacturer;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public abstract class Device implements OnlineStatus, PowerStatus{
-    protected final String deviceID;
+public abstract class Device {
+    protected final Integer deviceID;
     protected String name;
-    protected String OS;
-    protected Manufacturer manufacturer;
-    protected String brand;
-    protected Room room;
+    protected final String OS;
+    protected final Manufacturer manufacturer;
+    protected final String brand;
+    protected final double power;
     protected OnlineStatusType onlineStatus;
     protected PowerStatusType powerStatus;
-    protected final double power;
     protected LocalDateTime lastOpenTime;
     protected final Set<Usage> deviceUsages = new TreeSet<>(Comparator.comparing(Usage::getCloseTime));
+    protected final Map<String, DeviceAttribute<?>> attributes = new HashMap<>();
 
-    public Device(String deviceID, String name, String OS, Manufacturer manufacturer, String brand, double power, Room room) {
+
+    public Device(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand, double power) {
         this.deviceID = deviceID;
         this.name = name;
         this.OS = OS;
@@ -32,11 +30,10 @@ public abstract class Device implements OnlineStatus, PowerStatus{
         onlineStatus = OnlineStatusType.OUTLINE;
         powerStatus = PowerStatusType.UNPOWERED;
         this.power = power;
-        this.room = room;
-        new DeviceLog(this, power,"创建设备：" + name, Log.LogType.INFO, "null");
+        new DeviceLog(this, power, "创建设备：" + name, Log.LogType.INFO, "null");
     }
 
-    public String getDeviceID() {
+    public Integer getDeviceID() {
         return deviceID;
     }
 
@@ -52,24 +49,12 @@ public abstract class Device implements OnlineStatus, PowerStatus{
         return OS;
     }
 
-    public void setOS(String OS) {
-        this.OS = OS;
-    }
-
     public Manufacturer getManufacturer() {
         return manufacturer;
     }
 
-    public void setManufacturer(Manufacturer manufacturer) {
-        this.manufacturer = manufacturer;
-    }
-
     public String getBrand() {
         return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
     }
 
     public OnlineStatusType getOnlineStatus() {
@@ -80,8 +65,6 @@ public abstract class Device implements OnlineStatus, PowerStatus{
         return powerStatus;
     }
 
-    public abstract void execute(Device device, Map<String, Object> parameters);
-
     public double getPower(){
         return power;
     }
@@ -90,27 +73,64 @@ public abstract class Device implements OnlineStatus, PowerStatus{
         return deviceUsages;
     }
 
-    public Room getRoom() {
-        return room;
+    /**
+     * 添加设备属性
+     */
+    protected void addAttribute(String key, DeviceAttribute<?> attribute) {
+        attributes.put(key, attribute);
     }
 
-    public void setRoom(Room room) {
-        this.room = room;
+    public boolean hasAttribute(String attribute){
+        return attributes.containsKey(attribute);
+    }
+    /**
+     * 获取设备属性值
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getAttribute(String attributeName) {
+        DeviceAttribute<T> attribute = (DeviceAttribute<T>) attributes.get(attributeName);
+        return attribute != null ? attribute.getValue() : null;
     }
 
-    public void move(User operator, Room from, Room to){
-        if(from == null){
-            throw new IllegalArgumentException("该房间不存在！");
-        } else if(room != from) {
-            throw new IllegalArgumentException("该物品不在该房间内！");
-        }else if(!from.getHousehold().getUsers().contains(operator)){
-            throw new IllegalArgumentException("权限不足：只有家庭成员方可移动！");
-        } else if (!from.getHousehold().getRooms().contains(to)) {
-            throw new IllegalArgumentException("目标房间不存在！");
-        }else{
-            room = to;
-            from.removeDevice(operator, this);
-            to.addDevice(this);
+    /**
+     * 设置设备属性值
+     */
+    @SuppressWarnings("unchecked")
+    public <T> boolean setAttribute(String attributeName, T value) {
+        DeviceAttribute<T> attribute = (DeviceAttribute<T>) attributes.get(attributeName);
+        if (attribute != null && attribute.setValue(value)) {
+            // 记录属性变更日志
+            new DeviceLog(this, power,
+                    String.format("属性变更: %s = %s", attributeName, value),
+                    Log.LogType.INFO, null);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 统一的execute方法 - 现在可以处理属性设置
+     */
+    public void execute(Device device, Map<String, Object> parameters) {
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String attributeName = entry.getKey();
+            Object value = entry.getValue();
+
+            // 特殊处理核心状态
+            switch (attributeName) {
+                case "online_status":
+                    if ("ONLINE".equals(value)) connect();
+                    else if ("OUTLINE".equals(value)) disconnect();
+                    break;
+                case "power_status":
+                    if ("POWERED".equals(value)) open();
+                    else if ("UNPOWERED".equals(value)) close();
+                    break;
+                default:
+                    // 普通属性设置
+                    setAttribute(attributeName, value);
+                    break;
+            }
         }
     }
 
@@ -131,7 +151,7 @@ public abstract class Device implements OnlineStatus, PowerStatus{
         this.powerStatus = PowerStatusType.POWERED;
     }
     public void close(){
-        Usage u = new Usage(deviceID + deviceUsages.size(),this, lastOpenTime, LocalDateTime.now());
+        Usage u = new Usage(deviceID + "" + deviceUsages.size(),this, lastOpenTime, LocalDateTime.now());
         if(this.powerStatus == PowerStatusType.POWERED){
             deviceUsages.add(u);
         }
@@ -139,62 +159,14 @@ public abstract class Device implements OnlineStatus, PowerStatus{
         new DeviceLog(this, this.getPower(),"断开电源", Log.LogType.INFO, u.toString());
     }
 
-    public static double calculatePowerConsumption(Set<Usage> usages, LocalDateTime startTime, LocalDateTime endTime) {
-        double totalEnergy = 0.0;
 
-        for (Usage usage : usages) {
-            LocalDateTime powerOnTime = usage.getOpenTime();
-            LocalDateTime powerOffTime = usage.getCloseTime();
-            double power = usage.getDevice().getPower();
-
-            // 检查这个使用记录是否在查询时间范围内有重叠
-            if (isUsageInTimeRange(powerOnTime, powerOffTime, startTime, endTime)) {
-                // 计算实际在查询时间段内的使用时间
-                LocalDateTime actualStart = getLaterTime(powerOnTime, startTime);
-                LocalDateTime actualEnd = getEarlierTime(powerOffTime, endTime);
-
-                // 计算时间差（小时）
-                Duration duration = Duration.between(actualStart, actualEnd);
-                double hours = duration.toSeconds() / 3600.0; // 精确到秒转换为小时
-
-                // 累加能耗
-                totalEnergy += power * hours;
-            }
-        }
-
-        return totalEnergy;
+    public enum OnlineStatusType {
+        ONLINE,
+        OUTLINE
     }
 
-
-    public static double calculatePowerConsumption(Set<Usage> usages) {
-        double sum = 0;
-        for (Usage usage : usages) {
-            sum += usage.getPowerConsumption();
-        }
-        return sum;
+    public enum PowerStatusType {
+        POWERED,
+        UNPOWERED
     }
-
-    /**
-     * 检查使用记录是否在查询时间范围内有重叠
-     */
-    private static boolean isUsageInTimeRange(LocalDateTime usageStart, LocalDateTime usageEnd,
-                                              LocalDateTime queryStart, LocalDateTime queryEnd) {
-        // 使用记录完全在查询时间范围之外的情况
-        return !usageEnd.isBefore(queryStart) && !usageStart.isAfter(queryEnd);
-    }
-
-    /**
-     * 获取两个时间中较晚的一个
-     */
-    private static LocalDateTime getLaterTime(LocalDateTime time1, LocalDateTime time2) {
-        return time1.isAfter(time2) ? time1 : time2;
-    }
-
-    /**
-     * 获取两个时间中较早的一个
-     */
-    private static LocalDateTime getEarlierTime(LocalDateTime time1, LocalDateTime time2) {
-        return time1.isBefore(time2) ? time1 : time2;
-    }
-
 }

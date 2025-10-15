@@ -2,8 +2,6 @@ package homeSphere.domain.devices.bathroomScale;
 
 import homeSphere.domain.automationScene.DeviceAction;
 import homeSphere.domain.devices.Device;
-import homeSphere.domain.devices.OnlineStatus;
-import homeSphere.domain.devices.PowerStatus;
 
 import java.util.Map;
 
@@ -14,15 +12,15 @@ public class BathroomScaleAction implements DeviceAction {
             throw new IllegalArgumentException("参数错误");
         }
         BathroomScale d = (BathroomScale) device;
-        if((parameters.get("onlineStatus")).equals(OnlineStatus.OnlineStatusType.ONLINE)) {
+        if((parameters.get("onlineStatus")).equals(Device.OnlineStatusType.ONLINE)) {
             d.connect();
-        } else if ((parameters.get("onlineStatus")).equals(OnlineStatus.OnlineStatusType.OUTLINE)) {
+        } else if ((parameters.get("onlineStatus")).equals(Device.OnlineStatusType.OUTLINE)) {
             d.disconnect();
         }
 
-        if ((parameters.get("powerStatus")).equals(PowerStatus.PowerStatusType.POWERED)) {
+        if ((parameters.get("powerStatus")).equals(Device.PowerStatusType.POWERED)) {
             d.open();
-        } else if ((parameters.get("powerStatus")).equals(PowerStatus.PowerStatusType.UNPOWERED)) {
+        } else if ((parameters.get("powerStatus")).equals(Device.PowerStatusType.UNPOWERED)) {
             d.close();
         }
 
@@ -32,7 +30,7 @@ public class BathroomScaleAction implements DeviceAction {
     public boolean validateParameters(Device device, Map<String, Object> parameters) {
         return device instanceof BathroomScale &&
                 parameters != null &&
-                parameters.get("onlineStatus") instanceof OnlineStatus.OnlineStatusType &&
-                parameters.get("powerStatus") instanceof PowerStatus.PowerStatusType;
+                parameters.get("onlineStatus") instanceof Device.OnlineStatusType &&
+                parameters.get("powerStatus") instanceof Device.PowerStatusType;
     }
 }

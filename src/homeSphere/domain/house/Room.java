@@ -8,22 +8,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Room {
-    private final String roomID;
+    private final int roomID;
     private String name;
     private double area;
     private String introduction = "null";
-    private final Set<Device> devices = new HashSet<>();
-    private Household household;
 
-    public Room(Household household, String name, double area) {
-        this.household = household;
-        household.addRoom(this);
+
+    public Room(int roomID, String name, double area) {
+        this.roomID = roomID;
         this.name = name;
         this.area = area;
-        roomID = createRoomID();
     }
 
-    public String getRoomID() {
+    public int getRoomID() {
         return roomID;
     }
 
@@ -51,42 +48,10 @@ public class Room {
         this.introduction = introduction;
     }
 
-    public Set<Device> getDevices() {
-        return devices;
-    }
-
-    public void addDevice(Device d){
-        devices.add(d);
-    }
-    public void removeDevice(User operator, Device d){
-        if(!household.getUsers().contains(operator)){
-            throw new IllegalArgumentException("用户无权限！");
-        }
-        devices.remove(d);
-    }
-
-    public String createRoomID(){
-        return name + (1000 + household.getRooms().size());
-    }
-
-    public Household getHousehold() {
-        return household;
-    }
-
-    public void setHousehold(Household household) {
-        this.household = household;
-    }
-
-    public Set<Usage> getAllDeviceUsagesInRoom() {
-        return devices.stream()
-                .flatMap(s -> s.getDeviceUsages().stream())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
     @Override
     public String toString() {
         return new StringJoiner(" - ", "[", "]")
-                .add(roomID)
+                .add(Integer.toString(roomID))
                 .add(name)
                 .add(Double.toString(area))
                 .add(introduction)

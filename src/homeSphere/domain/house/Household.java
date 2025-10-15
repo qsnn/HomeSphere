@@ -16,14 +16,12 @@ public class Household {
     private String address;
     private User administrator;
     private final Set<Room> rooms = new HashSet<>();
-    private final Map<User, HouseholdMembershipType> householdMembership = new HashMap<>();
 
     public Household(int householdID, String name, String address, User creator) {
         this.householdID = householdID;
         this.name = name;
         this.address = address;
         administrator = creator;
-        householdMembership.put(creator, ADMIN);
         creator.addHousehold(this);
         creator.setCurrentHousehold(this);
     }
@@ -53,7 +51,7 @@ public class Household {
     }
 
     public Set<User> getUsers() {
-        return householdMembership.keySet();
+        return getUsersByHousehold(householdID);
     }
 
     public Set<Room> getRooms() {

@@ -10,8 +10,6 @@ import java.util.StringJoiner;
 
 public class User {
     private final int userID;
-    private Set<Household> households = new HashSet<>();
-    private Household currentHousehold;
     private String username;
     private String password;
     private String name;
@@ -27,21 +25,6 @@ public class User {
 
     public int getUserID() {
         return userID;
-    }
-
-    public Set<Household> getHouseholds() {
-        return households;
-    }
-
-    public Household getCurrentHousehold() {
-        return currentHousehold;
-    }
-
-    public void setCurrentHousehold(Household currentHousehold) {
-        if(!households.contains(currentHousehold)){
-            throw new IllegalArgumentException("用户没有权限进入该房屋！");
-        }
-        this.currentHousehold = currentHousehold;
     }
 
     public String getUsername() {
@@ -74,21 +57,6 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public void addHousehold(Household h){
-        if(households == null){
-            households = new HashSet<>();
-        }
-        households.add(h);
-    }
-
-    public void addDevice(Device d, Room r){
-        r.addDevice(d);
-    }
-
-    public void removeDevice(Device d, Room r){
-        r.removeDevice(this, d);
     }
 
     @Override

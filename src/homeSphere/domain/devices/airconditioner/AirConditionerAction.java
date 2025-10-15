@@ -2,8 +2,6 @@ package homeSphere.domain.devices.airconditioner;
 
 import homeSphere.domain.automationScene.DeviceAction;
 import homeSphere.domain.devices.Device;
-import homeSphere.domain.devices.OnlineStatus;
-import homeSphere.domain.devices.PowerStatus;
 
 import java.util.Map;
 
@@ -14,15 +12,15 @@ public class AirConditionerAction implements DeviceAction {
             throw new IllegalArgumentException("参数错误");
         }
         AirConditioner a = (AirConditioner) device;
-        if((parameters.get("onlineStatus")).equals(OnlineStatus.OnlineStatusType.ONLINE)) {
+        if((parameters.get("onlineStatus")).equals(Device.OnlineStatusType.ONLINE)) {
             a.connect();
-        } else if ((parameters.get("onlineStatus")).equals(OnlineStatus.OnlineStatusType.OUTLINE)) {
+        } else if ((parameters.get("onlineStatus")).equals(Device.OnlineStatusType.OUTLINE)) {
             a.disconnect();
         }
 
-        if ((parameters.get("powerStatus")).equals(PowerStatus.PowerStatusType.POWERED)) {
+        if ((parameters.get("powerStatus")).equals(Device.PowerStatusType.POWERED)) {
             a.open();
-        } else if ((parameters.get("powerStatus")).equals(PowerStatus.PowerStatusType.UNPOWERED)) {
+        } else if ((parameters.get("powerStatus")).equals(Device.PowerStatusType.UNPOWERED)) {
             a.close();
         }
 
