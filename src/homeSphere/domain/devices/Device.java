@@ -7,17 +7,17 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public abstract class Device {
-    protected final Integer deviceID;
-    protected String name;
-    protected final String OS;
-    protected final Manufacturer manufacturer;
-    protected final String brand;
-    protected final double power;
-    protected OnlineStatusType onlineStatus;
-    protected PowerStatusType powerStatus;
-    protected LocalDateTime lastOpenTime;
-    protected final Set<Usage> deviceUsages = new TreeSet<>(Comparator.comparing(Usage::getCloseTime));
-    protected final Map<String, DeviceAttribute<?>> attributes = new HashMap<>();
+    protected final Integer deviceID;   //设备序列号
+    protected String name;  //设备名
+    protected final String OS;  //设备系统
+    protected final Manufacturer manufacturer;  //制造商
+    protected final String brand;   //品牌
+    protected final double power;   //功率
+    protected OnlineStatusType onlineStatus;    //在线状态
+    protected PowerStatusType powerStatus;  //供电状态
+    protected LocalDateTime lastOpenTime;   //上次打开的时间
+    protected final Set<Usage> deviceUsages = new TreeSet<>(Comparator.comparing(Usage::getCloseTime)); //使用记录
+    protected final Map<String, DeviceAttribute<?>> attributes = new HashMap<>();   //属性
 
 
     public Device(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand, double power) {
@@ -151,7 +151,7 @@ public abstract class Device {
         this.powerStatus = PowerStatusType.POWERED;
     }
     public void close(){
-        Usage u = new Usage(deviceID + "" + deviceUsages.size(),this, lastOpenTime, LocalDateTime.now());
+        Usage u = new Usage(deviceID + "" + deviceUsages.size(),getPower(), lastOpenTime, LocalDateTime.now());
         if(this.powerStatus == PowerStatusType.POWERED){
             deviceUsages.add(u);
         }
