@@ -1,11 +1,5 @@
 package homeSphere.domain.users;
 
-import homeSphere.domain.devices.Device;
-import homeSphere.domain.house.Household;
-import homeSphere.domain.house.Room;
-
-import java.util.HashSet;
-import java.util.Set;
 import java.util.StringJoiner;
 
 public class User {
@@ -62,10 +56,10 @@ public class User {
     @Override
     public String toString(){
         return new StringJoiner(" - ", "[", "]")
-                .add(Integer.toString(userID))
-                .add(name)
-                .add(username)
-                .add(address)
+                .add(Integer.toString(getUserID()))
+                .add(getName())
+                .add(getUsername())
+                .add(getAddress())
                 .toString();
     }
 

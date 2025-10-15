@@ -1,29 +1,18 @@
 package homeSphere.domain.house;
 
-import homeSphere.domain.devices.Device;
-import homeSphere.domain.devices.Usage;
-import homeSphere.domain.users.User;
-
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static homeSphere.domain.house.HouseholdMembershipType.ADMIN;
-import static homeSphere.domain.house.HouseholdMembershipType.MEMBER;
 
 public class Household {
     private final int householdID;
     private String name;
     private String address;
-    private User administrator;
-    private final Set<Room> rooms = new HashSet<>();
+    private Integer administratorID;
 
-    public Household(int householdID, String name, String address, User creator) {
+    public Household(int householdID, String name, String address, Integer creatorID) {
         this.householdID = householdID;
         this.name = name;
         this.address = address;
-        administrator = creator;
-        creator.addHousehold(this);
-        creator.setCurrentHousehold(this);
+        administratorID = creatorID;
     }
 
     public int getHouseholdID() {
@@ -46,73 +35,17 @@ public class Household {
         this.address = address;
     }
 
-    public User getAdministrator() {
-        return administrator;
-    }
-
-    public Set<User> getUsers() {
-        return getUsersByHousehold(householdID);
-    }
-
-    public Set<Room> getRooms() {
-        return rooms;
-    }
-
-    public void addRoom(Room r){
-        rooms.add(r);
-        r.setHousehold(this);
-    }
-
-    public void removeRoom(Room r){
-        rooms.remove(r);
-    }
-
-    public void addUser(User operator, User user){
-        if(!householdMembership.get(operator).equals(ADMIN)){
-            return;
-        } else {
-            householdMembership.put(user, MEMBER);
-            user.addHousehold(this);
-        }
-        if(!user.getHouseholds().contains(this)){
-            user.addHousehold(this);
-        }
-    }
-
-    public Set<Device> getDevices() {
-        return rooms.stream()
-                .flatMap(r -> r.getDevices().stream())
-                .collect(Collectors.toSet());
-    }
-
-    public Set<Usage> getAllDeviceUsagesInHousehold(){
-        return getDevices().stream()
-                .flatMap(r -> r.getDeviceUsages().stream())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
-
-    public Map<User, HouseholdMembershipType> getHouseholdMembership() {
-        return householdMembership;
-    }
-
-    public void changeAdministrator(User oldAdministrator, User newAdministrator){
-        if(householdMembership.get(oldAdministrator) == ADMIN ){
-            if(!householdMembership.containsKey(newAdministrator)){
-                addUser(administrator, newAdministrator);
-            }
-            administrator = newAdministrator;
-            householdMembership.put(oldAdministrator, MEMBER);
-            householdMembership.put(newAdministrator, ADMIN);
-        }
+    public Integer getAdministratorID() {
+        return administratorID;
     }
 
     @Override
     public String toString() {
         return new StringJoiner(" - ", "[", "]")
-                .add(Integer.toString(householdID))
-                .add(name)
-                .add(address)
-                .add(administrator.getName())
+                .add(Integer.toString(getHouseholdID()))
+                .add(getName())
+                .add(getAddress())
                 .toString();
     }
+
 }
