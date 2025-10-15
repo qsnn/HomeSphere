@@ -1,21 +1,24 @@
 package homeSphere.log;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
-public abstract class Log {
+public class Log {
     protected final String logID;
+    protected final String actor;
     protected final LocalDateTime t;
     protected String event;
     protected LogType eventType;
-    protected String remarks = "";
+    protected String remarks;
 
-    public Log(String event, LogType eventType, String remarks) {
+    public Log(String actor, String event, LogType eventType, String remarks) {
         t = LocalDateTime.now();
         this.logID = generateLogID();
+        this.actor = actor;
         this.event = event;
         this.eventType = eventType;
-        this.remarks = remarks;
+        this.remarks = remarks == null ? "" : remarks;
     }
 
     public String getLogID() {
@@ -65,5 +68,13 @@ public abstract class Log {
         INFO,
         WARNING,
         ERROR
+    }
+
+    @Override
+    public String toString(){
+        return String.format("LOG[%s](%s) %s %s %s (%s)",
+                logID, actor,
+                t.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                eventType, event, remarks);
     }
 }

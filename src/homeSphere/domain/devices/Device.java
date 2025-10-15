@@ -1,6 +1,5 @@
 package homeSphere.domain.devices;
 
-import homeSphere.log.DeviceLog;
 import homeSphere.log.Log;
 import homeSphere.service.manufacturer.Manufacturer;
 
@@ -30,7 +29,7 @@ public abstract class Device {
         onlineStatus = OnlineStatusType.OUTLINE;
         powerStatus = PowerStatusType.UNPOWERED;
         this.power = power;
-        new DeviceLog(this, power, "创建设备：" + name, Log.LogType.INFO, "null");
+        new Log(getDeviceID().toString(),"创建设备：" + name, Log.LogType.INFO, null);
     }
 
     public Integer getDeviceID() {
@@ -100,7 +99,7 @@ public abstract class Device {
         DeviceAttribute<T> attribute = (DeviceAttribute<T>) attributes.get(attributeName);
         if (attribute != null && attribute.setValue(value)) {
             // 记录属性变更日志
-            new DeviceLog(this, power,
+            new Log(getDeviceID().toString(),
                     String.format("属性变更: %s = %s", attributeName, value),
                     Log.LogType.INFO, null);
             return true;
@@ -136,16 +135,16 @@ public abstract class Device {
     }
 
     public void connect(){
-        new DeviceLog(this, this.getPower(),"连接网络", Log.LogType.INFO, "null");
+        new Log(getDeviceID().toString(), "连接网络", Log.LogType.INFO, null);
         this.onlineStatus = OnlineStatusType.ONLINE;
     }
     public void disconnect(){
-        new DeviceLog(this, this.getPower(),"断开网络", Log.LogType.INFO, "null");
+        new Log(getDeviceID().toString(),"断开网络", Log.LogType.INFO, null);
         this.onlineStatus = OnlineStatusType.OUTLINE;
     }
 
     public void open(){
-        new DeviceLog(this, this.getPower(),"连接电源", Log.LogType.INFO, "null");
+        new Log(getDeviceID().toString(),"连接电源", Log.LogType.INFO, null);
         if(this.powerStatus == PowerStatusType.UNPOWERED){
             lastOpenTime = LocalDateTime.now();
         }
@@ -157,7 +156,7 @@ public abstract class Device {
             deviceUsages.add(u);
         }
         this.powerStatus = PowerStatusType.UNPOWERED;
-        new DeviceLog(this, this.getPower(),"断开电源", Log.LogType.INFO, u.toString());
+        new Log(getDeviceID().toString(),"断开电源", Log.LogType.INFO, u.toString());
     }
 
 
