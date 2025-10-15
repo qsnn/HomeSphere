@@ -108,6 +108,7 @@ public abstract class Device {
         return false;
     }
 
+    protected abstract void initializeAttributes();
     /**
      * 统一的execute方法 - 现在可以处理属性设置
      */

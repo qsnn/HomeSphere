@@ -1,4 +1,4 @@
-package homeSphere.domain.devices.nomalDevices;
+package homeSphere.domain.devices.devices;
 
 import homeSphere.domain.devices.Device;
 import homeSphere.service.manufacturer.Manufacturer;

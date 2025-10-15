@@ -5,12 +5,14 @@ import homeSphere.domain.devices.DeviceAttribute;
 public class RangeAttribute extends AbstractDeviceAttribute {
     private final int min;
     private final int max;
+    private final String unit;
 
-    public RangeAttribute(String name, Integer min, Integer max, Integer defaultValue) {
+    public RangeAttribute(String name, Integer min, Integer max, Integer defaultValue, String unit) {
         super(name, defaultValue);
         this.min = min;
         this.max = max;
         this.value = defaultValue;
+        this.unit = unit;
     }
 
     @Override
