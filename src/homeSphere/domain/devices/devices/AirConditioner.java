@@ -12,6 +12,7 @@ import homeSphere.service.powerService.MainsPower;
 public class AirConditioner extends Device implements MainsPower, WiFi, Bluetooth {
     public AirConditioner(Integer deviceID, String name, String OS, Manufacturer manufacturer, double power) {
         super(deviceID, name, OS, manufacturer, manufacturer.getName(), power);
+        initializeAttributes();
     }
 
     @Override

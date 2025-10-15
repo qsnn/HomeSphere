@@ -13,6 +13,7 @@ public abstract class AbstractDeviceAttribute<T> implements DeviceAttribute<T> {
         this.value = defaultValue;
     }
 
+    @Override
     public String getName() {
         return name;
     }

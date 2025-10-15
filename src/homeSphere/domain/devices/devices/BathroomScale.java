@@ -9,6 +9,7 @@ public class BathroomScale extends Device implements Battery, WiFi {
 
     public BathroomScale(Integer deviceID, String name, String OS, Manufacturer manufacturer, double power) {
         super(deviceID, name, OS, manufacturer, manufacturer.getName(), power);
+        initializeAttributes();
     }
 
     @Override

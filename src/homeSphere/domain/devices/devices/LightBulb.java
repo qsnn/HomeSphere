@@ -11,6 +11,7 @@ import homeSphere.service.powerService.MainsPower;
 public class LightBulb extends Device implements MainsPower, WiFi, Bluetooth {
     public LightBulb(Integer deviceID, String name, String OS, Manufacturer manufacturer, double power) {
         super(deviceID, name, OS, manufacturer, manufacturer.getName(), power);
+        initializeAttributes();
     }
 
     @Override
