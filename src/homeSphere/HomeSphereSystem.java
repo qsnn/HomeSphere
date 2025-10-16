@@ -1,14 +1,15 @@
 package homeSphere;
 
-import homeSphere.domain.devices.Device;
+import homeSphere.domain.deviceModule.Device;
+import homeSphere.domain.deviceModule.DeviceAttribute;
+import homeSphere.domain.deviceModule.Manufacturer;
+import homeSphere.domain.deviceModule.devices.*;
 import homeSphere.domain.house.Household;
 import homeSphere.domain.house.Room;
 import homeSphere.domain.users.User;
 import homeSphere.log.Log;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static homeSphere.utils.Util.createFreeID;
@@ -47,7 +48,7 @@ public class HomeSphereSystem {
     }
 
     //创造房间
-    public Room createRoom(Integer householdID, String name, Double area) {
+    public Integer createRoom(Integer householdID, String name, Double area) {
         validateHousehold(householdID);
 
         Integer roomID = createFreeID(rooms.keySet());
@@ -56,12 +57,78 @@ public class HomeSphereSystem {
 
         householdToRooms.computeIfAbsent(householdID, k -> new HashSet<>()).add(roomID);
         roomToHousehold.put(roomID, householdID);
-        return room;
+        return room.getRoomID();
     }
 
     //创建设备
-    public Device createDevice(){
-        return null;
+    public Integer createDevice(DeviceType deviceType, Integer deviceID, String name, String OS,
+                                Manufacturer manufacturer, double power,
+                                Device.ConnectMode connectMode, Device.PowerMode powerMode,
+                                Set<DeviceAttribute<?>> customAttributes) {
+
+        // 1. 参数验证
+        if (name == null || manufacturer == null) {
+            throw new IllegalArgumentException("设备名称和制造商不能为空");
+        }
+
+        // 3. 根据设备类型创建具体设备
+        Device device = createDeviceByType(deviceType, deviceID, name, OS, manufacturer,
+                power, connectMode, powerMode, customAttributes);
+
+        // 4. 记录到设备映射表
+        devices.put(deviceID, device);
+
+        return deviceID;
+    }
+
+    /**
+     * 创建设备的重载方法（不带自定义属性）
+     */
+    public Integer createDevice(DeviceType deviceType, Integer deviceID, String name, String OS,
+                                Manufacturer manufacturer, double power,
+                                Device.ConnectMode connectMode, Device.PowerMode powerMode) {
+        return createDevice(deviceType, deviceID, name, OS, manufacturer, power,
+                connectMode, powerMode, null);
+    }
+
+
+    /**
+     * 根据设备类型创建具体设备实例
+     */
+    private Device createDeviceByType(DeviceType deviceType, Integer deviceID, String name, String OS,
+                                      Manufacturer manufacturer, double power,
+                                      Device.ConnectMode connectMode, Device.PowerMode powerMode,
+                                      Set<DeviceAttribute<?>> customAttributes) {
+
+        String brand = manufacturer.getName();
+
+        switch (deviceType) {
+            case AIR_CONDITIONER:
+                return new AirConditioner(deviceID, name, OS, manufacturer, brand,
+                        connectMode, powerMode, power);
+
+            case LIGHT_BULB:
+                return new LightBulb(deviceID, name, OS, manufacturer, brand,
+                        connectMode, powerMode, power);
+
+            case SMART_LOCK:
+                return new SmartLock(deviceID, name, OS, manufacturer, brand,
+                        connectMode, powerMode, power);
+
+            case BATHROOM_SCALE:
+                return new BathroomScale(deviceID, name, OS, manufacturer, brand,
+                        connectMode, powerMode, power);
+
+            case UNDEFINED:
+                if (customAttributes == null || customAttributes.isEmpty()) {
+                    throw new IllegalArgumentException("UndefinedDevice必须提供自定义属性");
+                }
+                return new UndefinedDevice(deviceID, name, OS, manufacturer, brand,
+                        connectMode, powerMode, power, customAttributes);
+
+            default:
+                throw new IllegalArgumentException("不支持的设备类型: " + deviceType);
+        }
     }
 
 
@@ -73,6 +140,16 @@ public class HomeSphereSystem {
     // 通过ID获取家庭
     public Household getHouseholdByID(Integer householdId) {
         return households.get(householdId);
+    }
+
+    // 通过ID获取房间
+    public Room getRoomByID(Integer roomId) {
+        return rooms.get(roomId);
+    }
+
+    // 通过ID获取设备
+    public Device getDeviceByID(Integer deviceId) {
+        return devices.get(deviceId);
     }
 
     // 获取用户的所有家庭
@@ -179,10 +256,9 @@ public class HomeSphereSystem {
     }
 
     //添加设备到房间
-    public boolean addDeviceToRoom(Device device, Integer roomID) {
+    public boolean addDeviceToRoom(Integer deviceID, Integer roomID) {
         validateRoom(roomID);
-        devices.put(device.getDeviceID(), device);
-        deviceToRoom.put(device.getDeviceID(), roomID);
+        deviceToRoom.put(deviceID, roomID);
         return true;
     }
 
@@ -299,5 +375,20 @@ public class HomeSphereSystem {
     public void logout(int userID){
     }
 
+    public Map<Integer, User> getUsers() {
+        return users;
+    }
+
+    public Map<Integer, Household> getHouseholds() {
+        return households;
+    }
+
+    public Map<Integer, Room> getRooms() {
+        return rooms;
+    }
+
+    public Map<Integer, Device> getDevices() {
+        return devices;
+    }
 
 }

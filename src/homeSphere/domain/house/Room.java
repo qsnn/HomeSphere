@@ -1,12 +1,8 @@
 package homeSphere.domain.house;
 
-import homeSphere.domain.devices.Device;
-import homeSphere.domain.devices.Usage;
-import homeSphere.domain.users.User;
 import homeSphere.log.Log;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Room {
     private final int roomID;
@@ -19,6 +15,7 @@ public class Room {
         this.roomID = roomID;
         this.name = name;
         this.area = area;
+        roomLogs.add(new Log(Integer.toString(getRoomID()),"创建房间：" + name, Log.LogType.INFO, this.toString())) ;
     }
 
     public int getRoomID() {

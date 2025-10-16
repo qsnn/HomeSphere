@@ -1,4 +1,4 @@
-package homeSphere.domain.devices;
+package homeSphere.domain.deviceModule;
 
 public interface DeviceAttribute<T> {
     String getName();

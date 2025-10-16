@@ -1,7 +1,7 @@
-package homeSphere.domain.devices.devices;
+package homeSphere.domain.deviceModule.devices;
 
-import homeSphere.domain.devices.Device;
-import homeSphere.domain.devices.Manufacturer;
+import homeSphere.domain.deviceModule.Device;
+import homeSphere.domain.deviceModule.Manufacturer;
 
 public class BathroomScale extends Device {
 

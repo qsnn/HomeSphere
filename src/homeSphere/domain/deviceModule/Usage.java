@@ -1,4 +1,4 @@
-package homeSphere.domain.devices;
+package homeSphere.domain.deviceModule;
 
 import homeSphere.log.Log;
 

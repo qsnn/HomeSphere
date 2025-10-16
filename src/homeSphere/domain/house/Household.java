@@ -17,6 +17,7 @@ public class Household {
         this.name = name;
         this.address = address;
         administratorID = creatorID;
+        householdLogs.add(new Log(Integer.toString(getHouseholdID()),"创建家庭：" + name, Log.LogType.INFO, this.toString()));
     }
 
     public int getHouseholdID() {

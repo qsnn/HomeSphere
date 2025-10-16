@@ -22,6 +22,7 @@ public class User {
         this.password = password;
         this.name = name;
         this.address = address;
+        userLogs.add(new Log(Integer.toString(getUserID()),"注册用户：" + name, Log.LogType.INFO, this.toString())) ;
     }
 
     public int getUserID() {

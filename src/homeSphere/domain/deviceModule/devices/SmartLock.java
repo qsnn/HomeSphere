@@ -1,9 +1,9 @@
-package homeSphere.domain.devices.devices;
+package homeSphere.domain.deviceModule.devices;
 
-import homeSphere.domain.devices.Device;
-import homeSphere.domain.devices.attributes.BooleanAttribute;
-import homeSphere.domain.devices.attributes.StringChoiceAttribute;
-import homeSphere.domain.devices.Manufacturer;
+import homeSphere.domain.deviceModule.Device;
+import homeSphere.domain.deviceModule.attributes.BooleanAttribute;
+import homeSphere.domain.deviceModule.attributes.StringChoiceAttribute;
+import homeSphere.domain.deviceModule.Manufacturer;
 
 public class SmartLock extends Device {
     public SmartLock(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand, ConnectMode connectMode, PowerMode powerMode, double power) {

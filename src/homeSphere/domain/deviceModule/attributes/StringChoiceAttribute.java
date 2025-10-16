@@ -1,6 +1,4 @@
-package homeSphere.domain.devices.attributes;
-
-import homeSphere.domain.devices.DeviceAttribute;
+package homeSphere.domain.deviceModule.attributes;
 
 import java.util.*;
 

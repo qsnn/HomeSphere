@@ -1,9 +1,6 @@
 package homeSphere.utils;
 
-import homeSphere.domain.devices.Device;
-import homeSphere.domain.devices.Usage;
-import homeSphere.domain.house.Room;
-import homeSphere.domain.users.User;
+import homeSphere.domain.deviceModule.Usage;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

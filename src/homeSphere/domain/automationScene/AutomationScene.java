@@ -1,6 +1,6 @@
 package homeSphere.domain.automationScene;
 
-import homeSphere.domain.devices.Device;
+import homeSphere.domain.deviceModule.Device;
 
 import java.util.*;
 

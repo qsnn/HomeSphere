@@ -1,8 +1,8 @@
-package homeSphere.domain.devices.devices;
+package homeSphere.domain.deviceModule.devices;
 
-import homeSphere.domain.devices.Device;
-import homeSphere.domain.devices.DeviceAttribute;
-import homeSphere.domain.devices.Manufacturer;
+import homeSphere.domain.deviceModule.Device;
+import homeSphere.domain.deviceModule.DeviceAttribute;
+import homeSphere.domain.deviceModule.Manufacturer;
 
 import java.util.Set;
 

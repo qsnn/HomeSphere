@@ -1,10 +1,10 @@
-package homeSphere.domain.devices.devices;
+package homeSphere.domain.deviceModule.devices;
 
-import homeSphere.domain.devices.Device;
-import homeSphere.domain.devices.attributes.BooleanAttribute;
-import homeSphere.domain.devices.attributes.RangeAttribute;
-import homeSphere.domain.devices.attributes.StringChoiceAttribute;
-import homeSphere.domain.devices.Manufacturer;
+import homeSphere.domain.deviceModule.Device;
+import homeSphere.domain.deviceModule.attributes.BooleanAttribute;
+import homeSphere.domain.deviceModule.attributes.RangeAttribute;
+import homeSphere.domain.deviceModule.attributes.StringChoiceAttribute;
+import homeSphere.domain.deviceModule.Manufacturer;
 
 public class AirConditioner extends Device {
     public AirConditioner(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand, ConnectMode connectMode, PowerMode powerMode, double power) {

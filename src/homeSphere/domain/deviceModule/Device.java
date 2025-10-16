@@ -1,4 +1,4 @@
-package homeSphere.domain.devices;
+package homeSphere.domain.deviceModule;
 
 import homeSphere.log.Log;
 import homeSphere.utils.Util;
@@ -13,8 +13,8 @@ public abstract class Device {
     protected final Manufacturer manufacturer;  //制造商
     protected final String brand;   //品牌
     protected final double power;   //功率
-    protected final PowerMode powerMode;  //供电状态
-    protected final ConnectMode connectMode;    //在线状态
+    protected final PowerMode powerMode;  //供电模式
+    protected final ConnectMode connectMode;    //联网模式
     protected OnlineStatusType onlineStatus;    //在线状态
     protected PowerStatusType powerStatus;  //供电状态
     protected LocalDateTime lastOpenTime;   //上次打开的时间
@@ -33,7 +33,7 @@ public abstract class Device {
         onlineStatus = OnlineStatusType.OUTLINE;
         powerStatus = PowerStatusType.UNPOWERED;
         this.power = power;
-        new Log(getDeviceID().toString(),"创建设备：" + name, Log.LogType.INFO, null);
+        deviceLogs.add(new Log(getDeviceID().toString(),"创建设备：" + name, Log.LogType.INFO, this.toString()));
     }
 
     public Integer getDeviceID() {
@@ -190,6 +190,20 @@ public abstract class Device {
         return Util.calculatePowerConsumption(deviceUsages);
     }
 
+    @Override
+    public String toString() {
+        return new StringJoiner(" - ", "[", "]")
+                .add(Integer.toString(getDeviceID()))
+                .add(getName())
+                .add(getManufacturer().getName())  // 制造商名称
+                .add(getBrand())                   // 品牌
+                .add(getOS())                      // 操作系统
+                .add(Double.toString(getPower()) + "W")  // 功率
+                .add(getConnectMode().name())      // 连接模式
+                .add(getPowerMode().name())        // 电源模式
+
+                .toString();
+    }
 
     public enum OnlineStatusType {
         ONLINE,

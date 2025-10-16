@@ -1,6 +1,6 @@
-package homeSphere.domain.devices.attributes;
+package homeSphere.domain.deviceModule.attributes;
 
-import homeSphere.domain.devices.DeviceAttribute;
+import homeSphere.domain.deviceModule.DeviceAttribute;
 
 public abstract class AbstractDeviceAttribute<T> implements DeviceAttribute<T> {
     private final String name;
