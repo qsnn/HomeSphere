@@ -4,14 +4,13 @@ import homeSphere.domain.devices.Device;
 import homeSphere.domain.devices.attributes.BooleanAttribute;
 import homeSphere.domain.devices.attributes.RangeAttribute;
 import homeSphere.domain.devices.attributes.StringChoiceAttribute;
-import homeSphere.service.connectService.Bluetooth;
-import homeSphere.service.connectService.WiFi;
+import homeSphere.service.connectService.ConnectMode;
 import homeSphere.service.manufacturer.Manufacturer;
-import homeSphere.service.powerService.MainsPower;
+import homeSphere.service.powerService.PowerMode;
 
-public class AirConditioner extends Device implements MainsPower, WiFi, Bluetooth {
-    public AirConditioner(Integer deviceID, String name, String OS, Manufacturer manufacturer, double power) {
-        super(deviceID, name, OS, manufacturer, manufacturer.getName(), power);
+public class AirConditioner extends Device {
+    public AirConditioner(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand, ConnectMode connectMode, PowerMode powerMode, double power) {
+        super(deviceID, name, OS, manufacturer, brand, connectMode, powerMode, power);
         initializeAttributes();
     }
 

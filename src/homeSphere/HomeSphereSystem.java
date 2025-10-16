@@ -4,8 +4,11 @@ import homeSphere.domain.devices.Device;
 import homeSphere.domain.house.Household;
 import homeSphere.domain.house.Room;
 import homeSphere.domain.users.User;
+import homeSphere.log.Log;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static homeSphere.utils.Util.createFreeID;
@@ -17,7 +20,6 @@ public class HomeSphereSystem {
     private final Map<Integer, User> users = new HashMap<>();
     private final Map<Integer, Room> rooms = new HashMap<>();
     private final Map<Integer, Device> devices = new HashMap<>();
-
     // 统一的关系映射表
     private final Map<Integer, Set<Integer>> userToHouseholds = new HashMap<>(); // 用户 -> 家庭集合
     private final Map<Integer, Set<Integer>> householdToUsers = new HashMap<>(); // 家庭 -> 用户集合
@@ -261,6 +263,24 @@ public class HomeSphereSystem {
         if (!rooms.containsKey(roomID)) {
             throw new IllegalArgumentException("房间不存在");
         }
+    }
+
+    public Set<Log> getAllDeviceLogs(){
+        return devices.values().stream().map(Device::getDeviceLogs).flatMap(Set::stream)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<Log> getAllUserLogs(){
+        return users.values().stream().map(User::getUserLogs).flatMap(Set::stream)
+                .collect(Collectors.toSet());
+    }
+    public Set<Log> getAllRoomLogs(){
+        return rooms.values().stream().map(Room::getRoomLogs).flatMap(Set::stream)
+                .collect(Collectors.toSet());
+    }
+    public Set<Log> getAllHouseholdLogs(){
+        return households.values().stream().map(Household::getHouseholdLogs).flatMap(Set::stream)
+                .collect(Collectors.toSet());
     }
 
 

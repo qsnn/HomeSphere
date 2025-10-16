@@ -33,7 +33,7 @@ public class Util {
         for (Usage usage : usages) {
             LocalDateTime powerOnTime = usage.getOpenTime();
             LocalDateTime powerOffTime = usage.getCloseTime();
-            double power = usage.getDevice().getPower();
+            double power = usage.getPower();
 
             // 检查这个使用记录是否在查询时间范围内有重叠
             if (isUsageInTimeRange(powerOnTime, powerOffTime, startTime, endTime)) {

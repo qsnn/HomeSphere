@@ -3,6 +3,7 @@ package homeSphere.domain.house;
 import homeSphere.domain.devices.Device;
 import homeSphere.domain.devices.Usage;
 import homeSphere.domain.users.User;
+import homeSphere.log.Log;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,7 +13,7 @@ public class Room {
     private String name;
     private double area;
     private String introduction = "null";
-
+    protected final Set<Log> roomLogs = new TreeSet<>(Comparator.comparing(Log::getT)); //使用记录
 
     public Room(int roomID, String name, double area) {
         this.roomID = roomID;
@@ -46,6 +47,10 @@ public class Room {
 
     public void setIntroduction(String introduction) {
         this.introduction = introduction;
+    }
+
+    public Set<Log> getRoomLogs() {
+        return roomLogs;
     }
 
     @Override

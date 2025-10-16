@@ -1,5 +1,7 @@
 package homeSphere.domain.house;
 
+import homeSphere.log.Log;
+
 import java.util.*;
 
 public class Household {
@@ -7,6 +9,8 @@ public class Household {
     private String name;
     private String address;
     private Integer administratorID;
+    protected final Set<Log> householdLogs = new TreeSet<>(Comparator.comparing(Log::getT)); //使用记录
+
 
     public Household(int householdID, String name, String address, Integer creatorID) {
         this.householdID = householdID;
@@ -37,6 +41,10 @@ public class Household {
 
     public Integer getAdministratorID() {
         return administratorID;
+    }
+
+    public Set<Log> getHouseholdLogs() {
+        return householdLogs;
     }
 
     @Override

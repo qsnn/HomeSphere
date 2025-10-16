@@ -1,6 +1,11 @@
 package homeSphere.domain.users;
 
+import homeSphere.log.Log;
+
+import java.util.Comparator;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.TreeSet;
 
 public class User {
     private final int userID;
@@ -8,6 +13,8 @@ public class User {
     private String password;
     private String name;
     private String address;
+    protected final Set<Log> userLogs = new TreeSet<>(Comparator.comparing(Log::getT)); //使用记录
+
 
     public User(int userID, String username, String password, String name, String address) {
         this.userID = userID;
@@ -51,6 +58,10 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Set<Log> getUserLogs() {
+        return userLogs;
     }
 
     @Override

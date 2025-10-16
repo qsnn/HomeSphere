@@ -1,23 +1,27 @@
 package homeSphere.domain.devices;
 
+import homeSphere.log.Log;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 
 public class Usage {
-    private final String usageID;
+    private final String deviceID;
     private final double power;
     private final LocalDateTime openTime;
     private final LocalDateTime closeTime;
     private final double powerConsumption;
+    private final Log log;
 
-    public Usage(String usageID, double power, LocalDateTime openTime, LocalDateTime closeTime) {
-        this.usageID = usageID;
+    public Usage(String deviceID, double power, LocalDateTime openTime, LocalDateTime closeTime) {
+        this.deviceID = deviceID;
         this.power = power;
         this.openTime = openTime;
         this.closeTime = closeTime;
         powerConsumption = calculatePower();
+        log = new Log(deviceID, "设备被使用", Log.LogType.INFO, this.toString());
     }
 
     private double calculatePower() {
@@ -26,6 +30,10 @@ public class Usage {
         double hours = duration.toSeconds() / 3600.0; // 转换为小时
         // 能耗 = 功率 × 时间
         return power * hours / 1000.0;
+    }
+
+    public double getPower() {
+        return power;
     }
 
     public LocalDateTime getOpenTime() {
@@ -39,9 +47,13 @@ public class Usage {
     }
 
     public String toString() {
-        return "LOG[" + usageID + "] " +
+        return "LOG[" + deviceID + "] " +
                 openTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + " - " +
                 closeTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + " " +
                 "功耗：" + powerConsumption + "kWh";
+    }
+
+    public Log getLog() {
+        return log;
     }
 }

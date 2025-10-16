@@ -19,6 +19,7 @@ public class Log {
         this.event = event;
         this.eventType = eventType;
         this.remarks = remarks == null ? "" : remarks;
+        System.out.println(this);
     }
 
     public String getLogID() {

@@ -1,7 +1,10 @@
 package homeSphere.domain.devices;
 
 import homeSphere.log.Log;
+import homeSphere.service.connectService.ConnectMode;
 import homeSphere.service.manufacturer.Manufacturer;
+import homeSphere.service.powerService.PowerMode;
+import homeSphere.utils.Util;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -13,19 +16,23 @@ public abstract class Device {
     protected final Manufacturer manufacturer;  //制造商
     protected final String brand;   //品牌
     protected final double power;   //功率
+    protected final PowerMode powerMode;  //供电状态
+    protected final ConnectMode connectMode;    //在线状态
     protected OnlineStatusType onlineStatus;    //在线状态
     protected PowerStatusType powerStatus;  //供电状态
     protected LocalDateTime lastOpenTime;   //上次打开的时间
     protected final Set<Usage> deviceUsages = new TreeSet<>(Comparator.comparing(Usage::getCloseTime)); //使用记录
+    protected final Set<Log> deviceLogs = new TreeSet<>(Comparator.comparing(Log::getT)); //使用记录
     protected final Map<String, DeviceAttribute<?>> attributes = new HashMap<>();   //属性
 
-
-    public Device(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand, double power) {
+    public Device(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand, ConnectMode connectMode, PowerMode powerMode, double power) {
         this.deviceID = deviceID;
         this.name = name;
         this.OS = OS;
         this.manufacturer = manufacturer;
         this.brand = brand;
+        this.connectMode = connectMode;
+        this.powerMode = powerMode;
         onlineStatus = OnlineStatusType.OUTLINE;
         powerStatus = PowerStatusType.UNPOWERED;
         this.power = power;
@@ -56,6 +63,14 @@ public abstract class Device {
         return brand;
     }
 
+    public ConnectMode getConnectMode() {
+        return connectMode;
+    }
+
+    public PowerMode getPowerMode() {
+        return powerMode;
+    }
+
     public OnlineStatusType getOnlineStatus() {
         return onlineStatus;
     }
@@ -70,6 +85,10 @@ public abstract class Device {
 
     public Set<Usage> getDeviceUsages() {
         return deviceUsages;
+    }
+
+    public Set<Log> getDeviceLogs() {
+        return deviceLogs;
     }
 
     /**
@@ -107,6 +126,7 @@ public abstract class Device {
         return false;
     }
 
+    //初始化属性
     protected abstract void initializeAttributes();
     /**
      * 统一的execute方法 - 现在可以处理属性设置
@@ -135,16 +155,16 @@ public abstract class Device {
     }
 
     public void connect(){
-        new Log(getDeviceID().toString(), "连接网络", Log.LogType.INFO, null);
+        deviceLogs.add(new Log(getDeviceID().toString(), "连接网络", Log.LogType.INFO, null));
         this.onlineStatus = OnlineStatusType.ONLINE;
     }
     public void disconnect(){
-        new Log(getDeviceID().toString(),"断开网络", Log.LogType.INFO, null);
+        deviceLogs.add(new Log(getDeviceID().toString(),"断开网络", Log.LogType.INFO, null));
         this.onlineStatus = OnlineStatusType.OUTLINE;
     }
 
     public void open(){
-        new Log(getDeviceID().toString(),"连接电源", Log.LogType.INFO, null);
+        deviceLogs.add(new Log(getDeviceID().toString(),"连接电源", Log.LogType.INFO, null));
         if(this.powerStatus == PowerStatusType.UNPOWERED){
             lastOpenTime = LocalDateTime.now();
         }
@@ -156,7 +176,21 @@ public abstract class Device {
             deviceUsages.add(u);
         }
         this.powerStatus = PowerStatusType.UNPOWERED;
-        new Log(getDeviceID().toString(),"断开电源", Log.LogType.INFO, u.toString());
+        deviceLogs.add(new Log(getDeviceID().toString(),"断开电源", Log.LogType.INFO, u.toString()));
+    }
+
+    public Double calculatePowerConsumption(LocalDateTime startTime, LocalDateTime endTime){
+        if(powerMode == PowerMode.BATTERY){
+            return 0.0;
+        }
+        return Util.calculatePowerConsumption(deviceUsages, startTime, endTime);
+    }
+
+    public Double calculateAllPowerConsumption(){
+        if(powerMode == PowerMode.BATTERY){
+            return 0.0;
+        }
+        return Util.calculatePowerConsumption(deviceUsages);
     }
 
 

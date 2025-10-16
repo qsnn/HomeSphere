@@ -1,20 +1,26 @@
 package homeSphere.service.manufacturer;
 
+import homeSphere.service.connectService.ConnectMode;
+
+import java.util.Set;
+
 public class Manufacturer {
-    protected String name;
+    protected final String name;
+    protected final Set<ConnectMode> supportedConnectMode;
 
-    public Manufacturer() {
-    }
-
-    public Manufacturer(String name) {
+    public Manufacturer(String name, Set<ConnectMode> supportedConnectMode) {
         this.name = name;
+        this.supportedConnectMode = supportedConnectMode;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Set<ConnectMode> getSupportedConnectMode() {
+        return supportedConnectMode;
     }
 }
+
+
+
