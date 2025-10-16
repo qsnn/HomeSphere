@@ -4,9 +4,7 @@ import homeSphere.domain.devices.Device;
 import homeSphere.domain.devices.attributes.BooleanAttribute;
 import homeSphere.domain.devices.attributes.RangeAttribute;
 import homeSphere.domain.devices.attributes.StringChoiceAttribute;
-import homeSphere.service.connectService.ConnectMode;
-import homeSphere.service.manufacturer.Manufacturer;
-import homeSphere.service.powerService.PowerMode;
+import homeSphere.domain.devices.Manufacturer;
 
 public class AirConditioner extends Device {
     public AirConditioner(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand, ConnectMode connectMode, PowerMode powerMode, double power) {

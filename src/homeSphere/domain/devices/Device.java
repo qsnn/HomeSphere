@@ -1,9 +1,6 @@
 package homeSphere.domain.devices;
 
 import homeSphere.log.Log;
-import homeSphere.service.connectService.ConnectMode;
-import homeSphere.service.manufacturer.Manufacturer;
-import homeSphere.service.powerService.PowerMode;
 import homeSphere.utils.Util;
 
 import java.time.LocalDateTime;
@@ -202,5 +199,14 @@ public abstract class Device {
     public enum PowerStatusType {
         POWERED,
         UNPOWERED
+    }
+
+    public enum PowerMode {
+        BATTERY,
+        MAINSPOWER
+    }
+
+    public enum ConnectMode {
+        WIFI, BLUETOOTH, ZIGBEE, Z_WAVE, THREAD, MATTER
     }
 }

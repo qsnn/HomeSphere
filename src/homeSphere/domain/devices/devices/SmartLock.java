@@ -3,9 +3,7 @@ package homeSphere.domain.devices.devices;
 import homeSphere.domain.devices.Device;
 import homeSphere.domain.devices.attributes.BooleanAttribute;
 import homeSphere.domain.devices.attributes.StringChoiceAttribute;
-import homeSphere.service.connectService.ConnectMode;
-import homeSphere.service.manufacturer.Manufacturer;
-import homeSphere.service.powerService.PowerMode;
+import homeSphere.domain.devices.Manufacturer;
 
 public class SmartLock extends Device {
     public SmartLock(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand, ConnectMode connectMode, PowerMode powerMode, double power) {

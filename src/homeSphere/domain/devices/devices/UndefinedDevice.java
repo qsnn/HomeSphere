@@ -2,9 +2,7 @@ package homeSphere.domain.devices.devices;
 
 import homeSphere.domain.devices.Device;
 import homeSphere.domain.devices.DeviceAttribute;
-import homeSphere.service.connectService.ConnectMode;
-import homeSphere.service.manufacturer.Manufacturer;
-import homeSphere.service.powerService.PowerMode;
+import homeSphere.domain.devices.Manufacturer;
 
 import java.util.Set;
 

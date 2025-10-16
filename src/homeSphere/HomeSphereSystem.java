@@ -27,6 +27,9 @@ public class HomeSphereSystem {
     private final Map<Integer, Integer> roomToHousehold = new HashMap<>();       // 房间 -> 家庭
     private final Map<Integer, Integer> deviceToRoom = new HashMap<>();          // 设备 -> 房间
 
+    public static void main(String[] args) {
+
+    }
 
     //创建家庭
     public Integer createHousehold(String name, String address, Integer creatorID){

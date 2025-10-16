@@ -1,9 +1,7 @@
 package homeSphere.domain.devices.devices;
 
 import homeSphere.domain.devices.Device;
-import homeSphere.service.connectService.ConnectMode;
-import homeSphere.service.manufacturer.Manufacturer;
-import homeSphere.service.powerService.PowerMode;
+import homeSphere.domain.devices.Manufacturer;
 
 public class BathroomScale extends Device {
 
