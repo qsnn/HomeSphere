@@ -1,10 +1,11 @@
-package com.qsnn.homeSphere.domain.deviceModule;
+package qsnn.homeSphere.domain.deviceModule;
 
 import com.qsnn.homeSphere.domain.deviceModule.attributes.DeviceAttribute;
+import qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 import com.qsnn.homeSphere.log.Log;
-import com.qsnn.homeSphere.utils.Util;
+import qsnn.homeSphere.utils.Util;
 
-import java.time.LocalDateTime;
+import java.time.Date;
 import java.util.*;
 
 /**
@@ -35,77 +36,36 @@ import java.util.*;
  */
 public abstract class Device {
     /** 设备唯一序列号 */
-    protected final Integer deviceID;
+    protected final Integer deviceId;
 
     /** 设备名称 */
     protected String name;
 
-    /** 设备操作系统 */
-    protected final String OS;
-
     /** 设备制造商信息 */
     protected final Manufacturer manufacturer;
 
-    /** 设备品牌 */
-    protected final String brand;
-
     /** 设备功率，单位：瓦特(W) */
-    protected final double power;
+    protected double power;
 
     /** 设备供电模式 */
-    protected final PowerMode powerMode;
+    protected PowerMode powerMode;
 
     /** 设备连接模式 */
-    protected final ConnectMode connectMode;
+    protected ConnectMode connectMode;
 
     /** 设备在线状态 */
-    protected OnlineStatusType onlineStatus;
+    protected boolean isOnline;
 
     /** 设备电源状态 */
-    protected PowerStatusType powerStatus;
-
-    /** 设备电池电量（仅对电池设备有效） */
-    protected int batteryLevel;
+    protected boolean powerStatus;
 
     /** 设备上次开启时间 */
-    protected LocalDateTime lastOpenTime;
+    protected Date lastOpenTime;
 
-    /** 设备使用记录集合，按关闭时间排序 */
-    protected final Set<Usage> deviceUsages = new TreeSet<>(Comparator.comparing(Usage::getCloseTime));
-
-    /** 设备日志记录集合，按时间排序 */
-    protected final Set<Log> deviceLogs = new TreeSet<>(Comparator.comparing(Log::getT));
-
-    /** 设备属性映射表，存储动态属性 */
-    protected final Map<String, DeviceAttribute<?>> attributes = new HashMap<>();
-
-    /**
-     * 设备构造函数
-     *
-     * <p>初始化设备基本信息并设置默认状态，自动记录设备创建日志。</p>
-     *
-     * @param deviceID 设备唯一序列号
-     * @param name 设备名称
-     * @param OS 设备操作系统
-     * @param manufacturer 设备制造商
-     * @param brand 设备品牌
-     * @param connectMode 设备连接模式
-     * @param powerMode 设备供电模式
-     * @param power 设备功率，单位：瓦特(W)
-     */
-    public Device(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand,
-                  ConnectMode connectMode, PowerMode powerMode, double power) {
-        this.deviceID = deviceID;
+    public Device(Integer deviceId, String name, Manufacturer manufacturer) {
+        this.deviceId = deviceId;
         this.name = name;
-        this.OS = OS;
         this.manufacturer = manufacturer;
-        this.brand = brand;
-        this.connectMode = connectMode;
-        this.powerMode = powerMode;
-        this.onlineStatus = OnlineStatusType.OUTLINE;
-        this.powerStatus = PowerStatusType.UNPOWERED;
-        this.power = power;
-        deviceLogs.add(new Log(getDeviceID().toString(),"创建设备：" + name, Log.LogType.INFO, this.toString()));
     }
 
     // ==================== 基本Getter/Setter方法 ====================
@@ -115,8 +75,8 @@ public abstract class Device {
      *
      * @return 设备唯一序列号
      */
-    public Integer getDeviceID() {
-        return deviceID;
+    public Integer getDeviceId() {
+        return deviceId;
     }
 
     /**
@@ -137,14 +97,6 @@ public abstract class Device {
         this.name = name;
     }
 
-    /**
-     * 获取设备操作系统
-     *
-     * @return 设备操作系统
-     */
-    public String getOS() {
-        return OS;
-    }
 
     /**
      * 获取设备制造商
@@ -155,14 +107,6 @@ public abstract class Device {
         return manufacturer;
     }
 
-    /**
-     * 获取设备品牌
-     *
-     * @return 设备品牌
-     */
-    public String getBrand() {
-        return brand;
-    }
 
     /**
      * 获取设备连接模式
@@ -187,8 +131,8 @@ public abstract class Device {
      *
      * @return 设备在线状态
      */
-    public OnlineStatusType getOnlineStatus() {
-        return onlineStatus;
+    public boolean isOnline() {
+        return isOnline;
     }
 
     /**
@@ -209,38 +153,7 @@ public abstract class Device {
         return power;
     }
 
-    /**
-     * 获取设备使用记录
-     *
-     * @return 设备使用记录集合，按关闭时间排序
-     */
-    public Set<Usage> getDeviceUsages() {
-        return deviceUsages;
-    }
 
-    /**
-     * 获取设备日志记录
-     *
-     * @return 设备日志记录集合，按时间排序
-     */
-    public Set<Log> getDeviceLogs() {
-        return deviceLogs;
-    }
-
-    /**
-     * 获取设备电池电量
-     *
-     * <p>仅对电池供电设备有效，非电池设备调用此方法将抛出异常</p>
-     *
-     * @return 电池电量百分比
-     * @throws IllegalArgumentException 如果设备不是电池供电模式
-     */
-    public int getBatteryLevel() {
-        if(powerMode != PowerMode.BATTERY){
-            throw new IllegalArgumentException("非电池设备不能获取电池电量！");
-        }
-        return batteryLevel;
-    }
 
     // ==================== 属性管理方法 ====================
 
@@ -296,7 +209,7 @@ public abstract class Device {
         DeviceAttribute<T> attribute = (DeviceAttribute<T>) attributes.get(attributeName);
         if (attribute != null && attribute.setValue(value)) {
             // 记录属性变更日志
-            new Log(getDeviceID().toString(),
+            new Log(getDeviceId().toString(),
                     String.format("属性变更: %s = %s", attributeName, value),
                     Log.LogType.INFO, null);
             return true;
@@ -350,7 +263,7 @@ public abstract class Device {
      * <p>将设备在线状态设置为ONLINE，并记录连接日志</p>
      */
     public void connect(){
-        deviceLogs.add(new Log(getDeviceID().toString(), "连接网络", Log.LogType.INFO, null));
+        deviceLogs.add(new Log(getDeviceId().toString(), "连接网络", Log.LogType.INFO, null));
         this.onlineStatus = OnlineStatusType.ONLINE;
     }
 
@@ -360,7 +273,7 @@ public abstract class Device {
      * <p>将设备在线状态设置为OUTLINE，并记录断开日志</p>
      */
     public void disconnect(){
-        deviceLogs.add(new Log(getDeviceID().toString(),"断开网络", Log.LogType.INFO, null));
+        deviceLogs.add(new Log(getDeviceId().toString(),"断开网络", Log.LogType.INFO, null));
         this.onlineStatus = OnlineStatusType.OUTLINE;
     }
 
@@ -370,9 +283,9 @@ public abstract class Device {
      * <p>将设备电源状态设置为POWERED，记录开启时间，并记录电源连接日志</p>
      */
     public void open(){
-        deviceLogs.add(new Log(getDeviceID().toString(),"连接电源", Log.LogType.INFO, null));
+        deviceLogs.add(new Log(getDeviceId().toString(),"连接电源", Log.LogType.INFO, null));
         if(this.powerStatus == PowerStatusType.UNPOWERED){
-            lastOpenTime = LocalDateTime.now();
+            lastOpenTime = Date.now();
         }
         this.powerStatus = PowerStatusType.POWERED;
     }
@@ -383,12 +296,12 @@ public abstract class Device {
      * <p>将设备电源状态设置为UNPOWERED，创建使用记录，并记录电源断开日志</p>
      */
     public void close(){
-        Usage u = new Usage(deviceID + "" + deviceUsages.size(),getPower(), lastOpenTime, LocalDateTime.now());
+        Usage u = new Usage(deviceId + "" + deviceUsages.size(),getPower(), lastOpenTime, Date.now());
         if(this.powerStatus == PowerStatusType.POWERED){
             deviceUsages.add(u);
         }
         this.powerStatus = PowerStatusType.UNPOWERED;
-        deviceLogs.add(new Log(getDeviceID().toString(),"断开电源", Log.LogType.INFO, u.toString()));
+        deviceLogs.add(new Log(getDeviceId().toString(),"断开电源", Log.LogType.INFO, u.toString()));
     }
 
     // ==================== 能耗计算方法 ====================
@@ -402,7 +315,7 @@ public abstract class Device {
      * @param endTime 结束时间
      * @return 用电量，单位：千瓦时(kWh)
      */
-    public Double calculatePowerConsumption(LocalDateTime startTime, LocalDateTime endTime){
+    public Double calculatePowerConsumption(Date startTime, Date endTime){
         if(powerMode == PowerMode.BATTERY){
             return 0.0;
         }
@@ -435,7 +348,7 @@ public abstract class Device {
     @Override
     public String toString() {
         return new StringJoiner(" - ", "[", "]")
-                .add(Integer.toString(getDeviceID()))
+                .add(Integer.toString(getDeviceId()))
                 .add(getName())
                 .add(getManufacturer().getName())  // 制造商名称
                 .add(getBrand())                   // 品牌

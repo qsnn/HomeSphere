@@ -1,9 +1,7 @@
-package com.qsnn.homeSphere.utils;
-
-import com.qsnn.homeSphere.domain.deviceModule.Usage;
+package qsnn.homeSphere.utils;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.Date;
 import java.util.Random;
 import java.util.Set;
 
@@ -65,19 +63,19 @@ public class Util {
      * @param endTime 查询结束时间
      * @return 指定时间段内的总能耗，单位：瓦时(Wh)
      */
-    public static double calculatePowerConsumption(Set<Usage> usages, LocalDateTime startTime, LocalDateTime endTime) {
+    public static double calculatePowerConsumption(Set<Usage> usages, Date startTime, Date endTime) {
         double totalEnergy = 0.0;
 
         for (Usage usage : usages) {
-            LocalDateTime powerOnTime = usage.getOpenTime();
-            LocalDateTime powerOffTime = usage.getCloseTime();
+            Date powerOnTime = usage.getOpenTime();
+            Date powerOffTime = usage.getCloseTime();
             double power = usage.getPower();
 
             // 检查这个使用记录是否在查询时间范围内有重叠
             if (isUsageInTimeRange(powerOnTime, powerOffTime, startTime, endTime)) {
                 // 计算实际在查询时间段内的使用时间
-                LocalDateTime actualStart = getLaterTime(powerOnTime, startTime);
-                LocalDateTime actualEnd = getEarlierTime(powerOffTime, endTime);
+                Date actualStart = getLaterTime(powerOnTime, startTime);
+                Date actualEnd = getEarlierTime(powerOffTime, endTime);
 
                 // 计算时间差（小时）
                 Duration duration = Duration.between(actualStart, actualEnd);
@@ -118,8 +116,8 @@ public class Util {
      * @param queryEnd 查询结束时间
      * @return 如果有时间重叠返回true，否则返回false
      */
-    private static boolean isUsageInTimeRange(LocalDateTime usageStart, LocalDateTime usageEnd,
-                                              LocalDateTime queryStart, LocalDateTime queryEnd) {
+    private static boolean isUsageInTimeRange(Date usageStart, Date usageEnd,
+                                              Date queryStart, Date queryEnd) {
         // 使用记录完全在查询时间范围之外的情况
         return !usageEnd.isBefore(queryStart) && !usageStart.isAfter(queryEnd);
     }
@@ -131,7 +129,7 @@ public class Util {
      * @param time2 第二个时间
      * @return 较晚的时间
      */
-    private static LocalDateTime getLaterTime(LocalDateTime time1, LocalDateTime time2) {
+    private static Date getLaterTime(Date time1, Date time2) {
         return time1.isAfter(time2) ? time1 : time2;
     }
 
@@ -142,7 +140,7 @@ public class Util {
      * @param time2 第二个时间
      * @return 较早的时间
      */
-    private static LocalDateTime getEarlierTime(LocalDateTime time1, LocalDateTime time2) {
+    private static Date getEarlierTime(Date time1, Date time2) {
         return time1.isBefore(time2) ? time1 : time2;
     }
 }

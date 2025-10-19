@@ -1,7 +1,7 @@
-package com.qsnn.homeSphere.domain.deviceModule.devices;
+package qsnn.homeSphere.domain.deviceModule.devices;
 
-import com.qsnn.homeSphere.domain.deviceModule.Device;
-import com.qsnn.homeSphere.domain.deviceModule.Manufacturer;
+import qsnn.homeSphere.domain.deviceModule.Device;
+import qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 
 public class BathroomScale extends Device {
 

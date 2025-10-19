@@ -1,11 +1,7 @@
-package com.qsnn.homeSphere.domain.users;
+package qsnn.homeSphere.domain.users;
 
-import com.qsnn.homeSphere.log.Log;
 
-import java.util.Comparator;
-import java.util.Set;
 import java.util.StringJoiner;
-import java.util.TreeSet;
 
 /**
  * 用户类
@@ -32,44 +28,40 @@ import java.util.TreeSet;
  */
 public class User {
     /** 用户唯一标识符 */
-    private final int userID;
+    private final int userId;
 
     /** 用户名，用于登录认证 */
-    private String username;
+    private String loginName;
 
     /** 用户密码，用于登录认证 */
-    private String password;
+    private String loginPassword;
 
     /** 用户真实姓名 */
-    private String name;
+    private String userName;
 
     /** 用户联系地址 */
-    private String address;
+    private String email;
 
-    /**
-     * 用户日志记录集合
-     * 使用TreeSet并按日志时间排序，确保日志按时间顺序存储
-     */
-    protected final Set<Log> userLogs = new TreeSet<>(Comparator.comparing(Log::getT)); //日志记录
+    private boolean isAdmin;
+
 
     /**
      * 用户构造函数
      *
      * <p>创建用户时会自动记录注册日志到用户日志集合中。</p>
      *
-     * @param userID 用户唯一标识符
-     * @param username 用户名，用于登录
-     * @param password 用户密码
-     * @param name 用户真实姓名
-     * @param address 用户联系地址
+     * @param userId 用户唯一标识符
+     * @param loginName 用户名，用于登录
+     * @param loginPassword 用户密码
+     * @param userName 用户真实姓名
+     * @param email 用户联系地址
      */
-    public User(int userID, String username, String password, String name, String address) {
-        this.userID = userID;
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.address = address;
-        userLogs.add(new Log(Integer.toString(getUserID()),"注册用户：" + name, Log.LogType.INFO, this.toString())) ;
+    public User(int userId, String loginName, String loginPassword, String userName, String email) {
+        this.userId = userId;
+        this.loginName = loginName;
+        this.loginPassword = loginPassword;
+        this.userName = userName;
+        this.email = email;
     }
 
     // ==================== Getter 方法 ====================
@@ -79,8 +71,8 @@ public class User {
      *
      * @return 用户唯一标识符
      */
-    public int getUserID() {
-        return userID;
+    public int getUserId() {
+        return userId;
     }
 
     /**
@@ -88,8 +80,8 @@ public class User {
      *
      * @return 用户名
      */
-    public String getUsername() {
-        return username;
+    public String getLoginName() {
+        return loginName;
     }
 
     /**
@@ -97,8 +89,8 @@ public class User {
      *
      * @return 用户密码
      */
-    public String getPassword() {
-        return password;
+    public String getLoginPassword() {
+        return loginPassword;
     }
 
     /**
@@ -106,8 +98,8 @@ public class User {
      *
      * @return 用户真实姓名
      */
-    public String getName() {
-        return name;
+    public String getUserName() {
+        return userName;
     }
 
     /**
@@ -115,60 +107,57 @@ public class User {
      *
      * @return 用户联系地址
      */
-    public String getAddress() {
-        return address;
+    public String getEmail() {
+        return email;
     }
 
-    /**
-     * 获取用户日志集合
-     *
-     * <p>返回的日志集合按时间顺序排序</p>
-     *
-     * @return 用户的日志记录集合，按时间排序
-     */
-    public Set<Log> getUserLogs() {
-        return userLogs;
-    }
 
     // ==================== Setter 方法 ====================
 
     /**
      * 设置用户名
      *
-     * @param username 新的用户名
+     * @param loginName 新的用户名
      */
-    public void setUsername(String username) {
-        this.username = username;
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
     }
 
     /**
      * 设置用户密码
      *
-     * @param password 新的用户密码
+     * @param loginPassword 新的用户密码
      */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setLoginPassword(String loginPassword) {
+        this.loginPassword = loginPassword;
     }
 
     /**
      * 设置用户真实姓名
      *
-     * @param name 新的用户真实姓名
+     * @param userName 新的用户真实姓名
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     /**
      * 设置用户地址
      *
-     * @param address 新的用户联系地址
+     * @param email 新的用户联系地址
      */
-    public void setAddress(String address) {
-        this.address = address;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    // ==================== 重写方法 ====================
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+// ==================== 重写方法 ====================
 
     /**
      * 返回用户的格式化字符串表示
@@ -181,10 +170,10 @@ public class User {
     @Override
     public String toString(){
         return new StringJoiner(" - ", "[", "]")
-                .add(Integer.toString(getUserID()))
-                .add(getName())
-                .add(getUsername())
-                .add(getAddress())
+                .add(Integer.toString(getUserId()))
+                .add(getUserName())
+                .add(getLoginName())
+                .add(getEmail())
                 .toString();
     }
 
@@ -202,6 +191,6 @@ public class User {
         if (obj == null || getClass() != obj.getClass()) return false;
 
         User user = (User) obj;
-        return userID == user.userID;
+        return userId == user.userId;
     }
 }
