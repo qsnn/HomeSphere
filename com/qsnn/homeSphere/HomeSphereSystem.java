@@ -20,7 +20,7 @@ public class HomeSphereSystem{
     }
 
     public void login(String loginName, String loginPassword){
-        for (User user : household.getUsers().values()) {
+        for (User user : household.getUsers()) {
             if (user.getLoginName().equals(loginName)){
                 currentUser = user;
             }
@@ -44,13 +44,13 @@ public class HomeSphereSystem{
     // 或者如果需要更详细的输出，可以这样写：
     public void displayUsers() {
         System.out.println("=== Users List ===");
-        household.getUsers().values().forEach(System.out::println);
+        household.getUsers().forEach(System.out::println);
         System.out.println("Total: " + household.getUsers().size() + " users");
     }
 
     public void displayRooms() {
         System.out.println("=== Rooms List ===");
-        household.getRooms().values().forEach(System.out::println);
+        household.getRooms().forEach(System.out::println);
         System.out.println("Total: " + household.getRooms().size() + " rooms");
     }
 
@@ -63,7 +63,7 @@ public class HomeSphereSystem{
 
     public void displayAutoScenes() {
         System.out.println("=== Automation Scenes List ===");
-        household.getAutoScenes().values().forEach(System.out::println);
+        household.getAutoScenes().forEach(System.out::println);
         System.out.println("Total: " + household.getAutoScenes().size() + " scenes");
     }
 

@@ -1,25 +1,26 @@
 package qsnn.homeSphere;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import qsnn.homeSphere.domain.automationScene.AutomationScene;
 import qsnn.homeSphere.domain.automationScene.DeviceAction;
 import qsnn.homeSphere.domain.deviceModule.Device;
-import qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
-import qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 import qsnn.homeSphere.domain.deviceModule.devices.AirConditioner;
 import qsnn.homeSphere.domain.deviceModule.devices.BathroomScale;
 import qsnn.homeSphere.domain.deviceModule.devices.LightBulb;
 import qsnn.homeSphere.domain.deviceModule.devices.SmartLock;
+import qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
+import qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 import qsnn.homeSphere.domain.deviceModule.services.RunningLog;
 import qsnn.homeSphere.domain.house.Household;
 import qsnn.homeSphere.domain.house.Room;
 import qsnn.homeSphere.domain.users.User;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.After;
-import static org.junit.Assert.*;
 
 import java.util.Date;
 import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class HomeSphereSystemTest {
     private HomeSphereSystem system;
@@ -151,7 +152,7 @@ public class HomeSphereSystemTest {
         // 测试获取自动化场景
         household.addAutoScene(eveningScene);
         AutomationScene scene = household.getAutoScenes().get(0);
-        assertEquals(1, scene.getSceneld());
+        assertEquals(1, scene.getSceneId());
         assertEquals("晚安模式", scene.getName());
     }
 
@@ -298,7 +299,7 @@ public class HomeSphereSystemTest {
     @Test
     public void testAutomationScene() {
         // 测试场景属性
-        assertEquals(1, eveningScene.getSceneld());
+        assertEquals(1, eveningScene.getSceneId());
         assertEquals("晚安模式", eveningScene.getName());
         assertEquals("关闭灯光调节至事宜温度", eveningScene.getDescription());
 

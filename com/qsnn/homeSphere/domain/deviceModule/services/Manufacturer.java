@@ -29,7 +29,7 @@ import java.util.List;
  * @since 2025
  */
 public class Manufacturer {
-    private final int manufactureId;
+    private final int manufacturerId;
 
     /**
      * 制造商名称
@@ -46,20 +46,20 @@ public class Manufacturer {
     private List<Device> devices = new ArrayList<>();
 
 
-    public Manufacturer(int manufactureId) {
-        this.manufactureId = manufactureId;
+    public Manufacturer(int manufacturerId) {
+        this.manufacturerId = manufacturerId;
     }
 
-    public Manufacturer(int manufactureId, String name, String protocols) {
-        this.manufactureId = manufactureId;
+    public Manufacturer(int manufacturerId, String name, String protocols) {
+        this.manufacturerId = manufacturerId;
         this.name = name;
         this.protocols = protocols;
     }
     // ==================== Getter and Setter方法 ====================
 
 
-    public int getManufactureId() {
-        return manufactureId;
+    public int getManufacturerId() {
+        return manufacturerId;
     }
 
     public String getName() {
@@ -87,11 +87,11 @@ public class Manufacturer {
     }
 
     // ==================== 业务逻辑 ====================
-    public void addDevices(Device device){
+    public void addDevice(Device device){
         devices.add(device);
     }
 
-    public void removeDevices(Device device){
+    public void removeDevice(Device device){
         devices.remove(device);
     }
 }

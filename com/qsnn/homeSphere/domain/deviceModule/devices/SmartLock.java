@@ -1,24 +1,28 @@
 package qsnn.homeSphere.domain.deviceModule.devices;
 
 import qsnn.homeSphere.domain.deviceModule.Device;
-import com.qsnn.homeSphere.domain.deviceModule.attributes.BooleanAttribute;
-import com.qsnn.homeSphere.domain.deviceModule.attributes.StringChoiceAttribute;
 import qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 
 public class SmartLock extends Device {
-    public SmartLock(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand, ConnectMode connectMode, PowerMode powerMode, double power) {
-        super(deviceID, name, OS, manufacturer, brand, connectMode, powerMode, power);
-        initializeAttributes();
+    private boolean isLocked;
+    private int batteryLevel;
+    public SmartLock(Integer deviceID, String name,  Manufacturer manufacturer) {
+        super(deviceID, name, manufacturer);
     }
 
-    @Override
-    protected void initializeAttributes() {
-        // 供电模式
-        addAttribute("powerMode", new StringChoiceAttribute("powerMode", "BATTERY", "MAINSPOWER", "BATTERY"));
-
-        // 上锁控制
-        addAttribute("lockStatus", new BooleanAttribute("luminance", false));
-
+    public boolean isLocked() {
+        return isLocked;
     }
 
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
+
+    public int getBatteryLevel() {
+        return batteryLevel;
+    }
+
+    public void setBatteryLevel(int batteryLevel) {
+        this.batteryLevel = batteryLevel;
+    }
 }

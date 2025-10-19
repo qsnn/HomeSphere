@@ -1,12 +1,10 @@
 package qsnn.homeSphere.domain.deviceModule;
 
-import com.qsnn.homeSphere.domain.deviceModule.attributes.DeviceAttribute;
 import qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
-import com.qsnn.homeSphere.log.Log;
-import qsnn.homeSphere.utils.Util;
+import qsnn.homeSphere.domain.deviceModule.services.RunningLog;
 
-import java.time.Date;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 设备抽象基类
@@ -44,23 +42,13 @@ public abstract class Device {
     /** 设备制造商信息 */
     protected final Manufacturer manufacturer;
 
-    /** 设备功率，单位：瓦特(W) */
-    protected double power;
-
-    /** 设备供电模式 */
-    protected PowerMode powerMode;
-
-    /** 设备连接模式 */
-    protected ConnectMode connectMode;
-
     /** 设备在线状态 */
     protected boolean isOnline;
 
     /** 设备电源状态 */
     protected boolean powerStatus;
+    protected final List<RunningLog> runningLogs = new ArrayList<>();
 
-    /** 设备上次开启时间 */
-    protected Date lastOpenTime;
 
     public Device(Integer deviceId, String name, Manufacturer manufacturer) {
         this.deviceId = deviceId;
@@ -75,7 +63,7 @@ public abstract class Device {
      *
      * @return 设备唯一序列号
      */
-    public Integer getDeviceId() {
+    public int getDeviceId() {
         return deviceId;
     }
 
@@ -109,24 +97,6 @@ public abstract class Device {
 
 
     /**
-     * 获取设备连接模式
-     *
-     * @return 设备连接模式
-     */
-    public ConnectMode getConnectMode() {
-        return connectMode;
-    }
-
-    /**
-     * 获取设备供电模式
-     *
-     * @return 设备供电模式
-     */
-    public PowerMode getPowerMode() {
-        return powerMode;
-    }
-
-    /**
      * 获取设备在线状态
      *
      * @return 设备在线状态
@@ -140,272 +110,16 @@ public abstract class Device {
      *
      * @return 设备电源状态
      */
-    public PowerStatusType getPowerStatus() {
+    public boolean isPowerStatus() {
         return powerStatus;
     }
 
-    /**
-     * 获取设备功率
-     *
-     * @return 设备功率，单位：瓦特(W)
-     */
-    public double getPower(){
-        return power;
+    public void powerOn(){
+        this.powerStatus = true;
     }
 
-
-
-    // ==================== 属性管理方法 ====================
-
-    /**
-     * 添加设备属性
-     *
-     * <p>用于向设备添加动态属性，由子类在初始化时调用</p>
-     *
-     * @param key 属性键名
-     * @param attribute 属性对象
-     */
-    protected void addAttribute(String key, DeviceAttribute<?> attribute) {
-        attributes.put(key, attribute);
+    public void powerOff(){
+        this.powerStatus = false;
     }
 
-    /**
-     * 检查设备是否包含指定属性
-     *
-     * @param attribute 属性名称
-     * @return 如果包含该属性返回true，否则返回false
-     */
-    public boolean hasAttribute(String attribute){
-        return attributes.containsKey(attribute);
-    }
-
-    /**
-     * 获取设备属性值
-     *
-     * <p>泛型方法，自动进行类型转换</p>
-     *
-     * @param <T> 属性值类型
-     * @param attributeName 属性名称
-     * @return 属性值，如果属性不存在返回null
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T getAttribute(String attributeName) {
-        DeviceAttribute<T> attribute = (DeviceAttribute<T>) attributes.get(attributeName);
-        return attribute != null ? attribute.getValue() : null;
-    }
-
-    /**
-     * 设置设备属性值
-     *
-     * <p>设置属性值并自动记录变更日志</p>
-     *
-     * @param <T> 属性值类型
-     * @param attributeName 属性名称
-     * @param value 属性值
-     * @return 如果设置成功返回true，否则返回false
-     */
-    @SuppressWarnings("unchecked")
-    public <T> boolean setAttribute(String attributeName, T value) {
-        DeviceAttribute<T> attribute = (DeviceAttribute<T>) attributes.get(attributeName);
-        if (attribute != null && attribute.setValue(value)) {
-            // 记录属性变更日志
-            new Log(getDeviceId().toString(),
-                    String.format("属性变更: %s = %s", attributeName, value),
-                    Log.LogType.INFO, null);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 初始化设备属性抽象方法
-     *
-     * <p>由具体设备子类实现，用于初始化设备特定的属性</p>
-     */
-    protected abstract void initializeAttributes();
-
-    // ==================== 设备操作方法 ====================
-
-    /**
-     * 执行设备操作
-     *
-     * <p>统一的设备操作方法，处理属性设置和核心状态变更</p>
-     *
-     * @param device 目标设备
-     * @param parameters 操作参数映射表
-     */
-    public void execute(Device device, Map<String, Object> parameters) {
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            String attributeName = entry.getKey();
-            Object value = entry.getValue();
-
-            // 特殊处理核心状态
-            switch (attributeName) {
-                case "online_status":
-                    if ("ONLINE".equals(value)) connect();
-                    else if ("OUTLINE".equals(value)) disconnect();
-                    break;
-                case "power_status":
-                    if ("POWERED".equals(value)) open();
-                    else if ("UNPOWERED".equals(value)) close();
-                    break;
-                default:
-                    // 普通属性设置
-                    setAttribute(attributeName, value);
-                    break;
-            }
-        }
-    }
-
-    /**
-     * 连接设备到网络
-     *
-     * <p>将设备在线状态设置为ONLINE，并记录连接日志</p>
-     */
-    public void connect(){
-        deviceLogs.add(new Log(getDeviceId().toString(), "连接网络", Log.LogType.INFO, null));
-        this.onlineStatus = OnlineStatusType.ONLINE;
-    }
-
-    /**
-     * 断开设备网络连接
-     *
-     * <p>将设备在线状态设置为OUTLINE，并记录断开日志</p>
-     */
-    public void disconnect(){
-        deviceLogs.add(new Log(getDeviceId().toString(),"断开网络", Log.LogType.INFO, null));
-        this.onlineStatus = OnlineStatusType.OUTLINE;
-    }
-
-    /**
-     * 开启设备电源
-     *
-     * <p>将设备电源状态设置为POWERED，记录开启时间，并记录电源连接日志</p>
-     */
-    public void open(){
-        deviceLogs.add(new Log(getDeviceId().toString(),"连接电源", Log.LogType.INFO, null));
-        if(this.powerStatus == PowerStatusType.UNPOWERED){
-            lastOpenTime = Date.now();
-        }
-        this.powerStatus = PowerStatusType.POWERED;
-    }
-
-    /**
-     * 关闭设备电源
-     *
-     * <p>将设备电源状态设置为UNPOWERED，创建使用记录，并记录电源断开日志</p>
-     */
-    public void close(){
-        Usage u = new Usage(deviceId + "" + deviceUsages.size(),getPower(), lastOpenTime, Date.now());
-        if(this.powerStatus == PowerStatusType.POWERED){
-            deviceUsages.add(u);
-        }
-        this.powerStatus = PowerStatusType.UNPOWERED;
-        deviceLogs.add(new Log(getDeviceId().toString(),"断开电源", Log.LogType.INFO, u.toString()));
-    }
-
-    // ==================== 能耗计算方法 ====================
-
-    /**
-     * 计算指定时间段的设备用电量
-     *
-     * <p>电池设备返回0，非电池设备根据使用记录计算能耗</p>
-     *
-     * @param startTime 起始时间
-     * @param endTime 结束时间
-     * @return 用电量，单位：千瓦时(kWh)
-     */
-    public Double calculatePowerConsumption(Date startTime, Date endTime){
-        if(powerMode == PowerMode.BATTERY){
-            return 0.0;
-        }
-        return Util.calculatePowerConsumption(deviceUsages, startTime, endTime);
-    }
-
-    /**
-     * 计算设备总用电量
-     *
-     * <p>电池设备返回0，非电池设备计算所有使用记录的总能耗</p>
-     *
-     * @return 总用电量，单位：千瓦时(kWh)
-     */
-    public Double calculateAllPowerConsumption(){
-        if(powerMode == PowerMode.BATTERY){
-            return 0.0;
-        }
-        return Util.calculatePowerConsumption(deviceUsages);
-    }
-
-    // ==================== 重写方法 ====================
-
-    /**
-     * 返回设备的格式化字符串表示
-     *
-     * <p>格式：[设备ID - 设备名称 - 制造商 - 品牌 - 操作系统 - 功率 - 连接模式 - 供电模式]</p>
-     *
-     * @return 格式化的设备信息字符串
-     */
-    @Override
-    public String toString() {
-        return new StringJoiner(" - ", "[", "]")
-                .add(Integer.toString(getDeviceId()))
-                .add(getName())
-                .add(getManufacturer().getName())  // 制造商名称
-                .add(getBrand())                   // 品牌
-                .add(getOS())                      // 操作系统
-                .add(Double.toString(getPower()) + "W")  // 功率
-                .add(getConnectMode().name())      // 连接模式
-                .add(getPowerMode().name())        // 电源模式
-                .toString();
-    }
-
-    // ==================== 枚举类型定义 ====================
-
-    /**
-     * 设备在线状态枚举
-     */
-    public enum OnlineStatusType {
-        /** 在线 */
-        ONLINE,
-        /** 离线 */
-        OUTLINE
-    }
-
-    /**
-     * 设备电源状态枚举
-     */
-    public enum PowerStatusType {
-        /** 已供电 */
-        POWERED,
-        /** 未供电 */
-        UNPOWERED
-    }
-
-    /**
-     * 设备供电模式枚举
-     */
-    public enum PowerMode {
-        /** 电池供电 */
-        BATTERY,
-        /** 主电源供电 */
-        MAINSPOWER
-    }
-
-    /**
-     * 设备连接模式枚举
-     */
-    public enum ConnectMode {
-        /** WiFi连接 */
-        WIFI,
-        /** 蓝牙连接 */
-        BLUETOOTH,
-        /** ZigBee连接 */
-        ZIGBEE,
-        /** Z-Wave连接 */
-        Z_WAVE,
-        /** Thread连接 */
-        THREAD,
-        /** Matter协议连接 */
-        MATTER
-    }
 }

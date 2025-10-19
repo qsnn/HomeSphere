@@ -74,16 +74,16 @@ public class Household {
         this.admin = admin;
     }
 
-    public Map<Integer, User> getUsers() {
-        return users;
+    public List<User> getUsers() {
+        return users.values().stream().toList();
     }
 
-    public Map<Integer, Room> getRooms() {
-        return rooms;
+    public List<Room> getRooms() {
+        return rooms.values().stream().toList();
     }
 
-    public Map<Integer, AutomationScene> getAutoScenes() {
-        return autoScenes;
+    public List<AutomationScene> getAutoScenes() {
+        return autoScenes.values().stream().toList();
     }
 
     public AutomationScene getAutoSceneById(int sceneId) {

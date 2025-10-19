@@ -1,23 +1,43 @@
 package qsnn.homeSphere.domain.deviceModule.devices;
 
 import qsnn.homeSphere.domain.deviceModule.Device;
-import com.qsnn.homeSphere.domain.deviceModule.attributes.RangeAttribute;
-import com.qsnn.homeSphere.domain.deviceModule.attributes.StringChoiceAttribute;
+import qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
 import qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 
-public class LightBulb extends Device {
-    public LightBulb(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand, ConnectMode connectMode, PowerMode powerMode, double power) {
-        super(deviceID, name, OS, manufacturer, brand, connectMode, powerMode, power);
-        initializeAttributes();
+import java.util.Date;
+
+public class LightBulb extends Device implements EnergyReporting {
+    private double power = 100;
+    private double brightness;
+    private double colorTemp;
+    public LightBulb(Integer deviceID, String name,  Manufacturer manufacturer) {
+        super(deviceID, name, manufacturer);
+    }
+
+    public double getBrightness() {
+        return brightness;
+    }
+
+    public void setBrightness(double brightness) {
+        this.brightness = brightness;
+    }
+
+    public double getColorTemp() {
+        return colorTemp;
+    }
+
+    public void setColorTemp(double colorTemp) {
+        this.colorTemp = colorTemp;
     }
 
     @Override
-    protected void initializeAttributes() {
-        // 色温
-        addAttribute("colorTemperature", new StringChoiceAttribute("colorTemperature", "WARM", "WARM", "COOL", "NORMAL"));
-
-        // 光强控制 (0-100%)
-        addAttribute("luminance", new RangeAttribute("luminance", 0, 100, 10, "%"));
-
+    public double getPower() {
+        return power;
     }
+
+    @Override
+    public double getReport(Date startTime, Date endTime) {
+        return 0;
+    }
+
 }

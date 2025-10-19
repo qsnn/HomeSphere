@@ -4,13 +4,25 @@ import qsnn.homeSphere.domain.deviceModule.Device;
 import qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 
 public class BathroomScale extends Device {
-
-    public BathroomScale(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand, ConnectMode connectMode, PowerMode powerMode, double power) {
-        super(deviceID, name, OS, manufacturer, brand, connectMode, powerMode, power);
-        initializeAttributes();
+    private double bodyMass;
+    private int batteryLevel;
+    public BathroomScale(Integer deviceID, String name,  Manufacturer manufacturer) {
+        super(deviceID, name, manufacturer);
     }
 
-    @Override
-    protected void initializeAttributes() {}
+    public double getBodyMass() {
+        return bodyMass;
+    }
 
+    public void setBodyMass(double bodyMass) {
+        this.bodyMass = bodyMass;
+    }
+
+    public int getBatteryLevel() {
+        return batteryLevel;
+    }
+
+    public void setBatteryLevel(int batteryLevel) {
+        this.batteryLevel = batteryLevel;
+    }
 }

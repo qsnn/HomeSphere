@@ -114,12 +114,12 @@ public class Room {
     }
 
     // ==================== 业务逻辑 ====================
-    public void addDevices(Device device){
+    public void addDevice(Device device){
         devices.add(device);
     }
 
-    public void removeDevices(Device device){
-        devices.remove(device);
+    public void removeDevice(int deviceId){
+        devices.remove(deviceId);
     }
 
 }
