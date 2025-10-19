@@ -1,25 +1,22 @@
 package qsnn.homeSphere.domain.users;
 
-
-import java.util.StringJoiner;
-
 /**
  * 用户类
  *
- * <p>该类表示系统用户，包含用户的基本信息、认证信息和操作日志记录。</p>
+ * <p>该类表示系统用户，包含用户的基本信息、认证信息和权限管理。</p>
  *
  * <p><b>主要功能：</b></p>
  * <ul>
- *   <li>管理用户的基本信息（ID、用户名、密码、姓名、地址）</li>
+ *   <li>管理用户的基本信息（ID、用户名、密码、姓名、邮箱）</li>
  *   <li>提供用户身份认证信息</li>
- *   <li>记录用户相关的操作日志</li>
+ *   <li>管理用户权限（管理员/普通用户）</li>
  * </ul>
  *
  * <p><b>设计特点：</b></p>
  * <ul>
  *   <li>用户ID为final，确保唯一性和不变性</li>
- *   <li>使用TreeSet存储日志，按时间排序</li>
- *   <li>在构造时自动记录用户注册日志</li>
+ *   <li>支持管理员权限标识</li>
+ *   <li>提供完整的用户信息管理</li>
  * </ul>
  *
  * @author qsnn
@@ -39,22 +36,20 @@ public class User {
     /** 用户真实姓名 */
     private String userName;
 
-    /** 用户联系地址 */
+    /** 用户邮箱地址 */
     private String email;
 
+    /** 管理员权限标识 */
     private boolean isAdmin;
-
 
     /**
      * 用户构造函数
-     *
-     * <p>创建用户时会自动记录注册日志到用户日志集合中。</p>
      *
      * @param userId 用户唯一标识符
      * @param loginName 用户名，用于登录
      * @param loginPassword 用户密码
      * @param userName 用户真实姓名
-     * @param email 用户联系地址
+     * @param email 用户邮箱地址
      */
     public User(int userId, String loginName, String loginPassword, String userName, String email) {
         this.userId = userId;
@@ -62,7 +57,9 @@ public class User {
         this.loginPassword = loginPassword;
         this.userName = userName;
         this.email = email;
+        this.isAdmin = false; // 默认不是管理员
     }
+
 
     // ==================== Getter 方法 ====================
 
@@ -103,14 +100,22 @@ public class User {
     }
 
     /**
-     * 获取用户地址
+     * 获取用户邮箱
      *
-     * @return 用户联系地址
+     * @return 用户邮箱地址
      */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * 检查用户是否为管理员
+     *
+     * @return 如果是管理员返回true，否则返回false
+     */
+    public boolean isAdmin() {
+        return isAdmin;
+    }
 
     // ==================== Setter 方法 ====================
 
@@ -142,55 +147,53 @@ public class User {
     }
 
     /**
-     * 设置用户地址
+     * 设置用户邮箱
      *
-     * @param email 新的用户联系地址
+     * @param email 新的用户邮箱地址
      */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-
+    /**
+     * 设置管理员权限
+     *
+     * @param admin 是否为管理员
+     */
     public void setAdmin(boolean admin) {
         isAdmin = admin;
     }
-// ==================== 重写方法 ====================
+
+    // ==================== Object类方法重写 ====================
 
     /**
-     * 返回用户的格式化字符串表示
-     *
-     * <p>格式：[用户ID - 用户姓名 - 用户名 - 用户地址]</p>
-     * <p>示例：[1001 - 张三 - zhangsan - 北京市海淀区xx路xx号]</p>
-     *
-     * @return 格式化的用户信息字符串
-     */
-    @Override
-    public String toString(){
-        return new StringJoiner(" - ", "[", "]")
-                .add(Integer.toString(getUserId()))
-                .add(getUserName())
-                .add(getLoginName())
-                .add(getEmail())
-                .toString();
-    }
-
-    /**
-     * 比较两个用户对象是否相等
-     *
-     * <p>基于用户ID进行比较，因为用户ID是唯一标识符</p>
+     * 比较两个用户是否相等（基于用户ID）
      *
      * @param obj 要比较的对象
-     * @return 如果用户ID相同返回true，否则返回false
+     * @return 如果用户ID相同则返回true，否则返回false
      */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-
         User user = (User) obj;
         return userId == user.userId;
+    }
+
+    /**
+     * 返回对象的字符串表示形式
+     * 格式：类名{属性1=属性1值, 属性2='属性2值',...}
+     *
+     * @return 格式化的字符串
+     */
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", loginName='" + loginName + '\'' +
+                ", userName='" + userName + '\'' +
+                ", email='" + email + '\'' +
+                ", isAdmin=" + isAdmin +
+                '}';
     }
 }

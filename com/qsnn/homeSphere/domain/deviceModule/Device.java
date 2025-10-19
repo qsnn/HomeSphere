@@ -4,6 +4,7 @@ import qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 import qsnn.homeSphere.domain.deviceModule.services.RunningLog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ import java.util.List;
  *   <li>提供设备属性的动态管理</li>
  *   <li>支持设备开关、连接等基本操作</li>
  *   <li>计算设备能耗</li>
+ *   <li>支持节能减排管理</li>
  * </ul>
  *
  * <p><b>设计特点：</b></p>
@@ -25,6 +27,7 @@ import java.util.List;
  *   <li>使用抽象类设计，具体设备类型需要继承并实现特定功能</li>
  *   <li>支持动态属性管理，可扩展设备特性</li>
  *   <li>自动记录设备操作日志和使用记录</li>
+ *   <li>支持能耗计算和能源管理</li>
  *   <li>线程安全的集合操作</li>
  * </ul>
  *
@@ -47,13 +50,26 @@ public abstract class Device {
 
     /** 设备电源状态 */
     protected boolean powerStatus;
+
+    /** 设备运行日志列表 */
     protected final List<RunningLog> runningLogs = new ArrayList<>();
 
+    /** 最后开机时间，用于能耗计算 */
+    protected Date lastPowerOnTime;
 
+    /**
+     * 设备构造函数
+     *
+     * @param deviceId 设备唯一序列号
+     * @param name 设备名称
+     * @param manufacturer 设备制造商信息
+     */
     public Device(Integer deviceId, String name, Manufacturer manufacturer) {
         this.deviceId = deviceId;
         this.name = name;
         this.manufacturer = manufacturer;
+        this.isOnline = false;
+        this.powerStatus = false;
     }
 
     // ==================== 基本Getter/Setter方法 ====================
@@ -85,7 +101,6 @@ public abstract class Device {
         this.name = name;
     }
 
-
     /**
      * 获取设备制造商
      *
@@ -94,7 +109,6 @@ public abstract class Device {
     public Manufacturer getManufacturer() {
         return manufacturer;
     }
-
 
     /**
      * 获取设备在线状态
@@ -106,6 +120,23 @@ public abstract class Device {
     }
 
     /**
+     * 设置设备在线状态
+     *
+     * @param online 在线状态
+     */
+    public void setOnline(boolean online) {
+        boolean oldStatus = this.isOnline;
+        this.isOnline = online;
+
+        // 记录状态变化日志
+        if (oldStatus != online) {
+            String event = online ? "设备上线" : "设备下线";
+            addRunningLog(new RunningLog(new Date(), event, RunningLog.Type.INFO,
+                    "设备连接状态变化: " + (online ? "上线" : "下线")));
+        }
+    }
+
+    /**
      * 获取设备电源状态
      *
      * @return 设备电源状态
@@ -114,12 +145,98 @@ public abstract class Device {
         return powerStatus;
     }
 
-    public void powerOn(){
-        this.powerStatus = true;
+    /**
+     * 获取设备运行日志列表
+     *
+     * @return 运行日志列表
+     */
+    public List<RunningLog> getRunningLogs() {
+        return new ArrayList<>(runningLogs);
     }
 
-    public void powerOff(){
-        this.powerStatus = false;
+    // ==================== 设备操作方法 ====================
+
+    /**
+     * 打开设备电源
+     */
+    public void powerOn() {
+        if (!this.powerStatus) {
+            this.powerStatus = true;
+            this.lastPowerOnTime = new Date();
+
+            // 记录开机日志
+            addRunningLog(new RunningLog(new Date(), "设备开机", RunningLog.Type.INFO,
+                    "设备电源已开启"));
+        }
     }
 
+    /**
+     * 关闭设备电源
+     */
+    public void powerOff() {
+        if (this.powerStatus) {
+            this.powerStatus = false;
+            // 记录关机日志并计算本次运行的能耗
+            Date powerOffTime = new Date();
+            addRunningLog(new RunningLog(powerOffTime, "设备关机", RunningLog.Type.INFO, "设备电源已关闭"));
+
+        }
+    }
+
+    /**
+     * 连接设备
+     */
+    public void connect() {
+        setOnline(true);
+    }
+
+    /**
+     * 断开设备连接
+     */
+    public void disconnect() {
+        setOnline(false);
+    }
+
+    /**
+     * 添加运行日志
+     *
+     * @param log 运行日志
+     */
+    public void addRunningLog(RunningLog log) {
+        if (log != null) {
+            runningLogs.add(log);
+        }
+    }
+
+    // ==================== Object类方法重写 ====================
+
+    /**
+     * 比较两个设备是否相等（基于设备ID）
+     *
+     * @param obj 要比较的对象
+     * @return 如果设备ID相同则返回true，否则返回false
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Device device = (Device) obj;
+        return deviceId.equals(device.deviceId);
+    }
+
+    /**
+     * 返回对象的字符串表示形式
+     * 格式：类名{属性1=属性1值, 属性2='属性2值',...}
+     *
+     * @return 格式化的字符串
+     */
+    @Override
+    public String toString() {
+        return "Device{" +
+                "deviceId=" + deviceId +
+                ", name='" + name + '\'' +
+                ", isOnline=" + isOnline +
+                ", powerStatus=" + powerStatus +
+                '}';
+    }
 }

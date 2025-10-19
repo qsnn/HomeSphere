@@ -2,25 +2,27 @@ package qsnn.homeSphere.domain.house;
 
 import qsnn.homeSphere.domain.deviceModule.Device;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 房间类
  *
- * <p>该类表示房屋中的一个房间，包含房间的基本信息和相关日志记录。</p>
+ * <p>该类表示房屋中的一个房间，包含房间的基本信息和设备管理。</p>
  *
  * <p><b>主要功能：</b></p>
  * <ul>
- *   <li>管理房间的基本属性（ID、名称、面积、介绍）</li>
- *   <li>维护房间相关的操作日志</li>
- *   <li>提供房间信息的字符串表示</li>
+ *   <li>管理房间的基本属性（ID、名称、面积）</li>
+ *   <li>维护房间内的设备集合</li>
+ *   <li>提供设备的添加、移除和查询功能</li>
  * </ul>
  *
  * <p><b>设计特点：</b></p>
  * <ul>
  *   <li>房间ID为final，确保唯一性和不变性</li>
- *   <li>使用TreeSet存储日志，按时间排序</li>
- *   <li>在构造时自动记录房间创建日志</li>
+ *   <li>使用Map结构存储设备，便于快速查找</li>
+ *   <li>提供设备管理的便捷方法</li>
  * </ul>
  *
  * @author qsnn
@@ -38,12 +40,11 @@ public class Room {
     /** 房间面积，单位：平方米 */
     private double area;
 
-    private List<Device> devices;
+    /** 房间内的设备集合，键为设备ID，值为设备对象 */
+    private final Map<Integer, Device> devices = new HashMap<>();
 
     /**
      * 房间构造函数
-     *
-     * <p>创建房间时会自动记录创建日志到房间日志集合中。</p>
      *
      * @param roomId 房间唯一标识符
      * @param name 房间名称
@@ -84,10 +85,24 @@ public class Room {
         return area;
     }
 
+    /**
+     * 获取房间内的所有设备列表
+     *
+     * @return 设备列表
+     */
     public List<Device> getDevices() {
-        return devices;
+        return devices.values().stream().toList();
     }
 
+    /**
+     * 根据设备ID获取特定设备
+     *
+     * @param deviceId 设备ID
+     * @return 设备对象，如果不存在则返回null
+     */
+    public Device getDeviceById(int deviceId) {
+        return devices.get(deviceId);
+    }
 
     // ==================== Setter 方法 ====================
 
@@ -109,17 +124,82 @@ public class Room {
         this.area = area;
     }
 
-    public void setDevices(List<Device> devices) {
-        this.devices = devices;
+    // ==================== 设备管理方法 ====================
+
+    /**
+     * 添加设备到房间
+     *
+     * @param device 要添加的设备
+     */
+    public void addDevice(Device device) {
+        if (device != null) {
+            devices.put(device.getDeviceId(), device);
+        }
     }
 
-    // ==================== 业务逻辑 ====================
-    public void addDevice(Device device){
-        devices.add(device);
-    }
-
-    public void removeDevice(int deviceId){
+    /**
+     * 从房间移除设备
+     *
+     * @param deviceId 要移除的设备ID
+     */
+    public void removeDevice(int deviceId) {
         devices.remove(deviceId);
     }
 
+    /**
+     * 检查房间是否包含指定设备
+     *
+     * @param deviceId 设备ID
+     * @return 如果包含则返回true，否则返回false
+     */
+    public boolean containsDevice(int deviceId) {
+        return devices.containsKey(deviceId);
+    }
+
+    /**
+     * 获取房间内的设备数量
+     *
+     * @return 设备数量
+     */
+    public int getDeviceCount() {
+        return devices.size();
+    }
+
+    /**
+     * 清空房间内的所有设备
+     */
+    public void clearDevices() {
+        devices.clear();
+    }
+
+    // ==================== Object类方法重写 ====================
+
+    /**
+     * 比较两个房间是否相等（基于房间ID）
+     *
+     * @param obj 要比较的对象
+     * @return 如果房间ID相同则返回true，否则返回false
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Room room = (Room) obj;
+        return roomId == room.roomId;
+    }
+
+    /**
+     * 返回对象的字符串表示形式
+     * 格式：类名{属性1=属性1值, 属性2='属性2值',...}
+     *
+     * @return 格式化的字符串
+     */
+    @Override
+    public String toString() {
+        return "Room{" +
+                "roomId=" + roomId +
+                ", name='" + name + '\'' +
+                ", area=" + area +
+                '}';
+    }
 }
