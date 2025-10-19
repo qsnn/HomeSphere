@@ -25,7 +25,7 @@ import java.util.*;
  *
  * @author qsnn
  * @version 1.0
- * @since 2024
+ * @since 2025
  */
 public class Room {
 
@@ -216,14 +216,5 @@ public class Room {
         return String.format("房间%d: %s (%.1f㎡)", roomID, name, area);
     }
 
-    /**
-     * 检查房间是否有介绍信息
-     *
-     * <p>判断介绍是否为null或默认的"null"字符串</p>
-     *
-     * @return 如果有有效的介绍信息返回true，否则返回false
-     */
-    public boolean hasIntroduction() {
-        return introduction != null && !introduction.equals("null") && !introduction.trim().isEmpty();
-    }
+
 }
