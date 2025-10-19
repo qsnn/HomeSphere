@@ -1,5 +1,6 @@
 package com.qsnn.homeSphere.domain.deviceModule;
 
+import com.qsnn.homeSphere.domain.deviceModule.attributes.DeviceAttribute;
 import com.qsnn.homeSphere.log.Log;
 import com.qsnn.homeSphere.utils.Util;
 
@@ -17,10 +18,10 @@ public abstract class Device {
     protected final ConnectMode connectMode;    //联网模式
     protected OnlineStatusType onlineStatus;    //在线状态
     protected PowerStatusType powerStatus;  //供电状态
-    protected int batteryLevel;  //供电状态
+    protected int batteryLevel;  //电池电量
     protected LocalDateTime lastOpenTime;   //上次打开的时间
     protected final Set<Usage> deviceUsages = new TreeSet<>(Comparator.comparing(Usage::getCloseTime)); //使用记录
-    protected final Set<Log> deviceLogs = new TreeSet<>(Comparator.comparing(Log::getT)); //使用记录
+    protected final Set<Log> deviceLogs = new TreeSet<>(Comparator.comparing(Log::getT)); //日志记录
     protected final Map<String, DeviceAttribute<?>> attributes = new HashMap<>();   //属性
 
     public Device(Integer deviceID, String name, String OS, Manufacturer manufacturer, String brand, ConnectMode connectMode, PowerMode powerMode, double power) {
@@ -37,6 +38,7 @@ public abstract class Device {
         deviceLogs.add(new Log(getDeviceID().toString(),"创建设备：" + name, Log.LogType.INFO, this.toString()));
     }
 
+    //========== 基本Getter/Setter ==========
     public Integer getDeviceID() {
         return deviceID;
     }
@@ -97,9 +99,7 @@ public abstract class Device {
     }
 
 
-    /**
-     * 添加设备属性
-     */
+     //添加设备属性
     protected void addAttribute(String key, DeviceAttribute<?> attribute) {
         attributes.put(key, attribute);
     }
@@ -107,18 +107,16 @@ public abstract class Device {
     public boolean hasAttribute(String attribute){
         return attributes.containsKey(attribute);
     }
-    /**
-     * 获取设备属性值
-     */
+
+     //获取设备属性值
     @SuppressWarnings("unchecked")
     public <T> T getAttribute(String attributeName) {
         DeviceAttribute<T> attribute = (DeviceAttribute<T>) attributes.get(attributeName);
         return attribute != null ? attribute.getValue() : null;
     }
 
-    /**
-     * 设置设备属性值
-     */
+
+     //设置设备属性值
     @SuppressWarnings("unchecked")
     public <T> boolean setAttribute(String attributeName, T value) {
         DeviceAttribute<T> attribute = (DeviceAttribute<T>) attributes.get(attributeName);
@@ -134,9 +132,9 @@ public abstract class Device {
 
     //初始化属性
     protected abstract void initializeAttributes();
-    /**
-     * 统一的execute方法 - 现在可以处理属性设置
-     */
+
+
+     //统一的execute方法 ,处理属性设置
     public void execute(Device device, Map<String, Object> parameters) {
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             String attributeName = entry.getKey();
@@ -160,6 +158,7 @@ public abstract class Device {
         }
     }
 
+    //连接/断开网络
     public void connect(){
         deviceLogs.add(new Log(getDeviceID().toString(), "连接网络", Log.LogType.INFO, null));
         this.onlineStatus = OnlineStatusType.ONLINE;
@@ -169,6 +168,7 @@ public abstract class Device {
         this.onlineStatus = OnlineStatusType.OUTLINE;
     }
 
+    //开关设备
     public void open(){
         deviceLogs.add(new Log(getDeviceID().toString(),"连接电源", Log.LogType.INFO, null));
         if(this.powerStatus == PowerStatusType.UNPOWERED){
@@ -185,6 +185,14 @@ public abstract class Device {
         deviceLogs.add(new Log(getDeviceID().toString(),"断开电源", Log.LogType.INFO, u.toString()));
     }
 
+    /**计算电器用电量
+     *
+     * @param startTime
+     *        起始时间
+     * @param endTime
+     *        结束时间
+     * @return 用电量
+     */
     public Double calculatePowerConsumption(LocalDateTime startTime, LocalDateTime endTime){
         if(powerMode == PowerMode.BATTERY){
             return 0.0;
@@ -192,6 +200,7 @@ public abstract class Device {
         return Util.calculatePowerConsumption(deviceUsages, startTime, endTime);
     }
 
+    //计算设备总用电量
     public Double calculateAllPowerConsumption(){
         if(powerMode == PowerMode.BATTERY){
             return 0.0;

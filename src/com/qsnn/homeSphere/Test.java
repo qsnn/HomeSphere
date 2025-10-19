@@ -2,7 +2,7 @@ package com.qsnn.homeSphere;
 
 import com.qsnn.homeSphere.domain.automationScene.AutomationScene;
 import com.qsnn.homeSphere.domain.deviceModule.Device;
-import com.qsnn.homeSphere.domain.deviceModule.DeviceAttribute;
+import com.qsnn.homeSphere.domain.deviceModule.attributes.DeviceAttribute;
 import com.qsnn.homeSphere.domain.deviceModule.Manufacturer;
 import com.qsnn.homeSphere.domain.house.Household;
 import com.qsnn.homeSphere.domain.house.Room;

@@ -1,9 +1,8 @@
-package com.qsnn.homeSphere.domain.deviceModule;
+package com.qsnn.homeSphere.domain.deviceModule.attributes;
 
 public interface DeviceAttribute<T> {
     String getName();
     T getValue();
     boolean setValue(T value);
-    Class<T> getValueType();
     boolean validate(Object value);
 }

@@ -20,7 +20,7 @@ public class AirConditioner extends Device {
         // 温度控制 (16-30度)
         addAttribute("temperature", new RangeAttribute("temperature", 16, 30, 26, "摄氏度"));
 
-        // 风速控制
+        // 风速控制（1-5档）
         addAttribute("fan_speed", new RangeAttribute("fan_speed", 1, 5, 1, "档"));
 
         // 扫风模式

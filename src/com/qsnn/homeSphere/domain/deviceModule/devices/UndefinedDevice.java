@@ -1,7 +1,7 @@
 package com.qsnn.homeSphere.domain.deviceModule.devices;
 
 import com.qsnn.homeSphere.domain.deviceModule.Device;
-import com.qsnn.homeSphere.domain.deviceModule.DeviceAttribute;
+import com.qsnn.homeSphere.domain.deviceModule.attributes.DeviceAttribute;
 import com.qsnn.homeSphere.domain.deviceModule.Manufacturer;
 
 import java.util.Set;

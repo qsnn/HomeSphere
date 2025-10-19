@@ -13,7 +13,7 @@ public class User {
     private String password;
     private String name;
     private String address;
-    protected final Set<Log> userLogs = new TreeSet<>(Comparator.comparing(Log::getT)); //使用记录
+    protected final Set<Log> userLogs = new TreeSet<>(Comparator.comparing(Log::getT)); //日志记录
 
 
     public User(int userID, String username, String password, String name, String address) {

@@ -1,7 +1,7 @@
 package com.qsnn.homeSphere;
 
 import com.qsnn.homeSphere.domain.deviceModule.Device;
-import com.qsnn.homeSphere.domain.deviceModule.DeviceAttribute;
+import com.qsnn.homeSphere.domain.deviceModule.attributes.DeviceAttribute;
 import com.qsnn.homeSphere.domain.deviceModule.Manufacturer;
 import com.qsnn.homeSphere.domain.deviceModule.devices.*;
 import com.qsnn.homeSphere.domain.house.Household;
@@ -71,11 +71,11 @@ public class HomeSphereSystem {
             throw new IllegalArgumentException("设备名称和制造商不能为空");
         }
 
-        // 3. 根据设备类型创建具体设备
+        // 2. 根据设备类型创建具体设备
         Device device = createDeviceByType(deviceType, deviceID, name, OS, manufacturer,
                 power, connectMode, powerMode, customAttributes);
 
-        // 4. 记录到设备映射表
+        // 3. 记录到设备映射表
         devices.put(deviceID, device);
 
         return deviceID;

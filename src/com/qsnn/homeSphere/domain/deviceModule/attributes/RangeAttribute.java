@@ -13,6 +13,7 @@ public class RangeAttribute extends AbstractDeviceAttribute {
         this.unit = unit;
     }
 
+    //检查属性值是否合法
     @Override
     public boolean validate(Object value) {
         if (value instanceof Integer) {
@@ -22,8 +23,4 @@ public class RangeAttribute extends AbstractDeviceAttribute {
         return false;
     }
 
-    @Override
-    public Class<Integer> getValueType() {
-        return Integer.class;
-    }
 }

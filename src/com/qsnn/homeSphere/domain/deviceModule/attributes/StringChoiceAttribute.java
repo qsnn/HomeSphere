@@ -14,16 +14,13 @@ public class StringChoiceAttribute extends AbstractDeviceAttribute {
         }
     }
 
+    //检查属性值是否合法
     @Override
     public boolean validate(Object value) {
         return value instanceof String && allowedValues.contains(value);
     }
 
-    @Override
-    public Class getValueType() {
-        return String.class;
-    }
-
+    //获取合法属性值集合
     public Set<String> getAllowedValues() {
         return Collections.unmodifiableSet(allowedValues);
     }

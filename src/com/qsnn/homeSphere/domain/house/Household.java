@@ -9,7 +9,7 @@ public class Household {
     private String name;
     private String address;
     private Integer administratorID;
-    protected final Set<Log> householdLogs = new TreeSet<>(Comparator.comparing(Log::getT)); //使用记录
+    protected final Set<Log> householdLogs = new TreeSet<>(Comparator.comparing(Log::getT)); //日志记录
 
 
     public Household(int householdID, String name, String address, Integer creatorID) {

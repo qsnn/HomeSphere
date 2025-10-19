@@ -8,6 +8,7 @@ import java.util.*;
  * 自动化场景实现类
  * 用于管理一组设备操作的集合，可以批量执行
  */
+
 public class AutomationScene {
 
     // 场景唯一标识
@@ -19,9 +20,6 @@ public class AutomationScene {
     // 场景描述
     private String description;
 
-    // 是否激活状态
-    private boolean isActive;
-
     /**
      * 自动化操作存储
      * 键：设备对象
@@ -29,36 +27,27 @@ public class AutomationScene {
      */
     private final Map<Device, Map<String, Object>> deviceActions = new HashMap<>();
 
-    // 执行顺序（可选，按添加顺序执行）
-    private final List<Device> executionOrder = new ArrayList<>();
-
     public AutomationScene(String name) {
         this.sceneId = createSceneId();
         this.name = name;
         this.description = "";
-        this.isActive = true;
     }
 
     public AutomationScene(String name, String description) {
         this.sceneId = createSceneId();
         this.name = name;
         this.description = description;
-        this.isActive = true;
     }
 
-    public AutomationScene(String sceneId, String name, String description, boolean isActive) {
+    public AutomationScene(String sceneId, String name, String description) {
         this.sceneId = sceneId;
         this.name = name;
         this.description = description;
-        this.isActive = isActive;
     }
 
-    /**
-     * 生成场景ID
-     */
+     //生成场景ID
     private String createSceneId() {
-        return "SCENE_" + System.currentTimeMillis() + "_" +
-                UUID.randomUUID().toString().substring(0, 8);
+        return "SCENE_" + System.currentTimeMillis();
     }
 
     // ========== 基本Getter/Setter ==========
@@ -83,19 +72,10 @@ public class AutomationScene {
         this.description = description;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
 
     // ========== 操作管理方法 ==========
 
-    /**
-     * 获取所有设备操作（不可修改的视图）
-     */
+    //获取所有设备操作（不可修改的视图）
     public Map<Device, Map<String, Object>> getDeviceActions() {
         Map<Device, Map<String, Object>> copy = new HashMap<>();
         for (Map.Entry<Device, Map<String, Object>> entry : deviceActions.entrySet()) {
@@ -104,17 +84,10 @@ public class AutomationScene {
         return Collections.unmodifiableMap(copy);
     }
 
-    /**
-     * 添加设备操作（如果设备已存在则合并操作）
-     */
+     //添加设备操作（如果设备已存在则合并操作）
     public void addDeviceOperation(Device device, Map<String, Object> operations) {
         if (device == null || operations == null || operations.isEmpty()) {
             throw new IllegalArgumentException("设备和操作不能为空");
-        }
-
-        // 如果设备不存在，添加到执行顺序列表
-        if (!deviceActions.containsKey(device)) {
-            executionOrder.add(device);
         }
 
         // 合并操作参数
@@ -126,18 +99,15 @@ public class AutomationScene {
         existingOperations.putAll(operations);
     }
 
-    /**
-     * 添加单个设备操作
-     */
+     //添加单个设备操作
     public void addDeviceOperation(Device device, String attribute, Object value) {
         Map<String, Object> operation = new HashMap<>();
         operation.put(attribute, value);
         addDeviceOperation(device, operation);
     }
 
-    /**
-     * 移除设备的特定操作
-     */
+
+     //移除设备的特定操作
     public boolean removeDeviceOperation(Device device, String attribute) {
         Map<String, Object> operations = deviceActions.get(device);
         if (operations != null) {
@@ -146,49 +116,38 @@ public class AutomationScene {
         return false;
     }
 
-    /**
-     * 移除整个设备的操作
-     */
+    //移除整个设备的操作
     public boolean removeDevice(Device device) {
-        executionOrder.remove(device);
         return deviceActions.remove(device) != null;
     }
 
-    /**
-     * 清空所有设备操作
-     */
+
+    //清空所有设备操作
     public void clearAllOperations() {
         deviceActions.clear();
-        executionOrder.clear();
     }
 
-    /**
-     * 获取指定设备的操作参数
-     */
+    //获取指定设备的操作参数
     public Map<String, Object> getOperationsForDevice(Device device) {
         Map<String, Object> operations = deviceActions.get(device);
         return operations != null ? Collections.unmodifiableMap(new HashMap<>(operations)) : Collections.emptyMap();
     }
 
-    /**
-     * 检查是否包含指定设备
-     */
+
+     //检查是否包含指定设备
     public boolean containsDevice(Device device) {
         return deviceActions.containsKey(device);
     }
 
-    /**
-     * 获取场景中涉及的设备数量
-     */
+     //获取场景中涉及的设备数量
     public int getDeviceCount() {
         return deviceActions.size();
     }
 
-    /**
-     * 获取所有涉及的设备（按执行顺序）
-     */
+
+     //获取所有涉及的设备（按执行顺序）
     public List<Device> getDevicesInOrder() {
-        return Collections.unmodifiableList(new ArrayList<>(executionOrder));
+        return List.copyOf(deviceActions.keySet());
     }
 
     // ========== 执行相关方法 ==========
@@ -198,17 +157,12 @@ public class AutomationScene {
      * @return 执行是否成功
      */
     public boolean execute() {
-        if (!isActive) {
-            System.out.println("场景 '" + name + "' 未激活，跳过执行");
-            return false;
-        }
-
         System.out.println("开始执行场景: " + name);
         boolean allSuccess = true;
         int successCount = 0;
 
         // 按顺序执行每个设备的操作
-        for (Device device : executionOrder) {
+        for (Device device : deviceActions.keySet()) {
             try {
                 Map<String, Object> operations = deviceActions.get(device);
                 if (operations != null && !operations.isEmpty()) {
@@ -228,13 +182,11 @@ public class AutomationScene {
             }
         }
 
-        System.out.println(String.format("场景执行完成: %d/%d 成功", successCount, executionOrder.size()));
+        System.out.println(String.format("场景执行完成: %d/%d 成功", successCount, deviceActions.size()));
         return allSuccess;
     }
 
-    /**
-     * 验证设备操作参数
-     */
+    //验证设备操作参数
     private boolean validateDeviceOperations(Device device, Map<String, Object> operations) {
         for (Map.Entry<String, Object> entry : operations.entrySet()) {
             String attribute = entry.getKey();
@@ -245,15 +197,11 @@ public class AutomationScene {
                 return false;
             }
 
-            // 验证参数值（如果设备有验证方法）
-            // 这里假设Device类有validateParameters方法
         }
         return true;
     }
 
-    /**
-     * 测试执行（不实际执行，只验证）
-     */
+     //测试执行（不实际执行，只验证）
     public boolean validate() {
         for (Device device : deviceActions.keySet()) {
             Map<String, Object> operations = deviceActions.get(device);
@@ -268,8 +216,8 @@ public class AutomationScene {
 
     @Override
     public String toString() {
-        return String.format("AutomationScene{id='%s', name='%s', devices=%d, active=%s}",
-                sceneId, name, getDeviceCount(), isActive);
+        return String.format("AutomationScene{id='%s', name='%s', devices=%d}",
+                sceneId, name, getDeviceCount());
     }
 
     /**
@@ -279,10 +227,9 @@ public class AutomationScene {
         StringBuilder sb = new StringBuilder();
         sb.append("场景: ").append(name).append("\n");
         sb.append("描述: ").append(description).append("\n");
-        sb.append("状态: ").append(isActive ? "激活" : "未激活").append("\n");
         sb.append("设备数量: ").append(getDeviceCount()).append("\n");
 
-        for (Device device : executionOrder) {
+        for (Device device : deviceActions.keySet()) {
             Map<String, Object> operations = deviceActions.get(device);
             sb.append("  - ").append(device.getName()).append(": ");
             sb.append(operations).append("\n");

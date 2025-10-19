@@ -1,10 +1,13 @@
 package com.qsnn.homeSphere.domain.deviceModule.attributes;
 
-import com.qsnn.homeSphere.domain.deviceModule.DeviceAttribute;
-
 public abstract class AbstractDeviceAttribute<T> implements DeviceAttribute<T> {
+    //属性名
     private final String name;
+
+    //当前属性值
     protected T value;
+
+    //默认属性值
     protected final T defaultValue;
 
     public AbstractDeviceAttribute(String name, T defaultValue) {
@@ -13,6 +16,7 @@ public abstract class AbstractDeviceAttribute<T> implements DeviceAttribute<T> {
         this.value = defaultValue;
     }
 
+    //========== 基本Getter/Setter ==========
     @Override
     public String getName() {
         return name;
@@ -37,6 +41,7 @@ public abstract class AbstractDeviceAttribute<T> implements DeviceAttribute<T> {
         this.value = defaultValue;
     }
 
+    //获取默认值
     public T getDefaultValue() {
         return defaultValue;
     }
