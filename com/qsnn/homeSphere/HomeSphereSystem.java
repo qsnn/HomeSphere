@@ -68,10 +68,11 @@ public class HomeSphereSystem {
         for (User user : household.getUsers()) {
             if (user.getLoginName().equals(loginName) && user.getLoginPassword().equals(loginPassword)) {
                 currentUser = user;
+                System.out.println("登录成功：" + user.toString());
                 return;
             }
         }
-
+        System.out.println("登录失败：用户名或密码错误！");
     }
 
     /**

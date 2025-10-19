@@ -33,10 +33,10 @@ public class LightBulb extends Device implements EnergyReporting {
     private double power = 100;
 
     /** 亮度级别，范围：0-100 */
-    private double brightness;
+    private int brightness;
 
     /** 色温值，单位：开尔文 */
-    private double colorTemp;
+    private int colorTemp;
 
     /**
      * 智能灯泡设备构造函数
@@ -54,7 +54,7 @@ public class LightBulb extends Device implements EnergyReporting {
      *
      * @return 亮度值，范围：0-100
      */
-    public double getBrightness() {
+    public int getBrightness() {
         return brightness;
     }
 
@@ -63,7 +63,7 @@ public class LightBulb extends Device implements EnergyReporting {
      *
      * @param brightness 新的亮度值，范围：0-100
      */
-    public void setBrightness(double brightness) {
+    public void setBrightness(int brightness) {
         this.brightness = brightness;
     }
 
@@ -72,7 +72,7 @@ public class LightBulb extends Device implements EnergyReporting {
      *
      * @return 色温值，单位：开尔文
      */
-    public double getColorTemp() {
+    public int getColorTemp() {
         return colorTemp;
     }
 
@@ -81,7 +81,7 @@ public class LightBulb extends Device implements EnergyReporting {
      *
      * @param colorTemp 新的色温值，单位：开尔文
      */
-    public void setColorTemp(double colorTemp) {
+    public void setColorTemp(int colorTemp) {
         this.colorTemp = colorTemp;
     }
 
