@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 
 /**
  * 基于 JUnit 4.13.1 的智能家居系统测试类
+ * 这个类是通过给deepseek程序的plantuml，让deepseek生成的
  */
 public class HomeSphereSystemTest {
 
