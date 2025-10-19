@@ -1,5 +1,4 @@
-```markdown
-# HomeSphere v1.0（master）
+# HomeSphere v1.0
 
 ## 📖 项目简介
 
