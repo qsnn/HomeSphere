@@ -101,7 +101,7 @@ public class Usage {
         if (closeTime == null) {
             throw new NullPointerException("关闭时间不能为null");
         }
-        if (!closeTime.isAfter(openTime)) {
+        if (closeTime.isBefore(openTime)) {
             throw new IllegalArgumentException("关闭时间必须在开启时间之后");
         }
     }
