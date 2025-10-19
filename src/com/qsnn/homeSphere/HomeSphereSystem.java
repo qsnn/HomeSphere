@@ -165,7 +165,7 @@ public class HomeSphereSystem {
         validateHousehold(householdID);
 
         Integer roomID = createFreeID(rooms.keySet());
-        Room room = new Room(createFreeID(rooms.keySet()), name, area);
+        Room room = new Room(roomID, name, area);
         rooms.put(roomID, room);
 
         householdToRooms.computeIfAbsent(householdID, k -> new HashSet<>()).add(roomID);
