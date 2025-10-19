@@ -1,4 +1,4 @@
-package qsnn.homeSphere.domain.users;
+package com.qsnn.homeSphere.domain.users;
 
 /**
  * 用户类

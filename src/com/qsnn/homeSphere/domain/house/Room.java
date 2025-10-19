@@ -1,6 +1,6 @@
-package qsnn.homeSphere.domain.house;
+package com.qsnn.homeSphere.domain.house;
 
-import qsnn.homeSphere.domain.deviceModule.Device;
+import com.qsnn.homeSphere.domain.deviceModule.Device;
 
 import java.util.HashMap;
 import java.util.List;

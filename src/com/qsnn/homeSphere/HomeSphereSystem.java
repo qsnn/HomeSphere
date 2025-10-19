@@ -1,8 +1,9 @@
-package qsnn.homeSphere;
+package com.qsnn.homeSphere;
 
-import qsnn.homeSphere.domain.deviceModule.Device;
-import qsnn.homeSphere.domain.house.Household;
-import qsnn.homeSphere.domain.users.User;
+import com.qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
+import com.qsnn.homeSphere.domain.deviceModule.Device;
+import com.qsnn.homeSphere.domain.house.Household;
+import com.qsnn.homeSphere.domain.users.User;
 
 import java.util.Date;
 import java.util.List;
@@ -154,9 +155,9 @@ public class HomeSphereSystem {
 
         for (Device device : devices) {
             // 检查设备是否实现了EnergyReporting接口
-            if (device instanceof qsnn.homeSphere.domain.deviceModule.services.EnergyReporting) {
-                qsnn.homeSphere.domain.deviceModule.services.EnergyReporting energyDevice =
-                        (qsnn.homeSphere.domain.deviceModule.services.EnergyReporting) device;
+            if (device instanceof EnergyReporting) {
+                EnergyReporting energyDevice =
+                        (EnergyReporting) device;
 
                 double energyConsumption = energyDevice.getReport(startTime, endTime);
                 double power = energyDevice.getPower();

@@ -1,7 +1,7 @@
-package qsnn.homeSphere.domain.deviceModule;
+package com.qsnn.homeSphere.domain.deviceModule;
 
-import qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
-import qsnn.homeSphere.domain.deviceModule.services.RunningLog;
+import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
+import com.qsnn.homeSphere.domain.deviceModule.services.RunningLog;
 
 import java.util.ArrayList;
 import java.util.Date;

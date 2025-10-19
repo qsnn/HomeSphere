@@ -1,6 +1,6 @@
-package qsnn.homeSphere.domain.deviceModule.services;
+package com.qsnn.homeSphere.domain.deviceModule.services;
 
-import qsnn.homeSphere.domain.deviceModule.Device;
+import com.qsnn.homeSphere.domain.deviceModule.Device;
 
 import java.util.ArrayList;
 import java.util.List;

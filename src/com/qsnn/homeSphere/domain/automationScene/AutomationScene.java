@@ -1,4 +1,4 @@
-package qsnn.homeSphere.domain.automationScene;
+package com.qsnn.homeSphere.domain.automationScene;
 
 import java.util.ArrayList;
 import java.util.List;

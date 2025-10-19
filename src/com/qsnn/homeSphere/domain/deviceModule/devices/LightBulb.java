@@ -1,8 +1,8 @@
-package qsnn.homeSphere.domain.deviceModule.devices;
+package com.qsnn.homeSphere.domain.deviceModule.devices;
 
-import qsnn.homeSphere.domain.deviceModule.Device;
-import qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
-import qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
+import com.qsnn.homeSphere.domain.deviceModule.Device;
+import com.qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
+import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 
 /**
  * 智能灯泡设备类

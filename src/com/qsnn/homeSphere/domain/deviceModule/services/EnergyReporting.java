@@ -1,4 +1,4 @@
-package qsnn.homeSphere.domain.deviceModule.services;
+package com.qsnn.homeSphere.domain.deviceModule.services;
 
 import java.util.Date;
 import java.util.List;

@@ -1,10 +1,10 @@
-package qsnn.homeSphere.domain.automationScene;
+package com.qsnn.homeSphere.domain.automationScene;
 
-import qsnn.homeSphere.domain.deviceModule.Device;
-import qsnn.homeSphere.domain.deviceModule.devices.AirConditioner;
-import qsnn.homeSphere.domain.deviceModule.devices.BathroomScale;
-import qsnn.homeSphere.domain.deviceModule.devices.LightBulb;
-import qsnn.homeSphere.domain.deviceModule.devices.SmartLock;
+import com.qsnn.homeSphere.domain.deviceModule.Device;
+import com.qsnn.homeSphere.domain.deviceModule.devices.AirConditioner;
+import com.qsnn.homeSphere.domain.deviceModule.devices.BathroomScale;
+import com.qsnn.homeSphere.domain.deviceModule.devices.LightBulb;
+import com.qsnn.homeSphere.domain.deviceModule.devices.SmartLock;
 
 /**
  * 设备操作类

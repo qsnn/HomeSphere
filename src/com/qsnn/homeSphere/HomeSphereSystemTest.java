@@ -1,21 +1,21 @@
-package qsnn.homeSphere;
+package com.qsnn.homeSphere;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import qsnn.homeSphere.domain.automationScene.AutomationScene;
-import qsnn.homeSphere.domain.automationScene.DeviceAction;
-import qsnn.homeSphere.domain.deviceModule.Device;
-import qsnn.homeSphere.domain.deviceModule.devices.AirConditioner;
-import qsnn.homeSphere.domain.deviceModule.devices.BathroomScale;
-import qsnn.homeSphere.domain.deviceModule.devices.LightBulb;
-import qsnn.homeSphere.domain.deviceModule.devices.SmartLock;
-import qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
-import qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
-import qsnn.homeSphere.domain.deviceModule.services.RunningLog;
-import qsnn.homeSphere.domain.house.Household;
-import qsnn.homeSphere.domain.house.Room;
-import qsnn.homeSphere.domain.users.User;
+import com.qsnn.homeSphere.domain.automationScene.AutomationScene;
+import com.qsnn.homeSphere.domain.automationScene.DeviceAction;
+import com.qsnn.homeSphere.domain.deviceModule.Device;
+import com.qsnn.homeSphere.domain.deviceModule.devices.AirConditioner;
+import com.qsnn.homeSphere.domain.deviceModule.devices.BathroomScale;
+import com.qsnn.homeSphere.domain.deviceModule.devices.LightBulb;
+import com.qsnn.homeSphere.domain.deviceModule.devices.SmartLock;
+import com.qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
+import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
+import com.qsnn.homeSphere.domain.deviceModule.services.RunningLog;
+import com.qsnn.homeSphere.domain.house.Household;
+import com.qsnn.homeSphere.domain.house.Room;
+import com.qsnn.homeSphere.domain.users.User;
 
 import java.util.Date;
 import java.util.List;
