@@ -230,4 +230,3 @@ scene.execute();
 ---
 
 *HomeSphere - 让智能家居更简单、更智能*
-```
