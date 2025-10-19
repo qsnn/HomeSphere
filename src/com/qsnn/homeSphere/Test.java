@@ -182,7 +182,7 @@ public class Test {
         // 12. 自动化场景演示
         System.out.println("\n=== 自动化场景演示 ===");
 
-        AutomationScene morningScene = new AutomationScene("早安模式", "早上自动开启的场景");
+        AutomationScene morningScene = system.getAutomationSceneByID(system.createAutomationScene(aliceHouseholdId, "早安模式", "早上自动开启的场景"));
 
         Map<String, Object> lightMorningOps = new HashMap<>();
         lightMorningOps.put("luminance", 70);

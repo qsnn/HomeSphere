@@ -2,7 +2,10 @@ package com.qsnn.homeSphere.domain.automationScene;
 
 import com.qsnn.homeSphere.domain.deviceModule.Device;
 
+import java.time.LocalDateTime;
 import java.util.*;
+
+import static com.qsnn.homeSphere.utils.Util.createFreeID;
 
 /**
  * 自动化场景实现类
@@ -11,7 +14,7 @@ import java.util.*;
  *
  * <p><b>主要功能：</b></p>
  * <ul>
- *   <li>管理自动化场景的基本信息（ID、名称、描述）</li>
+ *   <li>管理自动化场景的基本信息（ID、名称、描述、创建时间）</li>
  *   <li>维护设备与操作参数的映射关系</li>
  *   <li>批量执行设备自动化操作</li>
  *   <li>验证设备操作的合法性</li>
@@ -20,6 +23,8 @@ import java.util.*;
  * <p><b>设计特点：</b></p>
  * <ul>
  *   <li>场景ID为final，确保唯一性和不变性</li>
+ *   <li>自动生成场景ID，不允许外部传入</li>
+ *   <li>记录场景创建时间</li>
  *   <li>使用Map结构存储设备操作，支持灵活的参数配置</li>
  *   <li>提供操作验证机制，确保执行安全性</li>
  *   <li>支持操作的批量添加、移除和执行</li>
@@ -32,13 +37,16 @@ import java.util.*;
 public class AutomationScene {
 
     /** 场景唯一标识 */
-    private final String sceneId;
+    private final Integer sceneId;
 
     /** 场景名称 */
     private String name;
 
     /** 场景描述 */
     private String description;
+
+    /** 场景创建时间 */
+    private final LocalDateTime createTime;
 
     /**
      * 自动化操作存储
@@ -52,10 +60,11 @@ public class AutomationScene {
      *
      * @param name 场景名称
      */
-    public AutomationScene(String name) {
-        this.sceneId = createSceneId();
+    public AutomationScene(int sceneID, String name) {
+        this.sceneId = sceneID;
         this.name = name;
         this.description = "";
+        this.createTime = LocalDateTime.now();
     }
 
     /**
@@ -64,35 +73,13 @@ public class AutomationScene {
      * @param name 场景名称
      * @param description 场景描述
      */
-    public AutomationScene(String name, String description) {
-        this.sceneId = createSceneId();
+    public AutomationScene(int sceneID, String name, String description) {
+        this.sceneId = sceneID;
         this.name = name;
         this.description = description;
+        this.createTime = LocalDateTime.now();
     }
 
-    /**
-     * 自动化场景构造函数（完整参数）
-     *
-     * @param sceneId 场景ID
-     * @param name 场景名称
-     * @param description 场景描述
-     */
-    public AutomationScene(String sceneId, String name, String description) {
-        this.sceneId = sceneId;
-        this.name = name;
-        this.description = description;
-    }
-
-    /**
-     * 生成场景ID
-     *
-     * <p>基于当前时间戳生成唯一的场景标识符</p>
-     *
-     * @return 生成的场景ID
-     */
-    private String createSceneId() {
-        return "SCENE_" + System.currentTimeMillis();
-    }
 
     // ========== 基本Getter/Setter ==========
 
@@ -101,7 +88,7 @@ public class AutomationScene {
      *
      * @return 场景唯一标识
      */
-    public String getSceneId() {
+    public Integer getSceneId() {
         return sceneId;
     }
 
@@ -139,6 +126,15 @@ public class AutomationScene {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * 获取场景创建时间
+     *
+     * @return 场景创建时间
+     */
+    public LocalDateTime getCreateTime() {
+        return createTime;
     }
 
     // ========== 操作管理方法 ==========
@@ -339,14 +335,14 @@ public class AutomationScene {
     // ========== 工具方法 ==========
 
     /**
-     * 返回场景的字符串表示
+     * 返回场景的格式化字符串表示
      *
      * @return 格式化的场景信息
      */
     @Override
     public String toString() {
-        return String.format("AutomationScene{id='%s', name='%s', devices=%d}",
-                sceneId, name, getDeviceCount());
+        return String.format("AutomationScene{id=%d, name='%s', createTime=%s, devices=%d}",
+                sceneId, name, createTime, getDeviceCount());
     }
 
     /**
@@ -354,10 +350,12 @@ public class AutomationScene {
      *
      * @return 详细的场景摘要
      */
-    public String getDetails() {
+    public String getSummary() {
         StringBuilder sb = new StringBuilder();
-        sb.append("场景: ").append(name).append("\n");
-        sb.append("描述: ").append(description).append("\n");
+        sb.append("场景ID: ").append(sceneId).append("\n");
+        sb.append("场景名称: ").append(name).append("\n");
+        sb.append("场景描述: ").append(description).append("\n");
+        sb.append("创建时间: ").append(createTime).append("\n");
         sb.append("设备数量: ").append(getDeviceCount()).append("\n");
 
         for (Device device : deviceActions.keySet()) {

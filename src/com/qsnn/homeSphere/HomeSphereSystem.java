@@ -1,5 +1,6 @@
 package com.qsnn.homeSphere;
 
+import com.qsnn.homeSphere.domain.automationScene.AutomationScene;
 import com.qsnn.homeSphere.domain.deviceModule.Device;
 import com.qsnn.homeSphere.domain.deviceModule.attributes.DeviceAttribute;
 import com.qsnn.homeSphere.domain.deviceModule.Manufacturer;
@@ -58,6 +59,9 @@ public class HomeSphereSystem {
     /** 设备数据映射表 */
     private final Map<Integer, Device> devices = new HashMap<>();
 
+    /** 自动化场景数据映射表 */
+    private final Map<Integer, AutomationScene> automationScenes = new HashMap<>();
+
     // ==================== 统一的关系映射表 ====================
 
     /** 用户到家庭的映射关系（用户 -> 家庭集合） */
@@ -74,6 +78,12 @@ public class HomeSphereSystem {
 
     /** 设备到房间的映射关系（设备 -> 房间） */
     private final Map<Integer, Integer> deviceToRoom = new HashMap<>();
+
+    /** 家庭到自动化场景的映射关系（家庭 -> 场景集合） */
+    private final Map<Integer, Set<Integer>> householdToScenes = new HashMap<>();
+
+    /** 自动化场景到家庭的映射关系（场景 -> 家庭） */
+    private final Map<Integer, Integer> sceneToHousehold = new HashMap<>();
 
     /**
      * 系统主入口方法
@@ -155,7 +165,7 @@ public class HomeSphereSystem {
         validateHousehold(householdID);
 
         Integer roomID = createFreeID(rooms.keySet());
-        Room room = new Room(roomID, name, area);
+        Room room = new Room(createFreeID(rooms.keySet()), name, area);
         rooms.put(roomID, room);
 
         householdToRooms.computeIfAbsent(householdID, k -> new HashSet<>()).add(roomID);
@@ -292,6 +302,126 @@ public class HomeSphereSystem {
             System.err.println("移动设备失败: " + e.getMessage());
             return false;
         }
+    }
+
+    // ==================== 自动化场景相关方法 ====================
+
+    /**
+     * 创建自动化场景
+     *
+     * @param householdId 所属家庭ID
+     * @param name 场景名称
+     * @param description 场景描述
+     * @return 新创建场景的ID
+     */
+    public Integer createAutomationScene(Integer householdId, String name, String description) {
+        validateHousehold(householdId);
+
+        AutomationScene scene = new AutomationScene(createFreeID(automationScenes.keySet()), name, description);
+        automationScenes.put(scene.getSceneId(), scene);
+
+        // 建立场景与家庭的映射关系
+        householdToScenes.computeIfAbsent(householdId, k -> new HashSet<>()).add(scene.getSceneId());
+        sceneToHousehold.put(scene.getSceneId(), householdId);
+
+        return scene.getSceneId();
+    }
+
+    /**
+     * 创建自动化场景（仅名称）
+     *
+     * @param householdId 所属家庭ID
+     * @param name 场景名称
+     * @return 新创建场景的ID
+     */
+    public Integer createAutomationScene(Integer householdId, String name) {
+        return createAutomationScene(householdId, name, "");
+    }
+
+    /**
+     * 删除自动化场景
+     *
+     * @param sceneId 场景ID
+     * @return 删除是否成功
+     */
+    public boolean deleteAutomationScene(Integer sceneId) {
+        if (!automationScenes.containsKey(sceneId)) {
+            return false;
+        }
+
+        // 移除场景与家庭的映射关系
+        Integer householdId = sceneToHousehold.remove(sceneId);
+        if (householdId != null) {
+            Set<Integer> householdScenes = householdToScenes.get(householdId);
+            if (householdScenes != null) {
+                householdScenes.remove(sceneId);
+                if (householdScenes.isEmpty()) {
+                    householdToScenes.remove(householdId);
+                }
+            }
+        }
+
+        // 移除场景数据
+        automationScenes.remove(sceneId);
+        return true;
+    }
+
+    /**
+     * 通过ID获取自动化场景
+     *
+     * @param sceneId 场景ID
+     * @return 自动化场景对象
+     */
+    public AutomationScene getAutomationSceneByID(Integer sceneId) {
+        return automationScenes.get(sceneId);
+    }
+
+    /**
+     * 获取家庭的所有自动化场景
+     *
+     * @param householdId 家庭ID
+     * @return 自动化场景集合
+     */
+    public Set<AutomationScene> getAutomationScenesByHousehold(Integer householdId) {
+        Set<Integer> sceneIds = householdToScenes.getOrDefault(householdId, Collections.emptySet());
+        return sceneIds.stream()
+                .map(automationScenes::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * 获取自动化场景所属的家庭
+     *
+     * @param sceneId 场景ID
+     * @return 家庭对象
+     */
+    public Household getHouseholdByScene(Integer sceneId) {
+        Integer householdId = sceneToHousehold.get(sceneId);
+        return householdId != null ? households.get(householdId) : null;
+    }
+
+    /**
+     * 检查场景是否属于指定家庭
+     *
+     * @param sceneId 场景ID
+     * @param householdId 家庭ID
+     * @return 如果场景属于该家庭返回true，否则返回false
+     */
+    public boolean isSceneInHousehold(Integer sceneId, Integer householdId) {
+        Integer actualHouseholdId = sceneToHousehold.get(sceneId);
+        return Objects.equals(actualHouseholdId, householdId);
+    }
+
+    /**
+     * 统计家庭的自动化场景数量
+     *
+     * @param householdId 家庭ID
+     * @return 自动化场景数量
+     */
+    public int countAutomationScenesByHousehold(Integer householdId) {
+        Set<Integer> householdScenes = householdToScenes.get(householdId);
+        return householdScenes != null ? householdScenes.size() : 0;
     }
 
     // ==================== 关系管理方法 ====================
@@ -612,6 +742,10 @@ public class HomeSphereSystem {
     }
 
     // ==================== Getter方法 ====================
+
+    public Map<Integer, AutomationScene> getAutomationScenes() {
+        return new HashMap<>(automationScenes);
+    }
 
     public Map<Integer, User> getUsers() {
         return users;
