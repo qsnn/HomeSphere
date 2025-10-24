@@ -37,25 +37,25 @@ import java.util.List;
  */
 public abstract class Device {
     /** 设备唯一序列号 */
-    protected final Integer deviceId;
+    private final Integer deviceId;
 
     /** 设备名称 */
-    protected String name;
+    private String name;
 
     /** 设备制造商信息 */
-    protected final Manufacturer manufacturer;
+    private final Manufacturer manufacturer;
 
     /** 设备在线状态 */
-    protected boolean isOnline;
+    private boolean isOnline;
 
     /** 设备电源状态 */
-    protected boolean powerStatus;
+    private boolean powerStatus;
 
     /** 设备运行日志列表 */
-    protected final List<RunningLog> runningLogs = new ArrayList<>();
+    private final List<RunningLog> runningLogs = new ArrayList<>();
 
     /** 最后开机时间，用于能耗计算 */
-    protected Date lastPowerOnTime;
+    private Date lastPowerOnTime;
 
     /**
      * 设备构造函数
@@ -226,7 +226,7 @@ public abstract class Device {
 
     /**
      * 返回对象的字符串表示形式
-     * 格式：类名{属性1=属性1值, 属性2='属性2值',...}
+     * 格式：Device{deviceId=值, name='值', isOnline=值, powerStatus=值}
      *
      * @return 格式化的字符串
      */

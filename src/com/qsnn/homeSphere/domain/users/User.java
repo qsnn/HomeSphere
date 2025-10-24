@@ -182,7 +182,7 @@ public class User {
 
     /**
      * 返回对象的字符串表示形式
-     * 格式：类名{属性1=属性1值, 属性2='属性2值',...}
+     * 格式：User{userId=值, loginName='值', userName='值', email='值', isAdmin=值}
      *
      * @return 格式化的字符串
      */
