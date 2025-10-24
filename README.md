@@ -207,15 +207,13 @@ system.displayEnergyReportings(today, today);
 - `setcolortemp` - 设置色温
 
 ### 空调 (AirConditioner)
-- `poweron`/`turnon` - 开启空调（默认24°C）
-- `poweroff`/`turnoff` - 关闭空调
+- `poweron` - 开启空调（默认24°C）
+- `poweroff` - 关闭空调
 - `settemperature` - 设置目标温度
 - `setcurrtemp` - 设置当前温度
 
 ### 智能门锁 (SmartLock)
-- `lock` - 锁定门锁
-- `unlock` - 解锁门锁
-- `togglelock` - 切换锁定状态
+- `setlocked` - 切换锁定状态
 - `setbatterylevel` - 设置电池电量 (0-100)
 
 ### 体重秤 (BathroomScale)
