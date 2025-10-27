@@ -130,6 +130,7 @@ public class DeviceAction {
         }
 
         try {
+            System.out.print(device.getName() + " ");
             // 根据设备类型和命令执行相应的操作
             if (device instanceof LightBulb) {
                 executeLightBulbAction((LightBulb) device);
@@ -155,13 +156,13 @@ public class DeviceAction {
     private void executeLightBulbAction(LightBulb lightBulb) {
         switch (command.toLowerCase()) {
             case "poweron":
-                lightBulb.setBrightness(100); // 默认全亮
-                System.out.println("灯泡已开启，亮度设置为100%");
+                lightBulb.powerOn(); // 默认全亮
+                System.out.println("powered on");
                 break;
 
             case "poweroff":
-                lightBulb.setBrightness(0);
-                System.out.println("灯泡已关闭");
+                lightBulb.powerOff();
+                System.out.println("powered off");
                 break;
 
             case "setbrightness":
@@ -170,7 +171,7 @@ public class DeviceAction {
                         int brightness = Integer.parseInt(parameters);
                         if (brightness >= 0 && brightness <= 100) {
                             lightBulb.setBrightness(brightness);
-                            System.out.println("灯泡亮度设置为: " + brightness + "%");
+                            System.out.println("target brightness set to" + brightness + "%");
                         } else {
                             System.err.println("错误：亮度值必须在0-100之间");
                         }
@@ -185,7 +186,7 @@ public class DeviceAction {
                     try {
                         int colorTemp = Integer.parseInt(parameters);
                         lightBulb.setColorTemp(colorTemp);
-                        System.out.println("灯泡色温设置为: " + colorTemp + "K");
+                        System.out.println("target colorTemp set to " + colorTemp );
                     } catch (NumberFormatException e) {
                         System.err.println("错误：无效的色温参数 - " + parameters);
                     }
@@ -207,14 +208,14 @@ public class DeviceAction {
             case "poweron":
             case "turnon":
                 // 空调开启时设置一个默认目标温度
-                airConditioner.setTargetTemp(24.0);
-                System.out.println("空调已开启，目标温度设置为24°C");
+                airConditioner.powerOn();
+                System.out.println("powered on");
                 break;
 
             case "poweroff":
             case "turnoff":
-                airConditioner.setTargetTemp(airConditioner.getCurrTemp()); // 关闭时保持当前温度
-                System.out.println("空调已关闭");
+                airConditioner.powerOff(); // 关闭时保持当前温度
+                System.out.println("powered off");
                 break;
 
             case "settemperature":
@@ -222,21 +223,9 @@ public class DeviceAction {
                     try {
                         double temperature = Double.parseDouble(parameters);
                         airConditioner.setTargetTemp(temperature);
-                        System.out.println("空调目标温度设置为: " + temperature + "°C");
+                        System.out.println("target temperature set to " + temperature + "°C");
                     } catch (NumberFormatException e) {
                         System.err.println("错误：无效的温度参数 - " + parameters);
-                    }
-                }
-                break;
-
-            case "setcurrtemp":
-                if (!parameters.isEmpty()) {
-                    try {
-                        double currentTemp = Double.parseDouble(parameters);
-                        airConditioner.setCurrTemp(currentTemp);
-                        System.out.println("当前温度更新为: " + currentTemp + "°C");
-                    } catch (NumberFormatException e) {
-                        System.err.println("错误：无效的当前温度参数 - " + parameters);
                     }
                 }
                 break;
@@ -255,34 +244,12 @@ public class DeviceAction {
         switch (command.toLowerCase()) {
             case "lock":
                 smartLock.setLocked(true);
-                System.out.println("门锁已锁定");
+                System.out.println("locked");
                 break;
 
             case "unlock":
                 smartLock.setLocked(false);
-                System.out.println("门锁已解锁");
-                break;
-
-            case "togglelock":
-                boolean currentState = smartLock.isLocked();
-                smartLock.setLocked(!currentState);
-                System.out.println("门锁状态切换为: " + (currentState ? "解锁" : "锁定"));
-                break;
-
-            case "setbatterylevel":
-                if (!parameters.isEmpty()) {
-                    try {
-                        int batteryLevel = Integer.parseInt(parameters);
-                        if (batteryLevel >= 0 && batteryLevel <= 100) {
-                            smartLock.setBatteryLevel(batteryLevel);
-                            System.out.println("门锁电池电量设置为: " + batteryLevel + "%");
-                        } else {
-                            System.err.println("错误：电池电量必须在0-100之间");
-                        }
-                    } catch (NumberFormatException e) {
-                        System.err.println("错误：无效的电池电量参数 - " + parameters);
-                    }
-                }
+                System.out.println("unlocked");
                 break;
 
             default:
@@ -297,40 +264,13 @@ public class DeviceAction {
      */
     private void executeBathroomScaleAction(BathroomScale bathroomScale) {
         switch (command.toLowerCase()) {
-            case "setbodymass":
-                if (!parameters.isEmpty()) {
-                    try {
-                        double bodyMass = Double.parseDouble(parameters);
-                        if (bodyMass >= 0) {
-                            bathroomScale.setBodyMass(bodyMass);
-                            System.out.println("体重数据设置为: " + bodyMass + "kg");
-                        } else {
-                            System.err.println("错误：体重值不能为负数");
-                        }
-                    } catch (NumberFormatException e) {
-                        System.err.println("错误：无效的体重参数 - " + parameters);
-                    }
-                }
-                break;
-
-            case "setbatterylevel":
-                if (!parameters.isEmpty()) {
-                    try {
-                        int batteryLevel = Integer.parseInt(parameters);
-                        if (batteryLevel >= 0 && batteryLevel <= 100) {
-                            bathroomScale.setBatteryLevel(batteryLevel);
-                            System.out.println("体重秤电池电量设置为: " + batteryLevel + "%");
-                        } else {
-                            System.err.println("错误：电池电量必须在0-100之间");
-                        }
-                    } catch (NumberFormatException e) {
-                        System.err.println("错误：无效的电池电量参数 - " + parameters);
-                    }
-                }
-                break;
-
             default:
                 System.err.println("错误：不支持的体重秤命令 - " + command);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Executing command: " + command + "with parameters: " + parameters + "\n";
     }
 }

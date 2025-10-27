@@ -1,8 +1,17 @@
 package com.qsnn.homeSphere;
 
-import com.qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
+import com.qsnn.homeSphere.domain.automationScene.AutomationScene;
+import com.qsnn.homeSphere.domain.automationScene.DeviceAction;
 import com.qsnn.homeSphere.domain.deviceModule.Device;
+import com.qsnn.homeSphere.domain.deviceModule.devices.AirConditioner;
+import com.qsnn.homeSphere.domain.deviceModule.devices.BathroomScale;
+import com.qsnn.homeSphere.domain.deviceModule.devices.LightBulb;
+import com.qsnn.homeSphere.domain.deviceModule.devices.SmartLock;
+import com.qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
+import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
+import com.qsnn.homeSphere.domain.deviceModule.services.RunningLog;
 import com.qsnn.homeSphere.domain.house.Household;
+import com.qsnn.homeSphere.domain.house.Room;
 import com.qsnn.homeSphere.domain.users.User;
 
 import java.util.Date;
@@ -40,6 +49,7 @@ public class HomeSphereSystem {
     /** 当前登录用户 */
     private User currentUser;
 
+
     /**
      * 系统构造函数
      *
@@ -48,7 +58,6 @@ public class HomeSphereSystem {
     public HomeSphereSystem(Household household) {
         this.household = household;
     }
-
 
     /**
      * 获取当前登录用户
@@ -59,22 +68,27 @@ public class HomeSphereSystem {
         return currentUser;
     }
 
+    public Household getHousehold() {
+        return household;
+    }
+
+
     /**
      * 用户登录
      *
      * @param loginName 用户名
      * @param loginPassword 用户密码
      */
-    public void login(String loginName, String loginPassword) {
+    public boolean login(String loginName, String loginPassword) {
         logoff();
-        for (User user : household.getUsers()) {
-            if (user.getLoginName().equals(loginName) && user.getLoginPassword().equals(loginPassword)) {
-                currentUser = user;
-                System.out.println("登录成功：" + user.toString());
-                return;
-            }
+        User correctUser = containsUser(loginName);
+        if (correctUser == null || !correctUser.getLoginPassword().equals(loginPassword)) {
+            System.out.println("登录失败：用户名或密码错误！");
+            return false;
         }
-        System.out.println("登录失败：用户名或密码错误！");
+        System.out.println("User logged in");
+        currentUser = correctUser;
+        return true;
     }
 
     /**
@@ -87,94 +101,156 @@ public class HomeSphereSystem {
     /**
      * 用户注册
      *
-     * @param loginName 用户名
+     * @param loginName     用户名
      * @param loginPassword 用户密码
-     * @param userName 用户真实姓名
-     * @param email 用户邮箱
-     * @return 注册成功的用户对象，如果用户名已存在则返回null
+     * @param email         用户邮箱
      */
-    public User register(String loginName, String loginPassword, String userName, String email) {
-        if (household.containsUser(loginName)) {
-            return null;
+    public void register(String loginName, String loginPassword, String email, boolean isAdmin) {
+        if (household.containsUser(loginName) != null) {
         } else {
-            User user = new User(household.getUsers().size() + 1, loginName, loginPassword, userName, email);
+            User user = new User(household.getUsers().size() + 1, loginName, loginPassword, email, isAdmin);
             household.addUser(user);
-            return user;
         }
     }
 
-    /**
-     * 显示所有用户列表
-     */
-    public void displayUsers() {
-        System.out.println("=== Users List ===");
-        household.getUsers().forEach(System.out::println);
-        System.out.println("Total: " + household.getUsers().size() + " users");
+    public void removeUser(int userId) {
+        household.removeUser(userId);
     }
 
-    /**
-     * 显示所有房间列表
-     */
-    public void displayRooms() {
-        System.out.println("=== Rooms List ===");
-        household.getRooms().forEach(System.out::println);
-        System.out.println("Total: " + household.getRooms().size() + " rooms");
+    public String listUsers() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("===家庭成员列表===\n");
+        household.getUsers().values().forEach(user -> {
+            sb.append("ID：").append(user.getUserId()).append("\n");
+            sb.append("用户名：").append(user.getLoginName()).append("\n");
+            sb.append("邮箱：").append(user.getEmail()).append("\n");
+            sb.append("管理员：").append(user.isAdmin() ? "是" : "否").append("\n");
+            sb.append("-------------------\n");
+        });
+        return sb.toString();
     }
 
-    /**
-     * 显示所有设备列表
-     */
-    public void displayDevices() {
-        System.out.println("=== Devices List ===");
-        List<Device> devices = household.listAllDevices();
-        devices.forEach(System.out::println);
-        System.out.println("Total: " + devices.size() + " devices");
+    public void createDevice(String deviceName, int deviceType, Manufacturer manufacturer, int roomId) {
+        if (!household.getRooms().containsKey(roomId)) {
+            return;
+        }
+        int deviceId = household.getAllDevices().size() + 1;
+        Device device = switch (deviceType) {
+            case 1 -> new AirConditioner(deviceId, deviceName, manufacturer);
+            case 2 -> new LightBulb(deviceId, deviceName, manufacturer);
+            case 3 -> new SmartLock(deviceId, deviceName, manufacturer);
+            case 4 -> new BathroomScale(deviceId, deviceName, manufacturer);
+            default -> null;
+        };
+        if (device == null) {
+            return;
+        }
+        household.getRooms().get(roomId).addDevice(device);
     }
 
-    /**
-     * 显示所有自动化场景列表
-     */
-    public void displayAutoScenes() {
-        System.out.println("=== Automation Scenes List ===");
-        household.getAutoScenes().forEach(System.out::println);
-        System.out.println("Total: " + household.getAutoScenes().size() + " scenes");
+    public void removeDevice(int deviceId) {
+        household.removeDevice(deviceId);
     }
 
-    /**
-     * 显示能源消耗报告
-     *
-     * @param startTime 报告开始时间
-     * @param endTime 报告结束时间
-     */
-    public void displayEnergyReportings(Date startTime, Date endTime) {
-        System.out.println("=== Energy Consumption Report ===");
-        System.out.println("Time Period: " + startTime + " to " + endTime);
+    public String listDevices() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("===设备列表===\n");
+        household.getRooms().values().forEach(room -> {
+            sb.append("房间：").append(room.getName()).append("\n");
+            room.getDevices().forEach(device -> sb.append(device.toString()).append("\n"));
+            sb.append("-------------------\n");
+        });
+        return sb.toString();
+    }
 
-        List<Device> devices = household.listAllDevices();
-        double totalEnergy = 0;
-        int reportingDevices = 0;
+    public String getDeviceType(int deviceId) {
+        Device device = household.getDeviceById(deviceId);
+        if (device != null) {
+            return device.getClass().getSimpleName();
+        }
+        return null;
+    }
 
-        for (Device device : devices) {
-            // 检查设备是否实现了EnergyReporting接口
-            if (device instanceof EnergyReporting) {
-                EnergyReporting energyDevice =
-                        (EnergyReporting) device;
+    public int createScene(String sceneName, String description) {
+        int sceneId = household.getAutoScenes().size() + 1;
+        household.addAutoScene(new AutomationScene(sceneId, sceneName, description));
+        return sceneId;
+    }
 
-                double energyConsumption = energyDevice.getReport(startTime, endTime);
-                double power = energyDevice.getPower();
+    public void addSceneOperation(int sceneId, int deviceId, String operation, String parameter) {
+        AutomationScene scene = household.getAutoSceneById(sceneId);
+        if (scene != null) {
+            scene.addAction(new DeviceAction(operation, parameter, household.getDeviceById(deviceId)));
+        }
+    }
 
-                System.out.println("Device: " + device.getName() +
-                        " - Power: " + power + "W" +
-                        " - Energy: " + String.format("%.2f", energyConsumption) + "kWh");
+    public AutomationScene getSceneById(int sceneId) {
+        return household.getAutoSceneById(sceneId);
+    }
 
-                totalEnergy += energyConsumption;
-                reportingDevices++;
+    public String listScenes() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("===智能场景列表===\n");
+        household.getAutoScenes().values().forEach(scene -> {
+            sb.append("ID：").append(scene.getSceneId()).append("\n");
+            sb.append("名称：").append(scene.getName()).append("\n");
+            sb.append("描述：").append(scene.getDescription()).append("\n");
+            sb.append("-------------------\n");
+        });
+        return sb.toString();
+    }
+
+    public String listRunningLogs() {
+        StringBuilder res = new StringBuilder();
+        res.append("== 设备运行日志 ==\n");
+
+        household.getRooms().values().forEach(room -> {
+            res.append("房间：").append(room.getName()).append("\n");
+
+            if (room.getDevices().isEmpty()) {
+                res.append("（无设备）\n");
+            } else {
+                room.getDevices().forEach(device -> {
+                    res.append("ID: ").append(device.getDeviceId()).append("\n");
+                    res.append("名称：").append(device.getName()).append("\n");
+                    res.append("类型：").append(device.getClass().getSimpleName()).append("\n");
+                    res.append("运行日志：\n");
+
+                    // 获取设备运行日志
+                    List<RunningLog> logs = device.getRunningLogs();
+                    if (logs == null || logs.isEmpty()) {
+                        res.append("---\n");
+                    } else {
+                        logs.forEach(log -> res.append(log.toString()).append("\n"));
+                    }
+                    res.append("\n");
+                });
             }
+            res.append("-------------------\n");
+        });
+        return res.toString();
+    }
+
+    public String generateEnergyReport(Date startTime, Date endTime) {
+        StringBuilder res = new StringBuilder();
+        res.append("== 能耗报告 ==\n");
+        double totalEnergy = 0.0;
+
+        for (Room room : household.getRooms().values()) {
+            res.append("房间：").append(room.getName()).append("\n");
+            for (Device device : room.getDevices()) {
+                if (device instanceof EnergyReporting) {
+                    double deviceEnergy = ((EnergyReporting) device).getReport(startTime, endTime);
+                    totalEnergy += deviceEnergy;
+                    res.append("设备: ").append(device.getName()).append(" - ")
+                            .append(String.format("%.1f", deviceEnergy)).append(" kWh\n");
+                }
+            }
+            res.append("\n");
         }
 
-        System.out.println("=== Summary ===");
-        System.out.println("Total energy consumption: " + String.format("%.2f", totalEnergy) + " kWh");
-        System.out.println("Devices with energy reporting: " + reportingDevices);
+        res.append("总能耗: ").append(String.format("%.1f", totalEnergy)).append(" kWh\n");
+        return res.toString();
     }
 
     /**
@@ -184,5 +260,9 @@ public class HomeSphereSystem {
      */
     public void manualTrigSceneById(int sceneId) {
         household.getAutoSceneById(sceneId).manualTrig();
+    }
+
+    public User containsUser(String loginName) {
+        return household.containsUser(loginName);
     }
 }

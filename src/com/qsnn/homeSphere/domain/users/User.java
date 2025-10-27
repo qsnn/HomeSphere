@@ -33,9 +33,6 @@ public class User {
     /** 用户密码，用于登录认证 */
     private String loginPassword;
 
-    /** 用户真实姓名 */
-    private String userName;
-
     /** 用户邮箱地址 */
     private String email;
 
@@ -48,16 +45,14 @@ public class User {
      * @param userId 用户唯一标识符
      * @param loginName 用户名，用于登录
      * @param loginPassword 用户密码
-     * @param userName 用户真实姓名
      * @param email 用户邮箱地址
      */
-    public User(int userId, String loginName, String loginPassword, String userName, String email) {
+    public User(int userId, String loginName, String loginPassword, String email, boolean isAdmin) {
         this.userId = userId;
         this.loginName = loginName;
         this.loginPassword = loginPassword;
-        this.userName = userName;
         this.email = email;
-        this.isAdmin = false; // 默认不是管理员
+        this.isAdmin = isAdmin; // 默认不是管理员
     }
 
 
@@ -90,14 +85,6 @@ public class User {
         return loginPassword;
     }
 
-    /**
-     * 获取用户真实姓名
-     *
-     * @return 用户真实姓名
-     */
-    public String getUserName() {
-        return userName;
-    }
 
     /**
      * 获取用户邮箱
@@ -137,14 +124,6 @@ public class User {
         this.loginPassword = loginPassword;
     }
 
-    /**
-     * 设置用户真实姓名
-     *
-     * @param userName 新的用户真实姓名
-     */
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 
     /**
      * 设置用户邮箱
@@ -191,7 +170,6 @@ public class User {
         return "User{" +
                 "userId=" + userId +
                 ", loginName='" + loginName + '\'' +
-                ", userName='" + userName + '\'' +
                 ", email='" + email + '\'' +
                 ", isAdmin=" + isAdmin +
                 '}';

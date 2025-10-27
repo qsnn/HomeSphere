@@ -80,4 +80,15 @@ public class BathroomScale extends Device {
     public void setBatteryLevel(int batteryLevel) {
         this.batteryLevel = batteryLevel;
     }
+
+    @Override
+    public String toString() {
+        return "BathroomScale{" +
+                "deviceId=" + getDeviceId() +
+                ", name='" + getName() + '\'' +
+                ", manufacturer=" + getManufacturer() +
+                ", bodyMass=" + bodyMass +
+                ", batteryLevel=" + batteryLevel +
+                '}';
+    }
 }

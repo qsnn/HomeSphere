@@ -43,7 +43,7 @@ public abstract class Device {
     private String name;
 
     /** 设备制造商信息 */
-    private final Manufacturer manufacturer;
+    private Manufacturer manufacturer;
 
     /** 设备在线状态 */
     private boolean isOnline;
@@ -108,6 +108,11 @@ public abstract class Device {
      */
     public Manufacturer getManufacturer() {
         return manufacturer;
+    }
+
+    public void setManufacturer(Manufacturer manufacturer) {
+        this.manufacturer = manufacturer;
+        manufacturer.addDevice(this);
     }
 
     /**
@@ -181,20 +186,6 @@ public abstract class Device {
             addRunningLog(new RunningLog(powerOffTime, "设备关机", RunningLog.Type.INFO, "设备电源已关闭"));
 
         }
-    }
-
-    /**
-     * 连接设备
-     */
-    public void connect() {
-        setOnline(true);
-    }
-
-    /**
-     * 断开设备连接
-     */
-    public void disconnect() {
-        setOnline(false);
     }
 
     /**

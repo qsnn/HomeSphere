@@ -40,9 +40,6 @@ public class Household {
     /** 家庭地址 */
     private String address;
 
-    /** 家庭管理员 */
-    private User admin;
-
     /** 家庭成员集合，键为用户ID，值为用户对象 */
     private Map<Integer, User> users;
 
@@ -93,31 +90,14 @@ public class Household {
         this.address = address;
     }
 
-    /**
-     * 获取家庭管理员
-     *
-     * @return 管理员用户对象
-     */
-    public User getAdmin() {
-        return admin;
-    }
-
-    /**
-     * 设置家庭管理员
-     *
-     * @param admin 新的管理员用户
-     */
-    public void setAdmin(User admin) {
-        this.admin = admin;
-    }
 
     /**
      * 获取所有家庭成员列表
      *
      * @return 家庭成员列表
      */
-    public List<User> getUsers() {
-        return users.values().stream().toList();
+    public Map<Integer, User> getUsers() {
+        return users;
     }
 
     /**
@@ -125,8 +105,8 @@ public class Household {
      *
      * @return 房间列表
      */
-    public List<Room> getRooms() {
-        return rooms.values().stream().toList();
+    public Map<Integer, Room> getRooms() {
+        return rooms;
     }
 
     /**
@@ -134,8 +114,8 @@ public class Household {
      *
      * @return 自动化场景列表
      */
-    public List<AutomationScene> getAutoScenes() {
-        return autoScenes.values().stream().toList();
+    public Map<Integer, AutomationScene> getAutoScenes() {
+        return autoScenes;
     }
 
     /**
@@ -156,9 +136,6 @@ public class Household {
      * @param user 要添加的用户
      */
     public void addUser(User user) {
-        if(users.isEmpty()) {
-            user.setAdmin(true);
-        }
         users.put(user.getUserId(), user);
     }
 
@@ -167,8 +144,12 @@ public class Household {
      *
      * @param userId 要移除的用户ID
      */
-    public void removeUser(int userId) {
+    public boolean removeUser(int userId) {
+        if(!users.containsKey(userId) ||users.get(userId).isAdmin()){
+            return false;
+        }
         users.remove(userId);
+        return true;
     }
 
     /**
@@ -189,6 +170,38 @@ public class Household {
         rooms.remove(roomId);
     }
 
+    public void addDevice(Device device, int roomId) {
+        rooms.get(roomId).addDevice(device);
+    }
+
+    public void removeDevice(int deviceId) {
+        for (Room room : rooms.values()) {
+            if (room.getDeviceById(deviceId) != null) {
+                room.removeDevice(deviceId);
+                return;
+            }
+        }
+    }
+
+    public Device getDeviceById(int deviceId) {
+        for (Room room : rooms.values()) {
+            Device device = room.getDeviceById(deviceId);
+            if (device != null) {
+                return device;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取家庭中所有设备列表
+     *
+     * @return 所有设备列表
+     */
+    public List<Device> getAllDevices() {
+        return rooms.values().stream().flatMap(room -> room.getDevices().stream()).toList();
+    }
+
     /**
      * 添加自动化场景到家庭
      *
@@ -207,14 +220,10 @@ public class Household {
         autoScenes.remove(sceneId);
     }
 
-    /**
-     * 获取家庭中所有设备列表
-     *
-     * @return 所有设备列表
-     */
-    public List<Device> listAllDevices() {
-        return rooms.values().stream().flatMap(room -> room.getDevices().stream()).toList();
-    }
+
+
+
+
 
     /**
      * 检查是否存在指定用户名的用户
@@ -222,8 +231,13 @@ public class Household {
      * @param loginName 用户名
      * @return 如果存在返回true，否则返回false
      */
-    public boolean containsUser(String loginName) {
-        return getUsers().stream().anyMatch(u -> u.getLoginName().equals(loginName));
+    public User containsUser(String loginName) {
+        for (User user : users.values()) {
+            if (user.getLoginName().equals(loginName)) {
+                return user;
+            }
+        }
+        return null;
     }
 
     /**

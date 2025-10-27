@@ -3,6 +3,11 @@ package com.qsnn.homeSphere.domain.deviceModule.devices;
 import com.qsnn.homeSphere.domain.deviceModule.Device;
 import com.qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
 import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
+import com.qsnn.homeSphere.domain.deviceModule.services.RunningLog;
+
+import java.util.Date;
+
+import static com.qsnn.homeSphere.domain.deviceModule.services.RunningLog.Type.INFO;
 
 /**
  * 空调设备类
@@ -83,6 +88,7 @@ public class AirConditioner extends Device implements EnergyReporting {
      */
     public void setTargetTemp(double targetTemp) {
         this.targetTemp = targetTemp;
+        addRunningLog(new RunningLog(new Date(), "Target temperature set to " + targetTemp + "°C", INFO, ""));
     }
 
     /**
@@ -95,4 +101,14 @@ public class AirConditioner extends Device implements EnergyReporting {
         return power;
     }
 
+    @Override
+    public String toString() {
+        return "AirConditioner{" +
+                "deviceId=" + getDeviceId() +
+                ", name='" + getName() + '\'' +
+                ", manufacturer=" + getManufacturer() +
+                ", currTemp=" + currTemp +
+                ", targetTemp=" + targetTemp +
+                '}';
+    }
 }

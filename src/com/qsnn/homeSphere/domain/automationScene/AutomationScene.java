@@ -148,12 +148,22 @@ public class AutomationScene {
         deviceActions.remove(action);
     }
 
+    public String listActions() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("===当前场景操作列表===\n");
+        for (DeviceAction action : deviceActions) {
+            sb.append(action.getDevice().getName()).append(" - ").append(action.getCommand()).append("\n");
+        }
+        return sb.toString();
+    }
+
     /**
      * 手动触发场景
      * 执行场景中所有的设备操作
      */
     public void manualTrig() {
         for (DeviceAction action : deviceActions) {
+            System.out.println(action);
             action.execute();
         }
     }

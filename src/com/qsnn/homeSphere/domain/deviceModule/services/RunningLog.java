@@ -28,7 +28,7 @@ import java.util.Date;
 public class RunningLog {
 
     /** 日志记录时间 */
-    private final Date dateTime;
+    private final Date date;
 
     /** 事件描述 */
     private final String event;
@@ -42,13 +42,13 @@ public class RunningLog {
     /**
      * 运行日志构造函数
      *
-     * @param dateTime 日志记录时间
+     * @param date 日志记录时间
      * @param event 事件描述
      * @param type 日志类型
      * @param note 附加说明信息
      */
-    public RunningLog(Date dateTime, String event, Type type, String note) {
-        this.dateTime = dateTime;
+    public RunningLog(Date date, String event, Type type, String note) {
+        this.date = date;
         this.event = event;
         this.type = type;
         this.note = note;
@@ -59,8 +59,8 @@ public class RunningLog {
      *
      * @return 日志记录时间
      */
-    public Date getDateTime() {
-        return dateTime;
+    public Date getDate() {
+        return date;
     }
 
     /**
@@ -104,5 +104,15 @@ public class RunningLog {
 
         /** 错误日志 - 用于记录设备故障和严重错误 */
         ERROR
+    }
+
+    @Override
+    public String toString() {
+        return "RunningLog{" +
+                "dateTime=" + date.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() +
+                ", event='" + event + '\'' +
+                ", type=" + type +
+                ", note='" + note + '\'' +
+                '}';
     }
 }

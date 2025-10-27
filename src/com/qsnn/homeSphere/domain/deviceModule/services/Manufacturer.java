@@ -155,4 +155,13 @@ public class Manufacturer {
     public void removeDevice(Device device){
         devices.remove(device);
     }
+
+    @Override
+    public String toString() {
+        return "Manufacturer{" +
+                "manufacturerId=" + manufacturerId +
+                ", name='" + name + '\'' +
+                ", protocols='" + protocols + '\'' +
+                '}';
+    }
 }

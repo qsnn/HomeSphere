@@ -95,5 +95,14 @@ public class LightBulb extends Device implements EnergyReporting {
         return power;
     }
 
-
+    @Override
+    public String toString() {
+        return "LightBulb{" +
+                "deviceId=" + getDeviceId() +
+                ", name='" + getName() + '\'' +
+                ", manufacturer=" + getManufacturer() +
+                ", brightness=" + brightness +
+                ", colorTemp=" + colorTemp +
+                '}';
+    }
 }

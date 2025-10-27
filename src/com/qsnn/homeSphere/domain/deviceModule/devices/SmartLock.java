@@ -80,4 +80,15 @@ public class SmartLock extends Device {
     public void setBatteryLevel(int batteryLevel) {
         this.batteryLevel = batteryLevel;
     }
+
+    @Override
+    public String toString() {
+        return "SmartLock{" +
+                "deviceId=" + getDeviceId() +
+                ", name='" + getName() + '\'' +
+                ", manufacturer=" + getManufacturer() +
+                ", isLocked=" + isLocked +
+                ", batteryLevel=" + batteryLevel +
+                '}';
+    }
 }

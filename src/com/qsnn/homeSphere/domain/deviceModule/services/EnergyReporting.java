@@ -75,9 +75,9 @@ public interface EnergyReporting {
 
         for (RunningLog log : powerLogs) {
             if ("设备开机".equals(log.getEvent())) {
-                currentStart = log.getDateTime();
+                currentStart = log.getDate();
             } else if ("设备关机".equals(log.getEvent()) && currentStart != null) {
-                long runningTime = Math.min(log.getDateTime().getTime(), endTime.getTime())
+                long runningTime = Math.min(log.getDate().getTime(), endTime.getTime())
                         - Math.max(currentStart.getTime(), startTime.getTime());
 
                 if (runningTime > 0) {
@@ -110,8 +110,8 @@ public interface EnergyReporting {
     default List<RunningLog> getPowerLogsInPeriod(Date startTime, Date endTime) {
         return getRunningLogs().stream()
                 .filter(log -> ("设备开机".equals(log.getEvent()) || "设备关机".equals(log.getEvent())))
-                .filter(log -> !log.getDateTime().before(startTime) && !log.getDateTime().after(endTime))
-                .sorted(java.util.Comparator.comparing(RunningLog::getDateTime))
+                .filter(log -> !log.getDate().before(startTime) && !log.getDate().after(endTime))
+                .sorted(java.util.Comparator.comparing(RunningLog::getDate))
                 .collect(Collectors.toList());
     }
 
