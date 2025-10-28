@@ -1,5 +1,6 @@
 package com.qsnn.homeSphere.domain.deviceModule;
 
+import com.qsnn.homeSphere.domain.deviceModule.devices.DeviceType;
 import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 import com.qsnn.homeSphere.domain.deviceModule.services.RunningLog;
 
@@ -51,11 +52,11 @@ public abstract class Device {
     /** 设备电源状态 */
     private boolean powerStatus;
 
+    private DeviceType deviceType;
+
     /** 设备运行日志列表 */
     private final List<RunningLog> runningLogs = new ArrayList<>();
 
-    /** 最后开机时间，用于能耗计算 */
-    private Date lastPowerOnTime;
 
     /**
      * 设备构造函数
@@ -159,6 +160,14 @@ public abstract class Device {
         return new ArrayList<>(runningLogs);
     }
 
+    public DeviceType getDeviceType() {
+        return deviceType;
+    }
+
+    protected void setDeviceType(DeviceType deviceType) {
+        this.deviceType = deviceType;
+    }
+
     // ==================== 设备操作方法 ====================
 
     /**
@@ -167,11 +176,10 @@ public abstract class Device {
     public void powerOn() {
         if (!this.powerStatus) {
             this.powerStatus = true;
-            this.lastPowerOnTime = new Date();
 
             // 记录开机日志
-            addRunningLog(new RunningLog(new Date(), "设备开机", RunningLog.Type.INFO,
-                    "设备电源已开启"));
+            addRunningLog(new RunningLog(new Date(), "powerOn", RunningLog.Type.INFO,
+                    ""));
         }
     }
 
@@ -183,7 +191,7 @@ public abstract class Device {
             this.powerStatus = false;
             // 记录关机日志并计算本次运行的能耗
             Date powerOffTime = new Date();
-            addRunningLog(new RunningLog(powerOffTime, "设备关机", RunningLog.Type.INFO, "设备电源已关闭"));
+            addRunningLog(new RunningLog(powerOffTime, "powerOff", RunningLog.Type.INFO, ""));
 
         }
     }

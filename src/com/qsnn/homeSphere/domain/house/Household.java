@@ -5,8 +5,8 @@ import com.qsnn.homeSphere.domain.deviceModule.Device;
 import com.qsnn.homeSphere.domain.users.User;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 家庭类
@@ -41,13 +41,17 @@ public class Household {
     private String address;
 
     /** 家庭成员集合，键为用户ID，值为用户对象 */
-    private Map<Integer, User> users;
+    private final Map<Integer, User> users;
+
+    private int nextUserId = 1;
 
     /** 房间集合，键为房间ID，值为房间对象 */
-    private Map<Integer, Room> rooms;
+    private final Map<Integer, Room> rooms;
+
+    private int nextDeviceId = 1;
 
     /** 自动化场景集合，键为场景ID，值为场景对象 */
-    private Map<Integer, AutomationScene> autoScenes;
+    private final Map<Integer, AutomationScene> autoScenes;
 
     /**
      * 家庭构造函数
@@ -128,6 +132,10 @@ public class Household {
         return autoScenes.get(sceneId);
     }
 
+    public int getNextUserId() {
+        return nextUserId++;
+    }
+
     /**
      * 添加用户到家庭
      *
@@ -144,12 +152,8 @@ public class Household {
      *
      * @param userId 要移除的用户ID
      */
-    public boolean removeUser(int userId) {
-        if(!users.containsKey(userId) ||users.get(userId).isAdmin()){
-            return false;
-        }
+    public void removeUser(int userId) {
         users.remove(userId);
-        return true;
     }
 
     /**
@@ -168,6 +172,10 @@ public class Household {
      */
     public void removeRoom(int roomId) {
         rooms.remove(roomId);
+    }
+
+    public int getNextDeviceId() {
+        return nextDeviceId++;
     }
 
     public void addDevice(Device device, int roomId) {
@@ -198,8 +206,13 @@ public class Household {
      *
      * @return 所有设备列表
      */
-    public List<Device> getAllDevices() {
-        return rooms.values().stream().flatMap(room -> room.getDevices().stream()).toList();
+    public Map<Integer, Device> getAllDevices() {
+        return rooms.values().stream()
+                .flatMap(room -> room.getDevices().entrySet().stream())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue
+                ));
     }
 
     /**

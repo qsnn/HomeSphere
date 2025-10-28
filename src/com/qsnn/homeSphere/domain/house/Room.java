@@ -3,7 +3,6 @@ package com.qsnn.homeSphere.domain.house;
 import com.qsnn.homeSphere.domain.deviceModule.Device;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -90,8 +89,8 @@ public class Room {
      *
      * @return 设备列表
      */
-    public List<Device> getDevices() {
-        return devices.values().stream().toList();
+    public Map<Integer, Device> getDevices() {
+        return devices;
     }
 
     /**

@@ -34,6 +34,7 @@ import static com.qsnn.homeSphere.domain.deviceModule.services.RunningLog.Type.I
  */
 public class AirConditioner extends Device implements EnergyReporting {
 
+
     /** 空调功率，单位：瓦 */
     private double power = 1000;
 
@@ -52,6 +53,7 @@ public class AirConditioner extends Device implements EnergyReporting {
      */
     public AirConditioner(Integer deviceID, String name, Manufacturer manufacturer) {
         super(deviceID, name, manufacturer);
+        setDeviceType(DeviceType.AIR_CONDITIONER);
     }
 
     /**
@@ -61,15 +63,6 @@ public class AirConditioner extends Device implements EnergyReporting {
      */
     public double getCurrTemp() {
         return currTemp;
-    }
-
-    /**
-     * 设置当前温度
-     *
-     * @param currTemp 新的当前温度值，单位：摄氏度
-     */
-    public void setCurrTemp(double currTemp) {
-        this.currTemp = currTemp;
     }
 
     /**

@@ -1,12 +1,16 @@
 package com.qsnn.homeSphere.ui;
 
 import com.qsnn.homeSphere.HomeSphereSystem;
-import com.qsnn.homeSphere.domain.deviceModule.devices.AirConditioner;
+import com.qsnn.homeSphere.domain.deviceModule.devices.DeviceType;
 import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 import com.qsnn.homeSphere.domain.house.Household;
-import com.qsnn.homeSphere.domain.house.Room;
+import com.qsnn.homeSphere.exceptions.*;
+import com.qsnn.homeSphere.utils.DateUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 import static com.qsnn.homeSphere.ui.PageType.*;
 
@@ -31,11 +35,11 @@ public class CommandUI {
         manufacturers.add(new Manufacturer(3, "Locker", "WIFI"));
         manufacturers.add(new Manufacturer(4, "华为", "WIFI, Zigbee"));
 
-        system.getHousehold().addRoom(new Room(1, "客厅", 30.0));
-        system.getHousehold().addRoom(new Room(2, "卧室", 20.0));
-        system.getHousehold().addRoom(new Room(3, "厨房", 8.62));
+        system.createRoom("客厅", 30.0);
+        system.createRoom("卧室", 20.0);
+        system.createRoom("厨房", 8.62);
 
-        system.getHousehold().addDevice(new AirConditioner(1, "客厅空调", manufacturers.get(0)) , 1);
+        system.createDevice("客厅空调", DeviceType.AIR_CONDITIONER, manufacturers.get(0) , 1);
 
     }
 
@@ -137,9 +141,12 @@ public class CommandUI {
         String loginName = sc.nextLine();
         System.out.print("请输入密码：");
         String password = sc.nextLine();
-        if(system.login(loginName, password)) {
+        try {
+            system.login(loginName, password);
+            System.out.println("User logged in");
             return MENU_PAGE; // 登录成功后进入菜单页面
-        }else {
+        }catch (InvalidUserException e){
+            System.out.println(e.getMessage());
             return START_PAGE; // 登录失败后返回起始页面
         }
     }
@@ -164,14 +171,25 @@ public class CommandUI {
         System.out.print("请输入邮箱：");
         String email = sc.nextLine();
 
-        system.register(loginName, password, email, false);
+        try {
+            system.register(loginName, password, email, false);
+            System.out.println("用户添加成功！");
+        } catch (InvalidUserException e) {
+            System.out.println(e.getMessage());
+        }
         return MEMBER_PAGE;
     }
 
     private PageType removeMember() {
         System.out.print("请输入要删除的用户ID：");
         int userId = sc.nextInt();
-        system.removeUser(userId);
+        sc.nextLine();
+        try {
+            system.removeUser(userId);
+            System.out.println("用户删除成功！");
+        } catch (InvalidUserException e) {
+            System.out.println(e.getMessage());
+        }
         return MEMBER_PAGE;
     }
 
@@ -188,25 +206,39 @@ public class CommandUI {
     private PageType addDevice() {
         System.out.print("请输入设备名称：");
         String deviceName = sc.nextLine();
-        System.out.print("选择设备类型：（1.空调 2.智能灯泡 3.智能锁 4.智能体重秤）");
-        int deviceType = sc.nextInt();
-        sc.nextLine();
 
-        if(deviceType < 1 || deviceType > 4){
-            System.out.println("无效的设备类型选择！");
-        }else {
-            System.out.print("请输入要添加到的房间ID：");
-            int roomId = sc.nextInt();
-            sc.nextLine();
-            system.createDevice(deviceName, deviceType, manufacturers.get(deviceType - 1), roomId);
+        System.out.print("选择设备类型：（1.空调 2.智能灯泡 3.智能锁 4.智能体重秤）");
+        String deviceTypeS = sc.nextLine();
+
+        System.out.print("请输入要添加到的房间ID：");
+        String roomIdS = sc.nextLine();
+
+        try {
+            int roomId = Integer.parseInt(roomIdS);
+            int deviceType = Integer.parseInt(deviceTypeS);
+            system.createDevice(deviceName, DeviceType.getType(deviceType), manufacturers.get(deviceType - 1), roomId);
+            System.out.println("设备添加成功！");
+        } catch (InvalidDeviceException | InvalidRoomException e) {
+            System.out.println(e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("房间ID格式错误！");
         }
         return DEVICE_PAGE;
     }
 
     private PageType removeDevice() {
         System.out.print("请输入要删除的设备ID：");
-        int deviceId = sc.nextInt();
-        system.removeDevice(deviceId);
+        String deviceIdS = sc.nextLine();
+
+        try{
+            int deviceId = Integer.parseInt(deviceIdS);
+            system.removeDevice(deviceId);
+            System.out.println("设备删除成功！");
+        } catch (NumberFormatException e) {
+            System.out.println("ID格式错误！");
+        } catch (InvalidDeviceException e){
+            System.out.println(e.getMessage());
+        }
         return DEVICE_PAGE;
     }
 
@@ -240,43 +272,41 @@ public class CommandUI {
 
             if (choice.equals("y")) {
                 System.out.print("输入设备ID：");
-                int deviceId;
+                String deviceIdS = sc.nextLine();
+
                 try {
-                    deviceId = Integer.parseInt(sc.nextLine());
+                    int deviceId = Integer.parseInt(deviceIdS);
+
+                    // 获取设备类型以提供相应的操作提示
+                    DeviceType deviceType = system.getDeviceById(deviceId).getDeviceType();
+
+                    // 根据设备类型提供不同的操作提示
+                    System.out.print("输入操作命令：");
+                    String operation = sc.nextLine().trim();
+
+                    // 使用DeviceType枚举的方法获取参数名
+                    String parameterName = deviceType.getParameterName(operation);
+
+                    // 处理需要额外参数的命令
+                    String parameter = "";
+                    if (parameterName != null) {
+                        System.out.print("输入" + parameterName + "：");
+                        parameter = sc.nextLine().trim();
+                    }
+
+                    // 添加场景操作
+                    system.addSceneOperation(sceneId, deviceId, operation, parameter);
+
+
                 } catch (NumberFormatException e) {
-                    System.out.println("无效的设备ID！");
-                    continue;
+                    System.out.println("ID格式错误！");
+                } catch (InvalidDeviceException | InvalidParametersException | InvalidAutomationSceneException e) {
+                    System.out.println(e.getMessage());
                 }
-
-                // 获取设备类型以提供相应的操作提示
-                String deviceType = system.getDeviceType(deviceId);
-                if (deviceType == null) {
-                    System.out.println("设备不存在！");
-                    continue;
-                }
-
-                // 根据设备类型提供不同的操作提示
-                String operationHint = getOperationHint(deviceType);
-                System.out.print("输入操作命令" + operationHint + "：");
-                String operation = sc.nextLine().trim();
-
-                // 处理需要额外参数的命令
-                String parameter = "";
-                if (operation.equals("setbrightness") || operation.equals("setcolortemp") ||
-                        operation.equals("settemperature") ) {
-
-                    System.out.print("输入" + getParameterName(operation) + "：");
-                    parameter = sc.nextLine().trim();
-
-                }
-
-                // 添加场景操作
-                system.addSceneOperation(sceneId, deviceId, operation, parameter);
-
             } else if (choice.equals("n")) {
                 addingOperations = false;
             } else {
-                System.out.println("请输入 y 或 n");
+                System.out.println("请正确输入 y 或 n！");
             }
         }
 
@@ -286,40 +316,22 @@ public class CommandUI {
 
     private PageType runScene() {
         System.out.print("输入要触发的场景ID：");
-        int sceneId;
+        String sceneIdS = sc.nextLine();
+
         try {
-            sceneId = Integer.parseInt(sc.nextLine());
+            int sceneId = Integer.parseInt(sceneIdS);
             system.manualTrigSceneById(sceneId);
             System.out.println("场景已触发！");
         } catch (NumberFormatException e) {
-            System.out.println("无效的场景ID！");
+            System.out.println("ID格式错误！");
+        } catch (InvalidAutomationSceneException e) {
+            System.out.println(e.getMessage());
         }
         return SCENE_PAGE;
     }
-
     private PageType listScenes() {
         System.out.println(system.listScenes());
         return SCENE_PAGE;
-    }
-
-    private String getOperationHint(String deviceType) {
-        return switch (deviceType.toLowerCase()) {
-            case "lightbulb" -> "（例如poweron/poweroff/setbrightness/setcolortemp）";
-            case "airconditioner" -> "（例如poweron/settemperature）";
-            case "smartlock" -> "（例如lock/unlock）";
-            case "bathroomscale" -> "（例如例如poweron/poweroff）";
-            default -> "（请参考设备支持的命令）";
-        };
-    }
-
-
-    private String getParameterName(String operation) {
-        return switch (operation.toLowerCase()) {
-            case "setbrightness" -> "亮度值(0-100)";
-            case "setcolortemp" -> "色温值(K)";
-            case "settemperature" -> "目标温度(°C)";
-            default -> "参数值";
-        };
     }
 
 
@@ -337,35 +349,18 @@ public class CommandUI {
         System.out.print("请输入起始时间（格式：yyyy-MM-dd）：");
         String startDateStr = sc.nextLine();
 
-        // 使用正则表达式验证格式
-        String dateRegex = "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$";
-        if (!startDateStr.matches(dateRegex)) {
-            System.out.println("日期格式错误，请按照 yyyy-MM-dd 格式输入");
-            return LOG_PAGE;
-        }
-
-        Date startDate = new Date(
-                Integer.parseInt(startDateStr.split("-")[0]),
-                Integer.parseInt(startDateStr.split("-")[1]),
-                Integer.parseInt(startDateStr.split("-")[2])
-             );
-
-
         System.out.print("请输入起始时间（格式：yyyy-MM-dd）：");
         String endDateStr = sc.nextLine();
 
-        if (!endDateStr.matches(dateRegex)) {
-            System.out.println("日期格式错误，请按照 yyyy-MM-dd 格式输入");
-            return LOG_PAGE;
+
+        try {
+            System.out.println(system.generateEnergyReport(
+                    DateUtil.formatStringToDate(startDateStr) ,
+                    DateUtil.formatStringToDate(endDateStr))
+            );
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
         }
-
-        Date endDate = new Date(
-                Integer.parseInt(endDateStr.split("-")[0]),
-                Integer.parseInt(endDateStr.split("-")[1]),
-                Integer.parseInt(endDateStr.split("-")[2])
-        );
-
-        System.out.println(system.generateEnergyReport(startDate, endDate));
 
 
         return LOG_PAGE;

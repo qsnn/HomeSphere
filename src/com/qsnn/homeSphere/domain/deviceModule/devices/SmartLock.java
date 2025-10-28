@@ -2,6 +2,11 @@ package com.qsnn.homeSphere.domain.deviceModule.devices;
 
 import com.qsnn.homeSphere.domain.deviceModule.Device;
 import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
+import com.qsnn.homeSphere.domain.deviceModule.services.RunningLog;
+
+import java.util.Date;
+
+import static com.qsnn.homeSphere.domain.deviceModule.services.RunningLog.Type.INFO;
 
 /**
  * 智能门锁设备类
@@ -43,6 +48,7 @@ public class SmartLock extends Device {
      */
     public SmartLock(Integer deviceID, String name, Manufacturer manufacturer) {
         super(deviceID, name, manufacturer);
+        setDeviceType(DeviceType.SMART_LOCK);
     }
 
     /**
@@ -61,6 +67,7 @@ public class SmartLock extends Device {
      */
     public void setLocked(boolean locked) {
         isLocked = locked;
+        addRunningLog(new RunningLog(new Date(), "Target lockStatus set to " + isLocked, INFO, ""));
     }
 
     /**
@@ -70,15 +77,6 @@ public class SmartLock extends Device {
      */
     public int getBatteryLevel() {
         return batteryLevel;
-    }
-
-    /**
-     * 设置电池电量
-     *
-     * @param batteryLevel 新的电池电量百分比
-     */
-    public void setBatteryLevel(int batteryLevel) {
-        this.batteryLevel = batteryLevel;
     }
 
     @Override

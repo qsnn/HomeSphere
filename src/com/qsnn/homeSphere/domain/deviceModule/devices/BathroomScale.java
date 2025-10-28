@@ -43,6 +43,7 @@ public class BathroomScale extends Device {
      */
     public BathroomScale(Integer deviceID, String name, Manufacturer manufacturer) {
         super(deviceID, name, manufacturer);
+        setDeviceType(DeviceType.BATHROOM_SCALE);
     }
 
     /**
@@ -54,14 +55,6 @@ public class BathroomScale extends Device {
         return bodyMass;
     }
 
-    /**
-     * 设置体重数据
-     *
-     * @param bodyMass 新的体重值，单位：千克
-     */
-    public void setBodyMass(double bodyMass) {
-        this.bodyMass = bodyMass;
-    }
 
     /**
      * 获取电池电量
@@ -70,15 +63,6 @@ public class BathroomScale extends Device {
      */
     public int getBatteryLevel() {
         return batteryLevel;
-    }
-
-    /**
-     * 设置电池电量
-     *
-     * @param batteryLevel 新的电池电量百分比
-     */
-    public void setBatteryLevel(int batteryLevel) {
-        this.batteryLevel = batteryLevel;
     }
 
     @Override
