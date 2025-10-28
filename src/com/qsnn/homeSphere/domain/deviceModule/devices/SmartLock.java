@@ -1,5 +1,6 @@
 package com.qsnn.homeSphere.domain.deviceModule.devices;
 
+import com.alibaba.fastjson2.JSON;
 import com.qsnn.homeSphere.domain.deviceModule.Device;
 import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 import com.qsnn.homeSphere.domain.deviceModule.services.RunningLog;
@@ -88,5 +89,15 @@ public class SmartLock extends Device {
                 ", isLocked=" + isLocked +
                 ", batteryLevel=" + batteryLevel +
                 '}';
+    }
+
+    @Override
+    public String formatToJsonString() {
+        return JSON.toJSONString(this);
+    }
+
+    @Override
+    public SmartLock ParseFromJsonString(String jsonString) {
+        return JSON.parseObject(jsonString, SmartLock.class);
     }
 }

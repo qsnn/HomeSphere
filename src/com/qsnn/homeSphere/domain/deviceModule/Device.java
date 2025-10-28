@@ -207,6 +207,9 @@ public abstract class Device {
         }
     }
 
+    public abstract String formatToJsonString();
+    public abstract Device ParseFromJsonString(String jsonString);
+
     // ==================== Object类方法重写 ====================
 
     /**
