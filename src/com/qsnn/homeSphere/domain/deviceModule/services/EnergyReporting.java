@@ -65,32 +65,43 @@ public interface EnergyReporting {
             return 0.0;
         }
 
-        List<RunningLog> powerLogs = getPowerLogsInPeriod(startTime, endTime);
+        Date currentTime = new Date();
+        Date effectiveEndTime = endTime.after(currentTime) ? currentTime : endTime;
+
+        List<RunningLog> powerLogs = getPowerLogsInPeriod(startTime, effectiveEndTime);
         double totalEnergy = 0.0;
 
-        // 根据第一个日志类型确定初始状态
-        Date currentStart = powerLogs.isEmpty() ?
-                (isPowerStatus() ? startTime : null) :
-                ("设备开机".equals(powerLogs.get(0).getEvent()) ? null : startTime);
+        // 确定初始状态：如果在查询开始时间设备是开机状态，则从startTime开始计算
+        Date currentStart = isPowerStatus() ? startTime : null;
 
         for (RunningLog log : powerLogs) {
             if ("设备开机".equals(log.getEvent())) {
-                currentStart = log.getDate();
-            } else if ("设备关机".equals(log.getEvent()) && currentStart != null) {
-                long runningTime = Math.min(log.getDate().getTime(), endTime.getTime())
-                        - Math.max(currentStart.getTime(), startTime.getTime());
-
-                if (runningTime > 0) {
-                    double hours = runningTime / (1000.0 * 60 * 60);
-                    totalEnergy += getPower() * hours / 1000.0;  // 转换为kWh
+                // 如果遇到开机事件，且当前没有在计算运行时间，则开始新的时间段
+                if (currentStart == null) {
+                    currentStart = log.getDate();
                 }
-                currentStart = null;
+                // 如果已经有currentStart，说明出现了连续的开机事件，以最后一个为准
+                else {
+                    currentStart = log.getDate();
+                }
+            } else if ("设备关机".equals(log.getEvent())) {
+                // 如果遇到关机事件，且当前有在计算运行时间，则计算这段时间的能耗
+                if (currentStart != null) {
+                    long runningTime = Math.min(log.getDate().getTime(), effectiveEndTime.getTime())
+                            - Math.max(currentStart.getTime(), startTime.getTime());
+
+                    if (runningTime > 0) {
+                        double hours = runningTime / (1000.0 * 60 * 60);
+                        totalEnergy += getPower() * hours / 1000.0;  // 转换为kWh
+                    }
+                    currentStart = null;
+                }
             }
         }
 
-        // 处理最后一段开机状态
+        // 处理最后一段开机状态（设备一直开机到查询结束时间）
         if (currentStart != null) {
-            long runningTime = endTime.getTime() - Math.max(currentStart.getTime(), startTime.getTime());
+            long runningTime = effectiveEndTime.getTime() - Math.max(currentStart.getTime(), startTime.getTime());
             if (runningTime > 0) {
                 double hours = runningTime / (1000.0 * 60 * 60);
                 totalEnergy += getPower() * hours / 1000.0;  // 转换为kWh
@@ -108,9 +119,12 @@ public interface EnergyReporting {
      * @return 按时间排序的开关机日志列表
      */
     default List<RunningLog> getPowerLogsInPeriod(Date startTime, Date endTime) {
+        Date currentTime = new Date(); // 获取当前现实时间
+        Date effectiveEndTime = endTime.after(currentTime) ? currentTime : endTime;
+
         return getRunningLogs().stream()
                 .filter(log -> ("设备开机".equals(log.getEvent()) || "设备关机".equals(log.getEvent())))
-                .filter(log -> !log.getDate().before(startTime) && !log.getDate().after(endTime))
+                .filter(log -> !log.getDate().before(startTime) && !log.getDate().after(effectiveEndTime))
                 .sorted(java.util.Comparator.comparing(RunningLog::getDate))
                 .collect(Collectors.toList());
     }

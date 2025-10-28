@@ -41,6 +41,57 @@ public class CommandUI {
 
         system.createDevice("客厅空调", DeviceType.AIR_CONDITIONER, manufacturers.get(0) , 1);
 
+        // 创建更多设备
+        system.createDevice("卧室灯", DeviceType.LIGHT_BULB, manufacturers.get(1), 2);
+        system.createDevice("大门锁", DeviceType.SMART_LOCK, manufacturers.get(2), 1);
+        system.createDevice("厨房灯", DeviceType.LIGHT_BULB, manufacturers.get(3), 3);
+        system.createDevice("卧室空调", DeviceType.AIR_CONDITIONER, manufacturers.get(0), 2);
+
+        // 创建自动化场景
+        int sceneId = system.createScene("回家模式", "晚上回家时自动开启灯光和空调");
+
+        // 为场景添加操作
+        try {
+            // 开启客厅空调到24度
+            system.addSceneOperation(sceneId, 1, "poweron", "");
+            system.addSceneOperation(sceneId, 1, "settemperature", "24");
+
+            // 开启卧室灯并设置亮度
+            system.addSceneOperation(sceneId, 2, "poweron", "");
+            system.addSceneOperation(sceneId, 2, "setbrightness", "80");
+
+            // 解锁大门
+            system.addSceneOperation(sceneId, 3, "unlock", "");
+
+            // 开启厨房灯
+            system.addSceneOperation(sceneId, 4, "poweron", "");
+
+        } catch (Exception e) {
+            System.out.println("创建场景操作时出错: " + e.getMessage());
+        }
+
+        // 创建第二个场景
+        int sceneId2 = system.createScene("睡眠模式", "准备睡觉时关闭不必要的设备");
+
+        try {
+            // 关闭客厅空调
+            system.addSceneOperation(sceneId2, 1, "poweroff", "");
+
+            // 调暗卧室灯
+            system.addSceneOperation(sceneId2, 2, "setbrightness", "30");
+
+            // 锁门
+            system.addSceneOperation(sceneId2, 3, "lock", "");
+
+            // 关闭厨房灯
+            system.addSceneOperation(sceneId2, 4, "poweroff", "");
+
+            // 开启卧室空调到26度
+            system.addSceneOperation(sceneId2, 5, "settemperature", "26");
+
+        } catch (Exception e) {
+            System.out.println("创建场景操作时出错: " + e.getMessage());
+        }
     }
 
     private PageType manageChoices(PageType currentPage) {
@@ -320,11 +371,11 @@ public class CommandUI {
 
         try {
             int sceneId = Integer.parseInt(sceneIdS);
-            system.manualTrigSceneById(sceneId);
+            system.runScene(sceneId);
             System.out.println("场景已触发！");
         } catch (NumberFormatException e) {
-            System.out.println("ID格式错误！");
-        } catch (InvalidAutomationSceneException e) {
+            System.out.println("场景ID格式错误！");
+        } catch (InvalidAutomationSceneException | InvalidDeviceException | InvalidParametersException e) {
             System.out.println(e.getMessage());
         }
         return SCENE_PAGE;

@@ -1,10 +1,10 @@
 package com.qsnn.homeSphere.domain.automationScene;
 
 import com.qsnn.homeSphere.domain.deviceModule.Device;
-import com.qsnn.homeSphere.domain.deviceModule.devices.AirConditioner;
-import com.qsnn.homeSphere.domain.deviceModule.devices.BathroomScale;
-import com.qsnn.homeSphere.domain.deviceModule.devices.LightBulb;
-import com.qsnn.homeSphere.domain.deviceModule.devices.SmartLock;
+import com.qsnn.homeSphere.domain.deviceModule.devices.*;
+import com.qsnn.homeSphere.exceptions.InvalidDeviceException;
+import com.qsnn.homeSphere.exceptions.InvalidDeviceTypeException;
+import com.qsnn.homeSphere.exceptions.InvalidParametersException;
 
 /**
  * 设备操作类
@@ -119,35 +119,32 @@ public class DeviceAction {
      * <p>根据命令和参数执行具体的设备操作</p>
      */
     public void execute() {
+
         if (device == null) {
-            System.err.println("错误：未设置目标设备");
-            return;
+            throw new InvalidDeviceException("未设置目标设备");
         }
 
         if (command == null || command.trim().isEmpty()) {
-            System.err.println("错误：未指定操作命令");
-            return;
+            throw new InvalidParametersException("未指定操作命令");
+        }
+        System.out.print(device.getName() + " ");
+
+        // 根据设备类型执行相应的操作
+        if (device instanceof LightBulb) {
+            executeLightBulbAction((LightBulb) device);
+        } else if (device instanceof AirConditioner) {
+            executeAirConditionerAction((AirConditioner) device);
+        } else if (device instanceof SmartLock) {
+            executeSmartLockAction((SmartLock) device);
+        } else if (device instanceof BathroomScale) {
+            executeBathroomScaleAction((BathroomScale) device);
+        } else {
+            throw new InvalidDeviceTypeException("不支持的设备类型: " + device.getClass().getSimpleName());
         }
 
-        try {
-            System.out.print(device.getName() + " ");
-            // 根据设备类型和命令执行相应的操作
-            if (device instanceof LightBulb) {
-                executeLightBulbAction((LightBulb) device);
-            } else if (device instanceof AirConditioner) {
-                executeAirConditionerAction((AirConditioner) device);
-            } else if (device instanceof SmartLock) {
-                executeSmartLockAction((SmartLock) device);
-            } else if (device instanceof BathroomScale) {
-                executeBathroomScaleAction((BathroomScale) device);
-            } else {
-                System.err.println("错误：不支持的设备类型 - " + device.getClass().getSimpleName());
-            }
-        } catch (Exception e) {
-            System.err.println("执行设备操作时发生错误: " + e.getMessage());
-            e.printStackTrace();
-        }
     }
+
+
     /**
      * 执行智能灯泡操作
      *
@@ -156,7 +153,7 @@ public class DeviceAction {
     private void executeLightBulbAction(LightBulb lightBulb) {
         switch (command.toLowerCase()) {
             case "poweron":
-                lightBulb.powerOn(); // 默认全亮
+                lightBulb.powerOn();
                 System.out.println("powered on");
                 break;
 
@@ -166,35 +163,44 @@ public class DeviceAction {
                 break;
 
             case "setbrightness":
-                if (!parameters.isEmpty()) {
+                if (parameters != null && !parameters.trim().isEmpty()) {
                     try {
-                        int brightness = Integer.parseInt(parameters);
+                        int brightness = Integer.parseInt(parameters.trim());
                         if (brightness >= 0 && brightness <= 100) {
                             lightBulb.setBrightness(brightness);
-                            System.out.println("target brightness set to" + brightness + "%");
+                            System.out.println("target brightness set to " + brightness + "%");
                         } else {
-                            System.err.println("错误：亮度值必须在0-100之间");
+                            throw new InvalidParametersException("亮度值必须在0-100之间");
                         }
                     } catch (NumberFormatException e) {
-                        System.err.println("错误：无效的亮度参数 - " + parameters);
+                        throw new InvalidParametersException("无效的亮度参数: " + parameters);
                     }
+                } else {
+                    throw new InvalidParametersException("setbrightness操作需要亮度参数");
                 }
                 break;
 
             case "setcolortemp":
-                if (!parameters.isEmpty()) {
+                if (parameters != null && !parameters.trim().isEmpty()) {
                     try {
-                        int colorTemp = Integer.parseInt(parameters);
-                        lightBulb.setColorTemp(colorTemp);
-                        System.out.println("target colorTemp set to " + colorTemp );
+                        int colorTemp = Integer.parseInt(parameters.trim());
+                        if (colorTemp >= 2300 && colorTemp <= 7000) {
+                            lightBulb.setColorTemp(colorTemp);
+                            System.out.println("target colorTemp set to " + colorTemp + "%");
+                        } else {
+                            throw new InvalidParametersException("色温必须在2300-7000之间");
+                        }
+                        System.out.println("target colorTemp set to " + colorTemp + "K");
                     } catch (NumberFormatException e) {
-                        System.err.println("错误：无效的色温参数 - " + parameters);
+                        throw new InvalidParametersException("无效的色温参数: " + parameters);
                     }
+                } else {
+                    throw new InvalidParametersException("setcolortemp操作需要色温参数");
                 }
                 break;
 
             default:
-                System.err.println("错误：不支持的灯泡命令 - " + command);
+                throw new InvalidParametersException("不支持的灯泡命令: " + command);
         }
     }
 
@@ -206,32 +212,36 @@ public class DeviceAction {
     private void executeAirConditionerAction(AirConditioner airConditioner) {
         switch (command.toLowerCase()) {
             case "poweron":
-            case "turnon":
-                // 空调开启时设置一个默认目标温度
                 airConditioner.powerOn();
                 System.out.println("powered on");
                 break;
 
             case "poweroff":
-            case "turnoff":
-                airConditioner.powerOff(); // 关闭时保持当前温度
+                airConditioner.powerOff();
                 System.out.println("powered off");
                 break;
 
             case "settemperature":
-                if (!parameters.isEmpty()) {
+                if (parameters != null && !parameters.trim().isEmpty()) {
                     try {
-                        double temperature = Double.parseDouble(parameters);
-                        airConditioner.setTargetTemp(temperature);
+                        double temperature = Double.parseDouble(parameters.trim());
+                        if (temperature >= 16 && temperature <= 32) {
+                            airConditioner.setTargetTemp(temperature);
+                            System.out.println("target temperature set to " + temperature + "%");
+                        } else {
+                            throw new InvalidParametersException("16.0-32.0之间");
+                        }
                         System.out.println("target temperature set to " + temperature + "°C");
                     } catch (NumberFormatException e) {
-                        System.err.println("错误：无效的温度参数 - " + parameters);
+                        throw new InvalidParametersException("无效的温度参数: " + parameters);
                     }
+                } else {
+                    throw new InvalidParametersException("settemperature操作需要温度参数");
                 }
                 break;
 
             default:
-                System.err.println("错误：不支持的空调命令 - " + command);
+                throw new InvalidParametersException("不支持的空调命令: " + command);
         }
     }
 
@@ -242,6 +252,16 @@ public class DeviceAction {
      */
     private void executeSmartLockAction(SmartLock smartLock) {
         switch (command.toLowerCase()) {
+            case "poweron":
+                smartLock.setLocked(false);
+                System.out.println("powered on");
+                break;
+
+            case "poweroff":
+                smartLock.setLocked(true);
+                System.out.println("powered off");
+                break;
+
             case "lock":
                 smartLock.setLocked(true);
                 System.out.println("locked");
@@ -253,7 +273,7 @@ public class DeviceAction {
                 break;
 
             default:
-                System.err.println("错误：不支持的智能门锁命令 - " + command);
+                throw new InvalidParametersException("不支持的智能门锁命令: " + command);
         }
     }
 
@@ -264,8 +284,18 @@ public class DeviceAction {
      */
     private void executeBathroomScaleAction(BathroomScale bathroomScale) {
         switch (command.toLowerCase()) {
+            case "poweron":
+                bathroomScale.powerOn();
+                System.out.println("powered on");
+                break;
+
+            case "poweroff":
+                bathroomScale.powerOff();
+                System.out.println("powered off");
+                break;
+
             default:
-                System.err.println("错误：不支持的体重秤命令 - " + command);
+                throw new InvalidParametersException("不支持的体重秤命令: " + command);
         }
     }
 

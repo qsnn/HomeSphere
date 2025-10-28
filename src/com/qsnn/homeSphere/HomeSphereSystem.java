@@ -10,10 +10,7 @@ import com.qsnn.homeSphere.domain.deviceModule.services.RunningLog;
 import com.qsnn.homeSphere.domain.house.Household;
 import com.qsnn.homeSphere.domain.house.Room;
 import com.qsnn.homeSphere.domain.users.User;
-import com.qsnn.homeSphere.exceptions.InvalidAutomationSceneException;
-import com.qsnn.homeSphere.exceptions.InvalidDeviceException;
-import com.qsnn.homeSphere.exceptions.InvalidRoomException;
-import com.qsnn.homeSphere.exceptions.InvalidUserException;
+import com.qsnn.homeSphere.exceptions.*;
 
 import java.util.Date;
 import java.util.List;
@@ -217,8 +214,76 @@ public class HomeSphereSystem {
     }
 
     public void addSceneOperation(int sceneId, int deviceId, String operation, String parameter) {
+        // 验证参数（根据操作类型）
+        validateOperationParameters(operation, parameter);
+
         AutomationScene scene = getSceneById(sceneId);
         scene.addAction(new DeviceAction(operation, parameter, getDeviceById(deviceId)));
+    }
+
+    /**
+     * 根据操作类型验证参数
+     */
+    private void validateOperationParameters(String operation, String parameter) {
+        String op = operation.toLowerCase().trim();
+
+        switch (op) {
+            case "settemperature":
+                if (parameter == null || parameter.trim().isEmpty()) {
+                    throw new InvalidParametersException("settemperature操作需要温度参数");
+                }
+                try {
+                    double temperature = Double.parseDouble(parameter.trim());
+                    if (temperature < 16.0 || temperature > 32.0) {
+                        throw new InvalidParametersException("空调温度设置应在16.0-32.0度之间");
+                    }
+                } catch (NumberFormatException e) {
+                    throw new InvalidParametersException("无效的温度参数格式");
+                }
+                break;
+
+            case "setbrightness":
+                if (parameter == null || parameter.trim().isEmpty()) {
+                    throw new InvalidParametersException("setbrightness操作需要亮度参数");
+                }
+                try {
+                    int brightness = Integer.parseInt(parameter.trim());
+                    if (brightness < 0 || brightness > 100) {
+                        throw new InvalidParametersException("灯泡亮度设置应在0-100之间的整数");
+                    }
+                } catch (NumberFormatException e) {
+                    throw new InvalidParametersException("无效的亮度参数格式");
+                }
+                break;
+
+            case "setcolortemp":
+                if (parameter == null || parameter.trim().isEmpty()) {
+                    throw new InvalidParametersException("setcolortemp操作需要色温参数");
+                }
+                try {
+                    int colorTemp = Integer.parseInt(parameter.trim());
+                    if (colorTemp < 2300 || colorTemp > 7000) {
+                        throw new InvalidParametersException("色温设置应在2300K至7000K之间的整数");
+                    }
+                } catch (NumberFormatException e) {
+                    throw new InvalidParametersException("无效的色温参数格式");
+                }
+                break;
+
+            // 对于不需要参数的操作，确保参数为空或null
+            case "poweron":
+            case "poweroff":
+            case "lock":
+            case "unlock":
+                if (parameter != null && !parameter.trim().isEmpty()) {
+                    throw new InvalidParametersException(op + "操作不需要参数");
+                }
+                break;
+
+            default:
+                // 对于未知操作，不在这里验证参数，留给DeviceAction处理
+                break;
+        }
     }
 
     public AutomationScene getSceneById(int sceneId) {
@@ -298,11 +363,8 @@ public class HomeSphereSystem {
      *
      * @param sceneId 场景ID
      */
-    public void manualTrigSceneById(int sceneId) {
-        AutomationScene scene = household.getAutoSceneById(sceneId);
-        if(scene == null){
-            throw new InvalidAutomationSceneException("触发失败：场景不存在！");
-        }
+    public void runScene(int sceneId) {
+        AutomationScene scene = getSceneById(sceneId);
         scene.manualTrig();
     }
 

@@ -9,7 +9,7 @@ public enum DeviceType {
             return switch (operation.toLowerCase()) {
                 case "poweron" -> null;
                 case "poweroff" -> null;
-                case "settemperature" -> "目标温度(°C)";
+                case "settemperature" -> "目标温度(16.0-32.0°C)";
                 default -> throw new InvalidParametersException("AIR_CONDITIONER不支持操作: " + operation);
             };
         }
@@ -20,8 +20,8 @@ public enum DeviceType {
             return switch (operation.toLowerCase()) {
                 case "poweron" -> null;
                 case "poweroff" -> null;
-                case "setbrightness" -> "亮度值(0-100)";
-                case "setcolortemp" -> "色温值(K)";
+                case "setbrightness" -> "亮度值(0-100%)";
+                case "setcolortemp" -> "色温值(2300-2700K)";
                 default -> throw new InvalidParametersException("LIGHT_BULB不支持操作: " + operation); // 修正错误消息
             };
         }
