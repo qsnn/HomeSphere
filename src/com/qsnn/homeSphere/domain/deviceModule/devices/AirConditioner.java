@@ -96,6 +96,12 @@ public class AirConditioner extends Device implements EnergyReporting {
         return power;
     }
 
+/**
+ * 返回对象的字符串表示形式
+ * 格式：AirConditioner{deviceId=值, name='值', manufacturer=值, currTemp=值, targetTemp=值}
+ *
+ * @return 格式化的字符串
+ */
     @Override
     public String toString() {
         return "AirConditioner{" +
@@ -107,11 +113,22 @@ public class AirConditioner extends Device implements EnergyReporting {
                 '}';
     }
 
+    /**
+     * 将空调设备信息格式化为JSON字符串
+     *
+     * @return JSON格式的设备信息字符串
+     */
     @Override
     public String formatToJsonString() {
         return JSON.toJSONString(this);
     }
 
+    /**
+     * 从JSON字符串解析空调设备信息
+     *
+     * @param jsonString JSON格式的设备信息字符串
+     * @return 解析后的空调设备对象
+     */
     @Override
     public AirConditioner ParseFromJsonString(String jsonString) {
         return JSON.parseObject(jsonString, AirConditioner.class);

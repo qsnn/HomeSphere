@@ -1,9 +1,11 @@
 package com.qsnn.homeSphere.domain.automationScene;
 
 import com.qsnn.homeSphere.domain.deviceModule.Device;
-import com.qsnn.homeSphere.domain.deviceModule.devices.*;
+import com.qsnn.homeSphere.domain.deviceModule.devices.AirConditioner;
+import com.qsnn.homeSphere.domain.deviceModule.devices.BathroomScale;
+import com.qsnn.homeSphere.domain.deviceModule.devices.LightBulb;
+import com.qsnn.homeSphere.domain.deviceModule.devices.SmartLock;
 import com.qsnn.homeSphere.exceptions.InvalidDeviceException;
-import com.qsnn.homeSphere.exceptions.InvalidDeviceTypeException;
 import com.qsnn.homeSphere.exceptions.InvalidParametersException;
 
 /**
@@ -139,7 +141,7 @@ public class DeviceAction {
         } else if (device instanceof BathroomScale) {
             executeBathroomScaleAction((BathroomScale) device);
         } else {
-            throw new InvalidDeviceTypeException("不支持的设备类型: " + device.getClass().getSimpleName());
+            throw new InvalidDeviceException("不支持的设备类型: " + device.getClass().getSimpleName());
         }
 
     }
@@ -163,40 +165,15 @@ public class DeviceAction {
                 break;
 
             case "setbrightness":
-                if (parameters != null && !parameters.trim().isEmpty()) {
-                    try {
-                        int brightness = Integer.parseInt(parameters.trim());
-                        if (brightness >= 0 && brightness <= 100) {
-                            lightBulb.setBrightness(brightness);
-                            System.out.println("target brightness set to " + brightness + "%");
-                        } else {
-                            throw new InvalidParametersException("亮度值必须在0-100之间");
-                        }
-                    } catch (NumberFormatException e) {
-                        throw new InvalidParametersException("无效的亮度参数: " + parameters);
-                    }
-                } else {
-                    throw new InvalidParametersException("setbrightness操作需要亮度参数");
-                }
+                int brightness = Integer.parseInt(parameters.trim());
+                lightBulb.setBrightness(brightness);
+                System.out.println("target brightness set to " + brightness + "%");
                 break;
 
             case "setcolortemp":
-                if (parameters != null && !parameters.trim().isEmpty()) {
-                    try {
-                        int colorTemp = Integer.parseInt(parameters.trim());
-                        if (colorTemp >= 2300 && colorTemp <= 7000) {
-                            lightBulb.setColorTemp(colorTemp);
-                            System.out.println("target colorTemp set to " + colorTemp + "%");
-                        } else {
-                            throw new InvalidParametersException("色温必须在2300-7000之间");
-                        }
-                        System.out.println("target colorTemp set to " + colorTemp + "K");
-                    } catch (NumberFormatException e) {
-                        throw new InvalidParametersException("无效的色温参数: " + parameters);
-                    }
-                } else {
-                    throw new InvalidParametersException("setcolortemp操作需要色温参数");
-                }
+                int colorTemp = Integer.parseInt(parameters.trim());
+                lightBulb.setColorTemp(colorTemp);
+                System.out.println("target colorTemp set to " + colorTemp + "K");
                 break;
 
             default:
@@ -222,22 +199,9 @@ public class DeviceAction {
                 break;
 
             case "settemperature":
-                if (parameters != null && !parameters.trim().isEmpty()) {
-                    try {
-                        double temperature = Double.parseDouble(parameters.trim());
-                        if (temperature >= 16 && temperature <= 32) {
-                            airConditioner.setTargetTemp(temperature);
-                            System.out.println("target temperature set to " + temperature + "%");
-                        } else {
-                            throw new InvalidParametersException("16.0-32.0之间");
-                        }
-                        System.out.println("target temperature set to " + temperature + "°C");
-                    } catch (NumberFormatException e) {
-                        throw new InvalidParametersException("无效的温度参数: " + parameters);
-                    }
-                } else {
-                    throw new InvalidParametersException("settemperature操作需要温度参数");
-                }
+                double temperature = Double.parseDouble(parameters.trim());
+                airConditioner.setTargetTemp(temperature);
+                System.out.println("target temperature set to " + temperature + "°C");
                 break;
 
             default:
@@ -299,6 +263,12 @@ public class DeviceAction {
         }
     }
 
+    /**
+     * 返回对象的字符串表示形式
+     * 格式：Executing command: [命令] with parameters: [参数]
+     *
+     * @return 格式化的字符串
+     */
     @Override
     public String toString() {
         return "Executing command: " + command + " with parameters: " + parameters;

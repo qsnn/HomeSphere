@@ -72,14 +72,20 @@ public class SmartLock extends Device {
     }
 
     /**
-     * 获取电池电量
+     * 设置电池电量
      *
-     * @return 电池电量百分比
+     * @param batteryLevel 新的电池电量百分比
      */
-    public int getBatteryLevel() {
-        return batteryLevel;
+    public void setBatteryLevel(int batteryLevel) {
+        this.batteryLevel = batteryLevel;
     }
 
+    /**
+     * 返回对象的字符串表示形式
+     * 格式：SmartLock{deviceId=值, name='值', manufacturer=值, isLocked=值, batteryLevel=值}
+     *
+     * @return 格式化的字符串
+     */
     @Override
     public String toString() {
         return "SmartLock{" +
@@ -91,11 +97,22 @@ public class SmartLock extends Device {
                 '}';
     }
 
+    /**
+     * 将智能门锁设备信息格式化为JSON字符串
+     *
+     * @return JSON格式的设备信息字符串
+     */
     @Override
     public String formatToJsonString() {
         return JSON.toJSONString(this);
     }
 
+    /**
+     * 从JSON字符串解析智能门锁设备信息
+     *
+     * @param jsonString JSON格式的设备信息字符串
+     * @return 解析后的智能门锁设备对象
+     */
     @Override
     public SmartLock ParseFromJsonString(String jsonString) {
         return JSON.parseObject(jsonString, SmartLock.class);

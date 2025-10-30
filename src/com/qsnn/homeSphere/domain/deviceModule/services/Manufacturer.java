@@ -156,6 +156,12 @@ public class Manufacturer {
         devices.remove(device);
     }
 
+    /**
+     * 返回对象的字符串表示形式
+     * 格式：Manufacturer{manufacturerId=值, name='值', protocols='值'}
+     *
+     * @return 格式化的字符串
+     */
     @Override
     public String toString() {
         return "Manufacturer{" +

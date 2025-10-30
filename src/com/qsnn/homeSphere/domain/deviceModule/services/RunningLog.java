@@ -109,6 +109,12 @@ public class RunningLog {
         ERROR
     }
 
+    /**
+     * 返回对象的字符串表示形式
+     * 格式：RunningLog{dateTime=值, event='值', type=值, note='值'}
+     *
+     * @return 格式化的字符串
+     */
     @Override
     public String toString() {
         return "RunningLog{" +

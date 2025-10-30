@@ -104,6 +104,25 @@ public class LightBulb extends Device implements EnergyReporting {
         return power;
     }
 
+    /**
+     * 生成能源消耗报告
+     *
+     * @param startTime 报告起始时间
+     * @param endTime 报告结束时间
+     * @return 能源消耗量，单位：千瓦时
+     */
+    @Override
+    public double getReport(Date startTime, Date endTime) {
+        // 实现能源报告逻辑
+        return 0.0;
+    }
+
+    /**
+     * 返回对象的字符串表示形式
+     * 格式：LightBulb{deviceId=值, name='值', manufacturer=值, brightness=值, colorTemp=值}
+     *
+     * @return 格式化的字符串
+     */
     @Override
     public String toString() {
         return "LightBulb{" +
@@ -115,11 +134,22 @@ public class LightBulb extends Device implements EnergyReporting {
                 '}';
     }
 
+    /**
+     * 将智能灯泡设备信息格式化为JSON字符串
+     *
+     * @return JSON格式的设备信息字符串
+     */
     @Override
     public String formatToJsonString() {
         return JSON.toJSONString(this);
     }
 
+    /**
+     * 从JSON字符串解析智能灯泡设备信息
+     *
+     * @param jsonString JSON格式的设备信息字符串
+     * @return 解析后的智能灯泡设备对象
+     */
     @Override
     public LightBulb ParseFromJsonString(String jsonString) {
         return JSON.parseObject(jsonString, LightBulb.class);

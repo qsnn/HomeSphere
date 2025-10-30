@@ -52,6 +52,7 @@ public abstract class Device {
     /** 设备电源状态 */
     private boolean powerStatus;
 
+    /** 设备类型 */
     private DeviceType deviceType;
 
     /** 设备运行日志列表 */
@@ -111,6 +112,11 @@ public abstract class Device {
         return manufacturer;
     }
 
+    /**
+     * 设置设备制造商
+     *
+     * @param manufacturer 新的设备制造商
+     */
     public void setManufacturer(Manufacturer manufacturer) {
         this.manufacturer = manufacturer;
         manufacturer.addDevice(this);
@@ -152,6 +158,15 @@ public abstract class Device {
     }
 
     /**
+     * 设置设备电源状态
+     *
+     * @param powerStatus 电源状态
+     */
+    public void setPowerStatus(boolean powerStatus) {
+        this.powerStatus = powerStatus;
+    }
+
+    /**
      * 获取设备运行日志列表
      *
      * @return 运行日志列表
@@ -160,10 +175,20 @@ public abstract class Device {
         return new ArrayList<>(runningLogs);
     }
 
+    /**
+     * 获取设备类型
+     *
+     * @return 设备类型
+     */
     public DeviceType getDeviceType() {
         return deviceType;
     }
 
+    /**
+     * 设置设备类型
+     *
+     * @param deviceType 设备类型
+     */
     protected void setDeviceType(DeviceType deviceType) {
         this.deviceType = deviceType;
     }
@@ -192,7 +217,6 @@ public abstract class Device {
             // 记录关机日志并计算本次运行的能耗
             Date powerOffTime = new Date();
             addRunningLog(new RunningLog(powerOffTime, "powerOff", RunningLog.Type.INFO, ""));
-
         }
     }
 
@@ -207,7 +231,19 @@ public abstract class Device {
         }
     }
 
+    /**
+     * 将设备信息格式化为JSON字符串
+     *
+     * @return JSON格式的设备信息字符串
+     */
     public abstract String formatToJsonString();
+
+    /**
+     * 从JSON字符串解析设备信息
+     *
+     * @param jsonString JSON格式的设备信息字符串
+     * @return 解析后的设备对象
+     */
     public abstract Device ParseFromJsonString(String jsonString);
 
     // ==================== Object类方法重写 ====================

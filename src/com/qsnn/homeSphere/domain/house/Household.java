@@ -43,11 +43,13 @@ public class Household {
     /** 家庭成员集合，键为用户ID，值为用户对象 */
     private final Map<Integer, User> users;
 
+    /** 下一个可用的用户ID */
     private int nextUserId = 1;
 
     /** 房间集合，键为房间ID，值为房间对象 */
     private final Map<Integer, Room> rooms;
 
+    /** 下一个可用的设备ID */
     private int nextDeviceId = 1;
 
     /** 自动化场景集合，键为场景ID，值为场景对象 */
@@ -94,7 +96,6 @@ public class Household {
         this.address = address;
     }
 
-
     /**
      * 获取所有家庭成员列表
      *
@@ -132,14 +133,17 @@ public class Household {
         return autoScenes.get(sceneId);
     }
 
+    /**
+     * 获取下一个可用的用户ID
+     *
+     * @return 下一个用户ID
+     */
     public int getNextUserId() {
         return nextUserId++;
     }
 
     /**
      * 添加用户到家庭
-     *
-     * <p>如果家庭中还没有用户，第一个添加的用户将被设置为管理员</p>
      *
      * @param user 要添加的用户
      */
@@ -174,14 +178,30 @@ public class Household {
         rooms.remove(roomId);
     }
 
+    /**
+     * 获取下一个可用的设备ID
+     *
+     * @return 下一个设备ID
+     */
     public int getNextDeviceId() {
         return nextDeviceId++;
     }
 
+    /**
+     * 添加设备到指定房间
+     *
+     * @param device 要添加的设备
+     * @param roomId 房间ID
+     */
     public void addDevice(Device device, int roomId) {
         rooms.get(roomId).addDevice(device);
     }
 
+    /**
+     * 从家庭中移除设备
+     *
+     * @param deviceId 要移除的设备ID
+     */
     public void removeDevice(int deviceId) {
         for (Room room : rooms.values()) {
             if (room.getDeviceById(deviceId) != null) {
@@ -191,6 +211,12 @@ public class Household {
         }
     }
 
+    /**
+     * 根据设备ID获取设备
+     *
+     * @param deviceId 设备ID
+     * @return 设备对象，如果不存在则返回null
+     */
     public Device getDeviceById(int deviceId) {
         for (Room room : rooms.values()) {
             Device device = room.getDeviceById(deviceId);
@@ -233,16 +259,11 @@ public class Household {
         autoScenes.remove(sceneId);
     }
 
-
-
-
-
-
     /**
      * 检查是否存在指定用户名的用户
      *
      * @param loginName 用户名
-     * @return 如果存在返回true，否则返回false
+     * @return 如果存在返回对应的用户对象，否则返回null
      */
     public User containsUser(String loginName) {
         for (User user : users.values()) {

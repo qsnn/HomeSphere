@@ -187,7 +187,7 @@ public class AutomationScene {
 
     /**
      * 返回对象的字符串表示形式
-     * 格式：类名{属性1=属性1值, 属性2='属性2值',...}
+     * 格式：AutomationScene{sceneId=值, name='值', description='值'}
      *
      * @return 格式化的字符串
      */

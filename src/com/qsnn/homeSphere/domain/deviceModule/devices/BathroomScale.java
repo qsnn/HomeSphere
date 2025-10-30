@@ -66,6 +66,12 @@ public class BathroomScale extends Device {
         return batteryLevel;
     }
 
+    /**
+     * 返回对象的字符串表示形式
+     * 格式：BathroomScale{deviceId=值, name='值', manufacturer=值, bodyMass=值, batteryLevel=值}
+     *
+     * @return 格式化的字符串
+     */
     @Override
     public String toString() {
         return "BathroomScale{" +
@@ -77,11 +83,22 @@ public class BathroomScale extends Device {
                 '}';
     }
 
+    /**
+     * 将体重秤设备信息格式化为JSON字符串
+     *
+     * @return JSON格式的设备信息字符串
+     */
     @Override
     public String formatToJsonString() {
         return JSON.toJSONString(this);
     }
 
+    /**
+     * 从JSON字符串解析体重秤设备信息
+     *
+     * @param jsonString JSON格式的设备信息字符串
+     * @return 解析后的体重秤设备对象
+     */
     @Override
     public BathroomScale ParseFromJsonString(String jsonString) {
         return JSON.parseObject(jsonString, BathroomScale.class);

@@ -14,17 +14,35 @@ import java.util.Scanner;
 
 import static com.qsnn.homeSphere.ui.PageType.*;
 
+/**
+ * 命令行用户界面类，提供智能家居系统的文本交互界面
+ * 负责处理用户输入、显示系统信息和管理各种功能页面
+ *
+ * @author qsnn
+ * @version 2.0
+ * @since 2025
+ */
 public class CommandUI {
+    /** 智能家居系统核心实例 */
     private HomeSphereSystem system;
 
+    /** 输入扫描器，用于读取用户输入 */
     private final Scanner sc = new Scanner(System.in);
+    /** 制造商列表，存储系统支持的设备制造商 */
     private final List<Manufacturer> manufacturers = new ArrayList<>();
 
+    /**
+     * 构造函数，初始化系统并启动UI控制器
+     */
     public CommandUI() {
         setup();
         UIController();
     }
 
+    /**
+     * 系统初始化方法，设置默认数据
+     * 包括创建用户、制造商、房间、设备和自动化场景
+     */
     private void setup(){
         system = new HomeSphereSystem(new Household(1, "陕西省-西安市-长安区-东大街道-东祥路1号-西北工业大学"));
 
@@ -94,6 +112,12 @@ public class CommandUI {
         }
     }
 
+    /**
+     * 管理用户选择的核心方法，显示当前页面的选项并处理用户输入
+     *
+     * @param currentPage 当前页面类型
+     * @return 用户选择后应该跳转到的页面类型
+     */
     private PageType manageChoices(PageType currentPage) {
         //打印信息
         System.out.println(currentPage.getTitle());
@@ -115,6 +139,10 @@ public class CommandUI {
         return map.get(choice);
     }
 
+    /**
+     * UI控制器主循环，根据当前页面类型调用相应的处理方法
+     * 使用状态机模式管理页面导航
+     */
     private void UIController() {
         PageType page = START_PAGE;
         // 控制UI显示和交互的逻辑
@@ -183,10 +211,20 @@ public class CommandUI {
     }
 
     //登录界面
+    /**
+     * 处理起始页面显示和用户选择
+     *
+     * @return 用户选择后应该跳转到的页面类型
+     */
     private PageType startPage() {
         return manageChoices(START_PAGE);
     }
 
+    /**
+     * 处理用户登录流程
+     *
+     * @return 登录成功返回菜单页面，失败返回起始页面
+     */
     private PageType login() {
         System.out.print("请输入用户名：");
         String loginName = sc.nextLine();
@@ -202,18 +240,33 @@ public class CommandUI {
         }
     }
 
-    
+
     //菜单
+    /**
+     * 处理主菜单页面显示和用户选择
+     *
+     * @return 用户选择后应该跳转到的页面类型
+     */
     private PageType menuPage() {
         return manageChoices(MENU_PAGE);
     }
 
-    
+
     //用户相关页面
+    /**
+     * 处理成员管理页面显示和用户选择
+     *
+     * @return 用户选择后应该跳转到的页面类型
+     */
     private PageType memberPage() {
         return manageChoices(MEMBER_PAGE);
     }
 
+    /**
+     * 处理添加新成员流程
+     *
+     * @return 完成后返回成员管理页面
+     */
     private PageType addMember() {
         System.out.print("请输入用户名：");
         String loginName = sc.nextLine();
@@ -231,29 +284,52 @@ public class CommandUI {
         return MEMBER_PAGE;
     }
 
+    /**
+     * 处理删除成员流程
+     *
+     * @return 完成后返回成员管理页面
+     */
     private PageType removeMember() {
         System.out.print("请输入要删除的用户ID：");
-        int userId = sc.nextInt();
-        sc.nextLine();
-        try {
+        String userIdS = sc.nextLine();
+
+        try{
+            int userId = Integer.parseInt(userIdS);
             system.removeUser(userId);
             System.out.println("用户删除成功！");
-        } catch (InvalidUserException e) {
+        } catch (NumberFormatException e) {
+            System.out.println("ID格式错误！");
+        }  catch (InvalidUserException e) {
             System.out.println(e.getMessage());
         }
         return MEMBER_PAGE;
     }
 
+    /**
+     * 显示所有成员列表
+     *
+     * @return 完成后返回成员管理页面
+     */
     private PageType listMembers() {
         System.out.println(system.listUsers());
         return MEMBER_PAGE;
     }
 
     //设备相关页面
+    /**
+     * 处理设备管理页面显示和用户选择
+     *
+     * @return 用户选择后应该跳转到的页面类型
+     */
     private PageType devicePage() {
         return manageChoices(DEVICE_PAGE);
     }
 
+    /**
+     * 处理添加新设备流程
+     *
+     * @return 完成后返回设备管理页面
+     */
     private PageType addDevice() {
         System.out.print("请输入设备名称：");
         String deviceName = sc.nextLine();
@@ -277,6 +353,11 @@ public class CommandUI {
         return DEVICE_PAGE;
     }
 
+    /**
+     * 处理删除设备流程
+     *
+     * @return 完成后返回设备管理页面
+     */
     private PageType removeDevice() {
         System.out.print("请输入要删除的设备ID：");
         String deviceIdS = sc.nextLine();
@@ -293,6 +374,11 @@ public class CommandUI {
         return DEVICE_PAGE;
     }
 
+    /**
+     * 显示所有设备列表
+     *
+     * @return 完成后返回设备管理页面
+     */
     private PageType listDevices() {
         System.out.println(system.listDevices());
         return DEVICE_PAGE;
@@ -300,10 +386,20 @@ public class CommandUI {
 
 
     //场景相关页面
+    /**
+     * 处理场景管理页面显示和用户选择
+     *
+     * @return 用户选择后应该跳转到的页面类型
+     */
     private PageType scenePage() {
         return manageChoices(SCENE_PAGE);
     }
 
+    /**
+     * 处理添加新场景流程，包括场景操作的定义
+     *
+     * @return 完成后返回场景管理页面
+     */
     private PageType addScene() {
         System.out.print("输入场景名称：");
         String sceneName = sc.nextLine();
@@ -328,17 +424,13 @@ public class CommandUI {
                 try {
                     int deviceId = Integer.parseInt(deviceIdS);
 
-                    // 获取设备类型以提供相应的操作提示
                     DeviceType deviceType = system.getDeviceById(deviceId).getDeviceType();
 
-                    // 根据设备类型提供不同的操作提示
                     System.out.print("输入操作命令（例如：" + deviceType.getSupportedOperations() + "）：");
                     String operation = sc.nextLine().trim();
 
-                    // 使用DeviceType枚举的方法获取参数名
                     String parameterName = deviceType.getParameterName(operation);
 
-                    // 处理需要额外参数的命令
                     String parameter = "";
                     if (parameterName != null) {
                         System.out.print("输入" + parameterName + "：");
@@ -365,6 +457,11 @@ public class CommandUI {
         return SCENE_PAGE;
     }
 
+    /**
+     * 处理触发场景执行流程
+     *
+     * @return 完成后返回场景管理页面
+     */
     private PageType runScene() {
         System.out.print("输入要触发的场景ID：");
         String sceneIdS = sc.nextLine();
@@ -381,6 +478,12 @@ public class CommandUI {
         }
         return SCENE_PAGE;
     }
+
+    /**
+     * 显示所有场景列表
+     *
+     * @return 完成后返回场景管理页面
+     */
     private PageType listScenes() {
         System.out.println(system.listScenes());
         return SCENE_PAGE;
@@ -388,15 +491,30 @@ public class CommandUI {
 
 
     //日志相关页面
+    /**
+     * 处理日志管理页面显示和用户选择
+     *
+     * @return 用户选择后应该跳转到的页面类型
+     */
     private PageType logPage() {
         return manageChoices(LOG_PAGE);
     }
 
+    /**
+     * 显示设备运行日志
+     *
+     * @return 完成后返回日志管理页面
+     */
     private PageType deviceLogs() {
         System.out.println(system.listRunningLogs());
         return LOG_PAGE;
     }
 
+    /**
+     * 生成并显示能源消耗报告
+     *
+     * @return 完成后返回日志管理页面
+     */
     private PageType energyReport() {
         System.out.print("请输入起始时间（格式：yyyy-MM-dd）：");
         String startDateStr = sc.nextLine();

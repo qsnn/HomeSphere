@@ -18,13 +18,14 @@ import java.util.List;
 /**
  * 智能家居系统主控类
  *
- * <p>该类是整个智能家居系统的核心控制器，负责用户管理、设备展示和场景控制等功能。</p>
+ * <p>该类是整个智能家居系统的核心控制器，负责用户管理、设备管理、场景控制和能源报告等功能。</p>
  *
  * <p><b>主要功能：</b></p>
  * <ul>
  *   <li>用户登录、注销和注册管理</li>
- *   <li>系统各模块信息的展示和查询</li>
- *   <li>自动化场景的手动触发</li>
+ *   <li>房间和设备的管理操作</li>
+ *   <li>自动化场景的创建和执行</li>
+ *   <li>设备运行日志查看</li>
  *   <li>能源消耗报告生成</li>
  * </ul>
  *
@@ -36,7 +37,7 @@ import java.util.List;
  * </ul>
  *
  * @author qsnn
- * @version 1.0
+ * @version 2.0
  * @since 2025
  */
 public class HomeSphereSystem {
@@ -67,6 +68,11 @@ public class HomeSphereSystem {
         return currentUser;
     }
 
+    /**
+     * 获取家庭住户信息
+     *
+     * @return 家庭住户对象
+     */
     public Household getHousehold() {
         return household;
     }
@@ -77,6 +83,7 @@ public class HomeSphereSystem {
      *
      * @param loginName 用户名
      * @param loginPassword 用户密码
+     * @throws InvalidUserException 当用户名或密码错误时抛出异常
      */
     public void login(String loginName, String loginPassword) throws InvalidUserException {
         logoff();
@@ -100,6 +107,8 @@ public class HomeSphereSystem {
      * @param loginName     用户名
      * @param loginPassword 用户密码
      * @param email         用户邮箱
+     * @param isAdmin       是否为管理员用户
+     * @throws InvalidUserException 当注册信息无效或用户名已存在时抛出异常
      */
     public void register(String loginName, String loginPassword, String email, boolean isAdmin) {
         // 添加参数验证
@@ -120,6 +129,12 @@ public class HomeSphereSystem {
         household.addUser(user);
     }
 
+    /**
+     * 删除用户
+     *
+     * @param userId 要删除的用户ID
+     * @throws InvalidUserException 当用户不存在、是管理员或是当前登录用户时抛出异常
+     */
     public void removeUser(int userId) {
         if (!household.getUsers().containsKey(userId)) {
             throw new InvalidUserException("删除失败：用户不存在！");
@@ -133,6 +148,11 @@ public class HomeSphereSystem {
         household.removeUser(userId);
     }
 
+    /**
+     * 列出所有用户信息
+     *
+     * @return 格式化后的用户列表字符串
+     */
     public String listUsers() {
         StringBuilder sb = new StringBuilder();
         sb.append("===家庭成员列表===\n");
@@ -146,6 +166,13 @@ public class HomeSphereSystem {
         return sb.toString();
     }
 
+    /**
+     * 创建新房间
+     *
+     * @param roomName 房间名称
+     * @param area 房间面积
+     * @throws InvalidRoomException 当房间名称为空时抛出异常
+     */
     public void createRoom(String roomName, double area) {
         if (roomName == null || roomName.trim().isEmpty()) {
             throw new InvalidRoomException("添加失败：房间名称不能为空！");
@@ -155,6 +182,13 @@ public class HomeSphereSystem {
         household.addRoom(room);
     }
 
+    /**
+     * 根据ID获取房间
+     *
+     * @param roomId 房间ID
+     * @return 房间对象
+     * @throws InvalidRoomException 当房间不存在时抛出异常
+     */
     public Room getRoomById(int roomId) {
         if (!household.getRooms().containsKey(roomId)) {
             throw new InvalidRoomException("房间不存在！");
@@ -162,6 +196,16 @@ public class HomeSphereSystem {
         return household.getRooms().get(roomId);
     }
 
+    /**
+     * 创建设备并添加到指定房间
+     *
+     * @param deviceName 设备名称
+     * @param deviceType 设备类型
+     * @param manufacturer 设备制造商
+     * @param roomId 房间ID
+     * @throws InvalidRoomException 当房间不存在时抛出异常
+     * @throws InvalidDeviceException 当设备名称为空时抛出异常
+     */
     public void createDevice(String deviceName, DeviceType deviceType, Manufacturer manufacturer, int roomId) {
         if (!household.containsRoom(roomId)) {
             throw new InvalidRoomException("添加失败：房间不存在！");
@@ -179,6 +223,12 @@ public class HomeSphereSystem {
         household.addDevice(device, roomId);
     }
 
+    /**
+     * 删除设备
+     *
+     * @param deviceId 设备ID
+     * @throws InvalidDeviceException 当设备不存在时抛出异常
+     */
     public void removeDevice(int deviceId) {
         if(getDeviceById(deviceId) == null){
             throw new InvalidDeviceException("删除失败：设备不存在！");
@@ -186,6 +236,13 @@ public class HomeSphereSystem {
         household.removeDevice(deviceId);
     }
 
+    /**
+     * 根据ID获取设备
+     *
+     * @param deviceId 设备ID
+     * @return 设备对象
+     * @throws InvalidDeviceException 当设备不存在时抛出异常
+     */
     public Device getDeviceById(int deviceId) {
         if (!household.getAllDevices().containsKey(deviceId)){
             throw new InvalidDeviceException("设备不存在！");
@@ -193,6 +250,11 @@ public class HomeSphereSystem {
         return household.getDeviceById(deviceId);
     }
 
+    /**
+     * 列出所有设备信息
+     *
+     * @return 格式化后的设备列表字符串
+     */
     public String listDevices() {
         StringBuilder sb = new StringBuilder();
         sb.append("===设备列表===\n");
@@ -204,6 +266,14 @@ public class HomeSphereSystem {
         return sb.toString();
     }
 
+    /**
+     * 创建自动化场景
+     *
+     * @param sceneName 场景名称
+     * @param description 场景描述
+     * @return 新创建的场景ID
+     * @throws InvalidAutomationSceneException 当场景名称为空时抛出异常
+     */
     public int createScene(String sceneName, String description) {
         if (sceneName == null || sceneName.trim().isEmpty()) {
             throw new InvalidAutomationSceneException("创建失败：场景名称不能为空！");
@@ -213,18 +283,47 @@ public class HomeSphereSystem {
         return sceneId;
     }
 
+    /**
+     * 为场景添加设备操作
+     *
+     * @param sceneId 场景ID
+     * @param deviceId 设备ID
+     * @param operation 操作命令
+     * @param parameter 操作参数
+     * @throws InvalidParametersException 当操作参数无效时抛出异常
+     * @throws InvalidDeviceException 当设备不存在时抛出异常
+     * @throws InvalidAutomationSceneException 当场景不存在时抛出异常
+     */
     public void addSceneOperation(int sceneId, int deviceId, String operation, String parameter) {
-        // 验证参数（根据操作类型）
-        validateOperationParameters(operation, parameter);
+        // 验证设备是否存在
+        Device device = getDeviceById(deviceId);
 
+        // 验证场景是否存在
         AutomationScene scene = getSceneById(sceneId);
-        scene.addAction(new DeviceAction(operation, parameter, getDeviceById(deviceId)));
+
+        // 验证操作是否被设备类型支持
+        DeviceType deviceType = device.getDeviceType();
+        try {
+            deviceType.getParameterName(operation); // 这会验证操作是否被支持
+        } catch (InvalidParametersException e) {
+            throw new InvalidParametersException("设备类型 " + deviceType + " 不支持操作: " + operation);
+        }
+
+        // 验证参数（根据操作类型）
+        validateOperationParameters(operation, parameter, deviceType);
+
+        scene.addAction(new DeviceAction(operation, parameter, device));
     }
 
     /**
-     * 根据操作类型验证参数
+     * 根据操作类型和设备类型验证参数
+     *
+     * @param operation 操作命令
+     * @param parameter 操作参数
+     * @param deviceType 设备类型
+     * @throws InvalidParametersException 当参数格式或范围无效时抛出异常
      */
-    private void validateOperationParameters(String operation, String parameter) {
+    private void validateOperationParameters(String operation, String parameter, DeviceType deviceType) {
         String op = operation.toLowerCase().trim();
 
         switch (op) {
@@ -262,8 +361,9 @@ public class HomeSphereSystem {
                 }
                 try {
                     int colorTemp = Integer.parseInt(parameter.trim());
+                    // 根据设备类型使用不同的色温范围
                     if (colorTemp < 2300 || colorTemp > 7000) {
-                        throw new InvalidParametersException("色温设置应在2300K至7000K之间的整数");
+                        throw new InvalidParametersException("色温设置应在" + 2300 + "K至" + 7000 + "K之间的整数");
                     }
                 } catch (NumberFormatException e) {
                     throw new InvalidParametersException("无效的色温参数格式");
@@ -281,11 +381,17 @@ public class HomeSphereSystem {
                 break;
 
             default:
-                // 对于未知操作，不在这里验证参数，留给DeviceAction处理
-                break;
+                throw new InvalidParametersException("不支持的操作命令: " + operation);
         }
     }
 
+    /**
+     * 根据ID获取场景
+     *
+     * @param sceneId 场景ID
+     * @return 自动化场景对象
+     * @throws InvalidAutomationSceneException 当场景不存在时抛出异常
+     */
     public AutomationScene getSceneById(int sceneId) {
         if (!household.containsAutoScene(sceneId)){
             throw new InvalidAutomationSceneException("场景不存在！");
@@ -293,6 +399,11 @@ public class HomeSphereSystem {
         return household.getAutoSceneById(sceneId);
     }
 
+    /**
+     * 列出所有自动化场景
+     *
+     * @return 格式化后的场景列表字符串
+     */
     public String listScenes() {
         StringBuilder sb = new StringBuilder();
         sb.append("===智能场景列表===\n");
@@ -305,6 +416,11 @@ public class HomeSphereSystem {
         return sb.toString();
     }
 
+    /**
+     * 列出所有设备运行日志
+     *
+     * @return 格式化后的运行日志字符串
+     */
     public String listRunningLogs() {
         StringBuilder res = new StringBuilder();
         res.append("== 设备运行日志 ==\n");
@@ -334,6 +450,13 @@ public class HomeSphereSystem {
         return res.toString();
     }
 
+    /**
+     * 生成能源消耗报告
+     *
+     * @param startTime 起始时间
+     * @param endTime 结束时间
+     * @return 格式化后的能源报告字符串
+     */
     public String generateEnergyReport(Date startTime, Date endTime) {
         StringBuilder res = new StringBuilder();
         res.append("== 能耗报告 ==\n");
@@ -360,6 +483,9 @@ public class HomeSphereSystem {
      * 根据场景ID手动触发自动化场景
      *
      * @param sceneId 场景ID
+     * @throws InvalidAutomationSceneException 当场景不存在时抛出异常
+     * @throws InvalidDeviceException 当场景中的设备不存在时抛出异常
+     * @throws InvalidParametersException 当场景操作参数无效时抛出异常
      */
     public void runScene(int sceneId) {
         AutomationScene scene = getSceneById(sceneId);
