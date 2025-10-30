@@ -198,8 +198,8 @@ public class HomeSphereSystem {
         sb.append("===设备列表===\n");
         household.getRooms().values().forEach(room -> {
             sb.append("房间：").append(room.getName()).append("\n");
-            room.getDevices().values().forEach(device -> sb.append(device.toString()).append("\n"));
-            sb.append("-------------------\n");
+            room.getDevices().values().forEach(device -> sb.append(" ").append(device.toString()).append("\n"));
+            sb.append(" -------------------\n");
         });
         return sb.toString();
     }
@@ -316,22 +316,20 @@ public class HomeSphereSystem {
                 res.append("（无设备）\n");
             } else {
                 room.getDevices().values().forEach(device -> {
-                    res.append("ID: ").append(device.getDeviceId()).append("\n");
-                    res.append("名称：").append(device.getName()).append("\n");
-                    res.append("类型：").append(device.getClass().getSimpleName()).append("\n");
-                    res.append("运行日志：\n");
+                    res.append("  ID: ").append(device.getDeviceId()).append("\n");
+                    res.append("  名称：").append(device.getName()).append("\n");
+                    res.append("  类型：").append(device.getClass().getSimpleName()).append("\n");
+                    res.append("  运行日志：\n");
 
                     // 获取设备运行日志
                     List<RunningLog> logs = device.getRunningLogs();
-                    if (logs == null || logs.isEmpty()) {
-                        res.append("---\n");
-                    } else {
+                    if (logs != null && !logs.isEmpty()) {
                         logs.forEach(log -> res.append(log.toString()).append("\n"));
                     }
                     res.append("\n");
                 });
             }
-            res.append("-------------------\n");
+            res.append("  -------------------\n");
         });
         return res.toString();
     }
@@ -347,7 +345,7 @@ public class HomeSphereSystem {
                 if (device instanceof EnergyReporting) {
                     double deviceEnergy = ((EnergyReporting) device).getReport(startTime, endTime);
                     totalEnergy += deviceEnergy;
-                    res.append("设备: ").append(device.getName()).append(" - ")
+                    res.append("  设备: ").append(device.getName()).append(" - ")
                             .append(String.format("%.1f", deviceEnergy)).append(" kWh\n");
                 }
             }

@@ -301,6 +301,6 @@ public class DeviceAction {
 
     @Override
     public String toString() {
-        return "Executing command: " + command + "with parameters: " + parameters + "\n";
+        return "Executing command: " + command + " with parameters: " + parameters;
     }
 }

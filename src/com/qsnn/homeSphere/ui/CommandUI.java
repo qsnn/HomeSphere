@@ -104,7 +104,7 @@ public class CommandUI {
         String choiceS = sc.nextLine();
         int choice;
         try{
-            choice = Integer.parseInt(choiceS);
+            choice = Integer.parseInt(choiceS.trim());
             if(!map.containsKey(choice)) {
                 throw new NumberFormatException();
             }
@@ -332,7 +332,7 @@ public class CommandUI {
                     DeviceType deviceType = system.getDeviceById(deviceId).getDeviceType();
 
                     // 根据设备类型提供不同的操作提示
-                    System.out.print("输入操作命令：");
+                    System.out.print("输入操作命令（例如：" + deviceType.getSupportedOperations() + "）：");
                     String operation = sc.nextLine().trim();
 
                     // 使用DeviceType枚举的方法获取参数名
@@ -373,6 +373,7 @@ public class CommandUI {
             int sceneId = Integer.parseInt(sceneIdS);
             system.runScene(sceneId);
             System.out.println("场景已触发！");
+            System.out.println("Scene with ID " + sceneId + " triggered.");
         } catch (NumberFormatException e) {
             System.out.println("场景ID格式错误！");
         } catch (InvalidAutomationSceneException | InvalidDeviceException | InvalidParametersException e) {
@@ -400,7 +401,7 @@ public class CommandUI {
         System.out.print("请输入起始时间（格式：yyyy-MM-dd）：");
         String startDateStr = sc.nextLine();
 
-        System.out.print("请输入起始时间（格式：yyyy-MM-dd）：");
+        System.out.print("请输入截止时间（格式：yyyy-MM-dd）：");
         String endDateStr = sc.nextLine();
 
 

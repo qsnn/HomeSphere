@@ -1,6 +1,9 @@
 package com.qsnn.homeSphere.domain.deviceModule.services;
 
+import com.qsnn.homeSphere.utils.DateUtil;
+
 import java.util.Date;
+
 
 /**
  * 设备运行日志类
@@ -109,7 +112,7 @@ public class RunningLog {
     @Override
     public String toString() {
         return "RunningLog{" +
-                "dateTime=" + date.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() +
+                "dateTime=" + DateUtil.formatDateToString(date) +
                 ", event='" + event + '\'' +
                 ", type=" + type +
                 ", note='" + note + '\'' +

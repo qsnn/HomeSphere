@@ -13,6 +13,11 @@ public enum DeviceType {
                 default -> throw new InvalidParametersException("AIR_CONDITIONER不支持操作: " + operation);
             };
         }
+
+        @Override
+        public String getSupportedOperations() {
+            return "powerOn, powerOff, setTemperature";
+        }
     },
     LIGHT_BULB(2){
         @Override
@@ -24,6 +29,11 @@ public enum DeviceType {
                 case "setcolortemp" -> "色温值(2300-2700K)";
                 default -> throw new InvalidParametersException("LIGHT_BULB不支持操作: " + operation); // 修正错误消息
             };
+        }
+
+        @Override
+        public String getSupportedOperations() {
+            return "powerOn, powerOff, setBrightness, setColorTemp";
         }
     },
     SMART_LOCK(3){
@@ -37,6 +47,11 @@ public enum DeviceType {
                 default -> throw new InvalidParametersException("SMART_LOCK不支持操作: " + operation); // 修正错误消息
             };
         }
+
+        @Override
+        public String getSupportedOperations() {
+            return "powerOn, powerOff, lock, unlock";
+        }
     },
     BATHROOM_SCALE(4){
         @Override
@@ -46,6 +61,11 @@ public enum DeviceType {
                 case "poweroff" -> null;
                 default -> throw new InvalidParametersException("BATHROOM_SCALE不支持操作: " + operation); // 修正错误消息
             };
+        }
+
+        @Override
+        public String getSupportedOperations() {
+            return "powerOn, powerOff";
         }
     };
 
@@ -69,4 +89,6 @@ public enum DeviceType {
     }
 
     public abstract String getParameterName(String operation);
+
+    public abstract String getSupportedOperations();
 }
