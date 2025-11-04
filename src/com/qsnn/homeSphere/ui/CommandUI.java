@@ -44,7 +44,7 @@ public class CommandUI {
      * 包括创建用户、制造商、房间、设备和自动化场景
      */
     private void setup(){
-        system = new HomeSphereSystem(new Household(1, "陕西省-西安市-长安区-东大街道-东祥路1号-西北工业大学"));
+        system = HomeSphereSystem.getInstance(new Household(1, "陕西省-西安市-长安区-东大街道-东祥路1号-西北工业大学"));
 
         system.register("admin", "admin", "admin@nwpu.edu.cn", true);
 
@@ -299,7 +299,7 @@ public class CommandUI {
             System.out.println("用户删除成功！");
         } catch (NumberFormatException e) {
             System.out.println("ID格式错误！");
-        }  catch (InvalidUserException e) {
+        } catch (InvalidUserException e) {
             System.out.println(e.getMessage());
         }
         return MEMBER_PAGE;

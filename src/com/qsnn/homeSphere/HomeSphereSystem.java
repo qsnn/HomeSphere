@@ -41,21 +41,30 @@ import java.util.List;
  * @since 2025
  */
 public class HomeSphereSystem {
+    public static final String SYSTEM_NAME = "HomeSphere智能家居系统 v3.0";
+
+    private static HomeSphereSystem instance;
 
     /** 家庭住户信息 */
-    private final Household household;
+    private static Household household;
 
     /** 当前登录用户 */
     private User currentUser;
 
 
-    /**
-     * 系统构造函数
-     *
-     * @param household 家庭住户信息
-     */
-    public HomeSphereSystem(Household household) {
-        this.household = household;
+    public static HomeSphereSystem getInstance(Household household) {
+        if (instance == null) {
+            synchronized (SYSTEM_NAME) {
+                if(instance == null)
+                    instance = new HomeSphereSystem(household);
+            }
+        }
+
+        return instance;
+    }
+
+    private HomeSphereSystem(Household household) {
+        HomeSphereSystem.household = household;
     }
 
 
@@ -213,13 +222,12 @@ public class HomeSphereSystem {
         if (deviceName == null || deviceName.trim().isEmpty()) {
             throw new InvalidDeviceException("添加失败：设备名称不能为空！");
         }
+
         int deviceId = household.getNextDeviceId();
-        Device device = switch (deviceType) {
-            case AIR_CONDITIONER -> new AirConditioner(deviceId, deviceName, manufacturer);
-            case LIGHT_BULB -> new LightBulb(deviceId, deviceName, manufacturer);
-            case SMART_LOCK -> new SmartLock(deviceId, deviceName, manufacturer);
-            case BATHROOM_SCALE -> new BathroomScale(deviceId, deviceName, manufacturer);
-        };
+
+        // 使用制造商的工厂方法创建设备
+        Device device = manufacturer.createDevice(deviceId, deviceName, deviceType);
+
         household.addDevice(device, roomId);
     }
 
