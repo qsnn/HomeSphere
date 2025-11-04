@@ -6,8 +6,6 @@ import com.qsnn.homeSphere.domain.house.Household;
 import com.qsnn.homeSphere.domain.house.Room;
 import com.qsnn.homeSphere.utils.DateUtil;
 
-import java.io.FileOutputStream;
-
 /**
  * HTML格式运行日志格式化器
  *
@@ -88,25 +86,8 @@ public class HtmlRunningLogFormatter implements RunningLogFormatter {
         htmlBuilder.append("</body>");
         htmlBuilder.append("</html>");
 
-        String result = htmlBuilder.toString();
-
-        saveToFile(result, "HomeSphere_RunningLogs.html");
-
-        return result;
+        return htmlBuilder.toString();
     }
 
-    /**
-     * 将HTML内容保存到文件
-     *
-     * @param htmlContent 文本
-     * @param filePath 文件路径
-     */
-    private void saveToFile(String htmlContent, String filePath) {
-        try (FileOutputStream fos = new FileOutputStream(filePath)) {
-            fos.write(htmlContent.getBytes());
-            System.out.println("HTML文件已保存至: " + filePath);
-        } catch (java.io.IOException e) {
-            System.err.println("保存文件失败: " + e.getMessage());
-        }
-    }
+
 }
