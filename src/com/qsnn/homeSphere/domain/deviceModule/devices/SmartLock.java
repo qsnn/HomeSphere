@@ -114,7 +114,7 @@ public class SmartLock extends Device {
      * @return 解析后的智能门锁设备对象
      */
     @Override
-    public SmartLock ParseFromJsonString(String jsonString) {
+    public SmartLock parseFromJsonString(String jsonString) {
         return JSON.parseObject(jsonString, SmartLock.class);
     }
 }

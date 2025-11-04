@@ -151,7 +151,7 @@ public class LightBulb extends Device implements EnergyReporting {
      * @return 解析后的智能灯泡设备对象
      */
     @Override
-    public LightBulb ParseFromJsonString(String jsonString) {
+    public LightBulb parseFromJsonString(String jsonString) {
         return JSON.parseObject(jsonString, LightBulb.class);
     }
 }

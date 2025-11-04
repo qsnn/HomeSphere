@@ -244,7 +244,7 @@ public abstract class Device {
      * @param jsonString JSON格式的设备信息字符串
      * @return 解析后的设备对象
      */
-    public abstract Device ParseFromJsonString(String jsonString);
+    public abstract Device parseFromJsonString(String jsonString);
 
     // ==================== Object类方法重写 ====================
 

@@ -1,5 +1,6 @@
 package com.qsnn.homeSphere.domain.deviceModule.services;
 
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.qsnn.homeSphere.domain.deviceModule.Device;
 import com.qsnn.homeSphere.domain.deviceModule.devices.*;
 
@@ -48,6 +49,7 @@ public class Manufacturer implements DeviceFactory{
     private String protocols;
 
     /** 制造商生产的所有设备列表 */
+    @JSONField(serialize = false)
     private List<Device> devices = new ArrayList<>();
 
     /**

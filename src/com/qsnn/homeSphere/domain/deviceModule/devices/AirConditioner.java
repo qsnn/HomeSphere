@@ -130,7 +130,7 @@ public class AirConditioner extends Device implements EnergyReporting {
      * @return 解析后的空调设备对象
      */
     @Override
-    public AirConditioner ParseFromJsonString(String jsonString) {
+    public AirConditioner parseFromJsonString(String jsonString) {
         return JSON.parseObject(jsonString, AirConditioner.class);
     }
 }

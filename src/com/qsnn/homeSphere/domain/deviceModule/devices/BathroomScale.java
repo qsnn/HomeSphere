@@ -100,7 +100,7 @@ public class BathroomScale extends Device {
      * @return 解析后的体重秤设备对象
      */
     @Override
-    public BathroomScale ParseFromJsonString(String jsonString) {
+    public BathroomScale parseFromJsonString(String jsonString) {
         return JSON.parseObject(jsonString, BathroomScale.class);
     }
 }
