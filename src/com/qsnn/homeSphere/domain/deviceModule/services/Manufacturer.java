@@ -31,7 +31,7 @@ import java.util.List;
  * @version 1.0
  * @since 2025
  */
-public class Manufacturer implements DeviceFactory{
+public class Manufacturer{
 
     /** 制造商唯一标识符 */
     private final int manufacturerId;
@@ -174,34 +174,16 @@ public class Manufacturer implements DeviceFactory{
                 '}';
     }
 
-    @Override
     public Device createDevice(Integer deviceId, String name, DeviceType deviceType) {
-        Device device;
-
-        switch (deviceType) {
-            case AIR_CONDITIONER:
-                device = new AirConditioner(deviceId, name, this);
-                break;
-            case LIGHT_BULB:
-                device = new LightBulb(deviceId, name, this);
-                break;
-            case SMART_LOCK:
-                device = new SmartLock(deviceId, name, this);
-                break;
-            case BATHROOM_SCALE:
-                device = new BathroomScale(deviceId, name, this);
-                break;
-            default:
-                throw new IllegalArgumentException("不支持的设备类型: " + deviceType);
-        }
-
+        Device device = switch (deviceType) {
+            case AIR_CONDITIONER -> new AirConditioner(deviceId, name, this);
+            case LIGHT_BULB -> new LightBulb(deviceId, name, this);
+            case SMART_LOCK -> new SmartLock(deviceId, name, this);
+            case BATHROOM_SCALE -> new BathroomScale(deviceId, name, this);
+        };
         // 自动添加到制造商的设备列表中
         this.addDevice(device);
         return device;
     }
 
-    @Override
-    public Manufacturer getManufacturer() {
-        return this;
-    }
 }

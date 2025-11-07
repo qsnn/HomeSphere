@@ -129,7 +129,7 @@ public class DeviceAction {
         if (command == null || command.trim().isEmpty()) {
             throw new InvalidParametersException("未指定操作命令");
         }
-        System.out.print(device.getName() + " ");
+//        System.out.print(device.getName() + " ");
 
         // 根据设备类型执行相应的操作
         if (device instanceof LightBulb) {
@@ -156,24 +156,24 @@ public class DeviceAction {
         switch (command.toLowerCase()) {
             case "poweron":
                 lightBulb.powerOn();
-                System.out.println("powered on");
+                //System.out.println("powered on");
                 break;
 
             case "poweroff":
                 lightBulb.powerOff();
-                System.out.println("powered off");
+                //System.out.println("powered off");
                 break;
 
             case "setbrightness":
                 int brightness = Integer.parseInt(parameters.trim());
                 lightBulb.setBrightness(brightness);
-                System.out.println("target brightness set to " + brightness + "%");
+                //System.out.println("target brightness set to " + brightness + "%");
                 break;
 
             case "setcolortemp":
                 int colorTemp = Integer.parseInt(parameters.trim());
                 lightBulb.setColorTemp(colorTemp);
-                System.out.println("target colorTemp set to " + colorTemp + "K");
+                //System.out.println("target colorTemp set to " + colorTemp + "K");
                 break;
 
             default:
@@ -190,18 +190,18 @@ public class DeviceAction {
         switch (command.toLowerCase()) {
             case "poweron":
                 airConditioner.powerOn();
-                System.out.println("powered on");
+                //System.out.println("powered on");
                 break;
 
             case "poweroff":
                 airConditioner.powerOff();
-                System.out.println("powered off");
+                //System.out.println("powered off");
                 break;
 
             case "settemperature":
                 double temperature = Double.parseDouble(parameters.trim());
                 airConditioner.setTargetTemp(temperature);
-                System.out.println("target temperature set to " + temperature + "°C");
+                //System.out.println("target temperature set to " + temperature + "°C");
                 break;
 
             default:
@@ -218,22 +218,22 @@ public class DeviceAction {
         switch (command.toLowerCase()) {
             case "poweron":
                 smartLock.setLocked(false);
-                System.out.println("powered on");
+                //System.out.println("powered on");
                 break;
 
             case "poweroff":
                 smartLock.setLocked(true);
-                System.out.println("powered off");
+                //System.out.println("powered off");
                 break;
 
             case "lock":
                 smartLock.setLocked(true);
-                System.out.println("locked");
+                //System.out.println("locked");
                 break;
 
             case "unlock":
                 smartLock.setLocked(false);
-                System.out.println("unlocked");
+                //System.out.println("unlocked");
                 break;
 
             default:
@@ -250,12 +250,12 @@ public class DeviceAction {
         switch (command.toLowerCase()) {
             case "poweron":
                 bathroomScale.powerOn();
-                System.out.println("powered on");
+                //System.out.println("powered on");
                 break;
 
             case "poweroff":
                 bathroomScale.powerOff();
-                System.out.println("powered off");
+                //System.out.println("powered off");
                 break;
 
             default:

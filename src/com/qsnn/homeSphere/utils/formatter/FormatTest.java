@@ -11,7 +11,13 @@ import java.util.List;
 public class FormatTest {
     public static void main(String[] args) {
         List<Manufacturer> manufacturers = new ArrayList<>();
-        HomeSphereSystem system = HomeSphereSystem.getInstance(new Household(1, "陕西省-西安市-长安区-东大街道-东祥路1号-西北工业大学"));
+        HomeSphereSystem system = null;
+        try {
+            HomeSphereSystem.initialize(new Household(1, "陕西省-西安市-长安区-东大街道-东祥路1号-西北工业大学"));
+            system = HomeSphereSystem.getInstance();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
 
         system.register("admin", "admin", "admin@nwpu.edu.cn", true);
 
@@ -40,7 +46,6 @@ public class FormatTest {
             // 开启客厅空调到24度
             system.addSceneOperation(sceneId, 1, "poweron", "");
             system.addSceneOperation(sceneId, 1, "settemperature", "24");
-
             // 开启卧室灯并设置亮度
             system.addSceneOperation(sceneId, 2, "poweron", "");
             system.addSceneOperation(sceneId, 2, "setbrightness", "80");
@@ -77,6 +82,8 @@ public class FormatTest {
         } catch (Exception e) {
             System.out.println("创建场景操作时出错: " + e.getMessage());
         }
+
+        system.runScene(1);
 
         System.out.println(new XmlRunningLogFormatter().format(system.getHousehold()));
 

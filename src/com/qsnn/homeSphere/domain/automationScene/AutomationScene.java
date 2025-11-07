@@ -163,7 +163,7 @@ public class AutomationScene {
      */
     public void manualTrig() {
         for (DeviceAction action : deviceActions) {
-            System.out.println(action);
+//            System.out.println(action);
             action.execute();
         }
     }

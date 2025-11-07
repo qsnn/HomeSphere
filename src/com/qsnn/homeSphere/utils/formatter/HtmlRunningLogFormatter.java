@@ -22,11 +22,9 @@ public class HtmlRunningLogFormatter implements RunningLogFormatter {
         StringBuilder htmlBuilder = new StringBuilder();
 
         // HTML文档开始
-        htmlBuilder.append("<!DOCTYPE html>");
         htmlBuilder.append("<html>");
         htmlBuilder.append("<head>");
-        htmlBuilder.append("<title>HomeSphere 运行日志</title>");
-        htmlBuilder.append("<style>table,th,td{border:1px solid black;border-collapse:collapse;}th,td{padding:8px;text-align:left;}ul{margin:0;padding-left:20px;}</style>");
+        htmlBuilder.append("<style>table,th,td{border:1px solid black;border-collapse:collapse;}</style>");
         htmlBuilder.append("</head>");
         htmlBuilder.append("<body>");
 

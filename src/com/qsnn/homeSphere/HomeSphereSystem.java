@@ -3,7 +3,7 @@ package com.qsnn.homeSphere;
 import com.qsnn.homeSphere.domain.automationScene.AutomationScene;
 import com.qsnn.homeSphere.domain.automationScene.DeviceAction;
 import com.qsnn.homeSphere.domain.deviceModule.Device;
-import com.qsnn.homeSphere.domain.deviceModule.devices.*;
+import com.qsnn.homeSphere.domain.deviceModule.devices.DeviceType;
 import com.qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
 import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 import com.qsnn.homeSphere.domain.deviceModule.services.RunningLog;
@@ -51,15 +51,21 @@ public class HomeSphereSystem {
     /** 当前登录用户 */
     private User currentUser;
 
-
-    public static HomeSphereSystem getInstance(Household household) {
-        if (instance == null) {
-            synchronized (SYSTEM_NAME) {
-                if(instance == null)
-                    instance = new HomeSphereSystem(household);
+    public static void initialize(Household household) {
+        if (instance != null) {
+            throw new IllegalStateException("Already initialized");
+        }
+        synchronized (HomeSphereSystem.class) {
+            if (instance == null) {
+                instance = new HomeSphereSystem(household);
             }
         }
+    }
 
+    public static HomeSphereSystem getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Not initialized");
+        }
         return instance;
     }
 
@@ -206,7 +212,7 @@ public class HomeSphereSystem {
     }
 
     /**
-     * 创建设备并添加到指定房间
+     * 创建设备并添加到指定房间 - 使用简单工厂模式
      *
      * @param deviceName 设备名称
      * @param deviceType 设备类型
@@ -225,11 +231,12 @@ public class HomeSphereSystem {
 
         int deviceId = household.getNextDeviceId();
 
-        // 使用制造商的工厂方法创建设备
+        // 使用简单工厂模式创建设备
         Device device = manufacturer.createDevice(deviceId, deviceName, deviceType);
 
         household.addDevice(device, roomId);
     }
+
 
     /**
      * 删除设备

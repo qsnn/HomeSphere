@@ -44,7 +44,12 @@ public class CommandUI {
      * 包括创建用户、制造商、房间、设备和自动化场景
      */
     private void setup(){
-        system = HomeSphereSystem.getInstance(new Household(1, "陕西省-西安市-长安区-东大街道-东祥路1号-西北工业大学"));
+        try {
+            HomeSphereSystem.initialize(new Household(1, "陕西省-西安市-长安区-东大街道-东祥路1号-西北工业大学"));
+            system = HomeSphereSystem.getInstance();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
 
         system.register("admin", "admin", "admin@nwpu.edu.cn", true);
 
@@ -57,9 +62,8 @@ public class CommandUI {
         system.createRoom("卧室", 20.0);
         system.createRoom("厨房", 8.62);
 
-        system.createDevice("客厅空调", DeviceType.AIR_CONDITIONER, manufacturers.get(0) , 1);
-
-        // 创建更多设备
+        // 使用工厂方法创建设备
+        system.createDevice("客厅空调", DeviceType.AIR_CONDITIONER, manufacturers.get(0), 1);
         system.createDevice("卧室灯", DeviceType.LIGHT_BULB, manufacturers.get(1), 2);
         system.createDevice("大门锁", DeviceType.SMART_LOCK, manufacturers.get(2), 1);
         system.createDevice("厨房灯", DeviceType.LIGHT_BULB, manufacturers.get(3), 3);
