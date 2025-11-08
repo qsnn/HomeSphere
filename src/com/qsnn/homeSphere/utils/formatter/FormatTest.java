@@ -11,6 +11,9 @@ import java.util.List;
 public class FormatTest {
     public static void main(String[] args) {
         List<Manufacturer> manufacturers = new ArrayList<>();
+
+        RunningLogFormatter formatter;
+
         HomeSphereSystem system = null;
         try {
             HomeSphereSystem.initialize(new Household(1, "陕西省-西安市-长安区-东大街道-东祥路1号-西北工业大学"));
@@ -83,9 +86,12 @@ public class FormatTest {
             System.out.println("创建场景操作时出错: " + e.getMessage());
         }
 
+        //运行智能场景来为设备添加日志
         system.runScene(1);
 
-        System.out.println(new XmlRunningLogFormatter().format(system.getHousehold()));
+        //用任意格式化器输出运行日志
+        formatter = HtmlRunningLogFormatter.getInstance();
+        System.out.println(formatter.format(system.getHousehold()));
 
 
     }

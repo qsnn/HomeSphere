@@ -13,6 +13,19 @@ import com.qsnn.homeSphere.utils.DateUtil;
  */
 public class HtmlRunningLogFormatter implements RunningLogFormatter {
 
+    private static volatile HtmlRunningLogFormatter instance;
+
+    public static HtmlRunningLogFormatter getInstance() {
+        if (instance == null) {
+            synchronized (HtmlRunningLogFormatter.class) {
+                if (instance == null) {
+                    instance = new HtmlRunningLogFormatter();
+                }
+            }
+        }
+        return instance;
+    }
+
     @Override
     public String format(Household household) {
         if (household == null) {

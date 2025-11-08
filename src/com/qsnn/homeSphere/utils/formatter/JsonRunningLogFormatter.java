@@ -12,6 +12,19 @@ import java.util.List;
 import java.util.Map;
 
 public class JsonRunningLogFormatter implements RunningLogFormatter{
+    private static volatile JsonRunningLogFormatter instance;
+
+    public static JsonRunningLogFormatter getInstance() {
+        if (instance == null) {
+            synchronized (JsonRunningLogFormatter.class) {
+                if (instance == null) {
+                    instance = new JsonRunningLogFormatter();
+                }
+            }
+        }
+        return instance;
+    }
+
     @Override
     public String format(Household household) {
         if (household == null) {

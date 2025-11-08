@@ -15,6 +15,18 @@ import org.dom4j.Element;
  * <p>将设备运行日志格式化为XML格式输出</p>
  */
 public class XmlRunningLogFormatter implements RunningLogFormatter {
+    private static volatile XmlRunningLogFormatter instance;
+
+    public static XmlRunningLogFormatter getInstance() {
+        if (instance == null) {
+            synchronized (XmlRunningLogFormatter.class) {
+                if (instance == null) {
+                    instance = new XmlRunningLogFormatter();
+                }
+            }
+        }
+        return instance;
+    }
 
     @Override
     public String format(Household household) {
