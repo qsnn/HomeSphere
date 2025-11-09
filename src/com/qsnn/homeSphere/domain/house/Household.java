@@ -267,6 +267,14 @@ public class Household {
         autoScenes.remove(sceneId);
     }
 
+    public void addManufacturer(Manufacturer manufacturer) {
+        manufacturers.put(manufacturer.getManufacturerId(), manufacturer);
+    }
+
+    public Manufacturer getManufacturerById(int manufacturerId) {
+        return manufacturers.get(manufacturerId);
+    }
+
     /**
      * 检查是否存在指定用户名的用户
      *

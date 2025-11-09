@@ -65,6 +65,14 @@ public class BathroomScale extends Device {
         return batteryLevel;
     }
 
+    public void setBodyMass(double bodyMass) {
+        this.bodyMass = bodyMass;
+    }
+
+    public void setBatteryLevel(int batteryLevel) {
+        this.batteryLevel = batteryLevel;
+    }
+
     /**
      * 返回对象的字符串表示形式
      * 格式：BathroomScale{deviceId=值, name='值', manufacturer=值, bodyMass=值, batteryLevel=值}

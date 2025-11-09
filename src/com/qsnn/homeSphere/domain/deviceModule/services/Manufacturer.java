@@ -176,10 +176,10 @@ public class Manufacturer{
 
     public Device createDevice(Integer deviceId, String name, DeviceType deviceType) {
         Device device = switch (deviceType) {
-            case AIR_CONDITIONER -> new AirConditioner(deviceId, name, this);
-            case LIGHT_BULB -> new LightBulb(deviceId, name, this);
-            case SMART_LOCK -> new SmartLock(deviceId, name, this);
-            case BATHROOM_SCALE -> new BathroomScale(deviceId, name, this);
+            case AIR_CONDITIONER -> new AirConditioner(deviceId, name, manufacturerId);
+            case LIGHT_BULB -> new LightBulb(deviceId, name, manufacturerId);
+            case SMART_LOCK -> new SmartLock(deviceId, name, manufacturerId);
+            case BATHROOM_SCALE -> new BathroomScale(deviceId, name, manufacturerId);
         };
         // 自动添加到制造商的设备列表中
         this.addDevice(device);

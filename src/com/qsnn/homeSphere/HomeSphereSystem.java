@@ -125,6 +125,25 @@ public class HomeSphereSystem {
      * @param isAdmin       是否为管理员用户
      * @throws InvalidUserException 当注册信息无效或用户名已存在时抛出异常
      */
+    public void register(int userId, String loginName, String loginPassword, String email, boolean isAdmin) {
+        // 添加参数验证
+        if (loginName == null || loginName.trim().isEmpty()) {
+            throw new InvalidUserException("注册失败：用户名不能为空！");
+        }
+        if (loginPassword == null || loginPassword.trim().isEmpty()) {
+            throw new InvalidUserException("注册失败：密码不能为空！");
+        }
+        if (email == null) {
+            throw new InvalidUserException("注册失败：邮箱不能为空！");
+        }
+
+        if (household.containsUser(loginName) != null) {
+            throw new InvalidUserException("注册失败：用户名已存在！");
+        }
+        User user = new User(userId, loginName, loginPassword, email, isAdmin);
+        household.addUser(user);
+    }
+
     public void register(String loginName, String loginPassword, String email, boolean isAdmin) {
         // 添加参数验证
         if (loginName == null || loginName.trim().isEmpty()) {
@@ -188,6 +207,14 @@ public class HomeSphereSystem {
      * @param area 房间面积
      * @throws InvalidRoomException 当房间名称为空时抛出异常
      */
+    public void createRoom(int roomId, String roomName, double area) {
+        if (roomName == null || roomName.trim().isEmpty()) {
+            throw new InvalidRoomException("添加失败：房间名称不能为空！");
+        }
+        Room room = new Room(roomId, roomName, area);
+        household.addRoom(room);
+    }
+
     public void createRoom(String roomName, double area) {
         if (roomName == null || roomName.trim().isEmpty()) {
             throw new InvalidRoomException("添加失败：房间名称不能为空！");
@@ -211,17 +238,21 @@ public class HomeSphereSystem {
         return household.getRooms().get(roomId);
     }
 
+    public void addManufacturer(int manufacturerId, String manufacturerName, String protocols) {
+        household.addManufacturer(new Manufacturer(manufacturerId, manufacturerName, protocols));
+    }
+
     /**
      * 创建设备并添加到指定房间 - 使用简单工厂模式
      *
      * @param deviceName 设备名称
      * @param deviceType 设备类型
-     * @param manufacturer 设备制造商
+     * @param manufacturerId 设备制造商Id
      * @param roomId 房间ID
      * @throws InvalidRoomException 当房间不存在时抛出异常
      * @throws InvalidDeviceException 当设备名称为空时抛出异常
      */
-    public void createDevice(String deviceName, DeviceType deviceType, Manufacturer manufacturer, int roomId) {
+    public void createDevice(int deviceId, String deviceName, DeviceType deviceType, int manufacturerId, int roomId) {
         if (!household.containsRoom(roomId)) {
             throw new InvalidRoomException("添加失败：房间不存在！");
         }
@@ -229,10 +260,8 @@ public class HomeSphereSystem {
             throw new InvalidDeviceException("添加失败：设备名称不能为空！");
         }
 
-        int deviceId = household.getNextDeviceId();
-
         // 使用简单工厂模式创建设备
-        Device device = manufacturer.createDevice(deviceId, deviceName, deviceType);
+        Device device = household.getManufacturerById(manufacturerId).createDevice(deviceId, deviceName, deviceType);
 
         household.addDevice(device, roomId);
     }
@@ -294,6 +323,14 @@ public class HomeSphereSystem {
             throw new InvalidAutomationSceneException("创建失败：场景名称不能为空！");
         }
         int sceneId = household.getAutoScenes().size() + 1;
+        household.addAutoScene(new AutomationScene(sceneId, sceneName, description));
+        return sceneId;
+    }
+
+    public int createScene(int sceneId, String sceneName, String description) {
+        if (sceneName == null || sceneName.trim().isEmpty()) {
+            throw new InvalidAutomationSceneException("创建失败：场景名称不能为空！");
+        }
         household.addAutoScene(new AutomationScene(sceneId, sceneName, description));
         return sceneId;
     }
