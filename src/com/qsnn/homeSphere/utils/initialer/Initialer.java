@@ -1,4 +1,4 @@
-package com.qsnn.homeSphere.utils.parser;
+package com.qsnn.homeSphere.utils.initialer;
 
 import com.qsnn.homeSphere.HomeSphereSystem;
 import com.qsnn.homeSphere.domain.automationScene.AutomationScene;
@@ -14,36 +14,34 @@ import java.util.regex.Pattern;
 public class Initialer {
 
     private static HomeSphereSystem system;
-    public static void initialLine(String str) {
-        if (str == null || str.isEmpty()) {
+    public static void initialLine(String line) {
+        if (line == null || line.isEmpty()) {
             return;
         }
-        for (String line : str.split("\n")) {
-            if (line.startsWith("User")){
-                initialUser(formatLine(line));
-            } else if (line.startsWith("Household")) {
-                initialHousehold(formatLine(line));
-            } else if (line.startsWith("Room")) {
-                initialRoom(formatLine(line));
-            } else if (line.startsWith("Manufacturer")) {
-                initialManufacturer(formatLine(line));
-            } else if (line.startsWith("AirConditioner")) {
-                initialAirConditioner(formatLine(line));
-            } else if (line.startsWith("BathroomScale")) {
-                initialBathroomScale(formatLine(line));
-            } else if (line.startsWith("LightBulb")) {
-                initialLightBulb(formatLine(line));
-            } else if (line.startsWith("SmartLock")) {
-                initialSmartLock(formatLine(line));
-            } else if (line.startsWith("AutomationScene")) {
-                initialAutomationScene(formatLine(line));
-            }
+        if (line.startsWith("User")) {
+            initialUser(formatLine(line));
+        } else if (line.startsWith("Household")) {
+            initialHousehold(formatLine(line));
+        } else if (line.startsWith("Room")) {
+            initialRoom(formatLine(line));
+        } else if (line.startsWith("Manufacturer")) {
+            initialManufacturer(formatLine(line));
+        } else if (line.startsWith("AirConditioner")) {
+            initialAirConditioner(formatLine(line));
+        } else if (line.startsWith("BathroomScale")) {
+            initialBathroomScale(formatLine(line));
+        } else if (line.startsWith("LightBulb")) {
+            initialLightBulb(formatLine(line));
+        } else if (line.startsWith("SmartLock")) {
+            initialSmartLock(formatLine(line));
+        } else if (line.startsWith("AutomationScene")) {
+            initialAutomationScene(formatLine(line));
         }
 
     }
 
     private static String formatLine(String line){
-        return line.substring(line.indexOf("{") + 1, line.lastIndexOf("}"));
+        return line.substring(line.indexOf("{") + 1, line.lastIndexOf("}")).trim();
     }
 
     private static void initialHousehold(String line) {
@@ -51,8 +49,8 @@ public class Initialer {
         String address = null;
         int adminId = 0;
         for (String s : line.split(",")) {
-            String key = s.split("=")[0];
-            String value = s.split("=")[1];
+            String key = s.split("=")[0].trim();
+            String value = s.split("=")[1].trim();
             if ("householdId".equals(key)) {
                 householdId = Integer.parseInt(value);
             } else if ("address".equals(key)) {
@@ -63,6 +61,7 @@ public class Initialer {
         }
         Household h = new Household(householdId, address, adminId);
         HomeSphereSystem.initialize(h);
+        system = HomeSphereSystem.getInstance();
     }
 
     private static void initialUser(String line) {
@@ -72,8 +71,8 @@ public class Initialer {
         String email = null;
         boolean isAdmin = false;
         for (String s : line.split(",")) {
-            String key = s.split("=")[0];
-            String value = s.split("=")[1];
+            String key = s.split("=")[0].trim();
+            String value = s.split("=")[1].trim();
 
             if ("userId".equals(key)) {
                 userId = Integer.parseInt(value);
@@ -95,8 +94,11 @@ public class Initialer {
         String name = null;
         double area = 0.0;
         for (String s : line.split(",")) {
-            String key = s.split("=")[0];
-            String value = s.split("=")[1];
+            if (s.trim().isEmpty()) {
+                continue; // 跳过空字符串
+            }
+            String key = s.split("=")[0].trim();
+            String value = s.split("=")[1].trim();
             if ("roomId".equals(key)) {
                 roomId = Integer.parseInt(value);
             } else if ("name".equals(key)) {
@@ -113,8 +115,8 @@ public class Initialer {
         String name = null;
         String protocols = null;
         for (String s : line.split(",")) {
-            String key = s.split("=")[0];
-            String value = s.split("=")[1];
+            String key = s.split("=")[0].trim();
+            String value = s.split("=")[1].trim();
             if ("manufacturerId".equals(key)) {
                 manufacturerId = Integer.parseInt(value);
             } else if ("name".equals(key)) {
@@ -134,8 +136,8 @@ public class Initialer {
         double currTemp = 0.0;
         double targetTemp = 0.0;
         for (String s : line.split(",")){
-            String key = s.split("=")[0];
-            String value = s.split("=")[1];
+            String key = s.split("=")[0].trim();
+            String value = s.split("=")[1].trim();
             if ("deviceId".equals(key)) {
                 deviceId = Integer.parseInt(value);
             } else if ("name".equals(key)) {
@@ -163,8 +165,8 @@ public class Initialer {
         double bodyMass = 0.0;
         int batteryLevel = 0;
         for (String s : line.split(",")){
-            String key = s.split("=")[0];
-            String value = s.split("=")[1];
+            String key = s.split("=")[0].trim();
+            String value = s.split("=")[1].trim();
             if ("deviceId".equals(key)) {
                 deviceId = Integer.parseInt(value);
             } else if ("name".equals(key)) {
@@ -191,8 +193,8 @@ public class Initialer {
         int brightness = 0;
         int colorTemp = 0;
         for (String s : line.split(",")){
-            String key = s.split("=")[0];
-            String value = s.split("=")[1];
+            String key = s.split("=")[0].trim();
+            String value = s.split("=")[1].trim();
             if ("deviceId".equals(key)) {
                 deviceId = Integer.parseInt(value);
             } else if ("name".equals(key)) {
@@ -221,8 +223,8 @@ public class Initialer {
         boolean isLocked = false;
         int batteryLevel = 0;
         for (String s : line.split(",")) {
-            String key = s.split("=")[0];
-            String value = s.split("=")[1];
+            String key = s.split("=")[0].trim();
+            String value = s.split("=")[1].trim();
             if ("deviceId".equals(key)) {
                 deviceId = Integer.parseInt(value);
             } else if ("name".equals(key)) {
@@ -254,8 +256,8 @@ public class Initialer {
         line.replace("actions=[" + actionsStr + "]", "");
 
         for (String s : line.split(",")) {
-            String key = s.split("=")[0];
-            String value = s.split("=")[1];
+            String key = s.split("=")[0].trim();
+            String value = s.split("=")[1].trim();
 
             if ("sceneId".equals(key) || "sceneld".equals(key)) {
                 sceneId = Integer.parseInt(value);
@@ -295,8 +297,8 @@ public class Initialer {
         int deviceId = 0;
 
         for (String s : line.split(",")) {
-            String key = s.split("=")[0];
-            String value = s.split("=")[1];
+            String key = s.split("=")[0].trim();
+            String value = s.split("=")[1].trim();
 
             if ("command".equals(key)) {
                 command = value.substring(1, value.length() - 1); // 去除单引号

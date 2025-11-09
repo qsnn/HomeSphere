@@ -227,11 +227,13 @@ public class DeviceAction {
                 break;
 
             case "lock":
+            case "setlocked":
                 smartLock.setLocked(true);
                 //System.out.println("locked");
                 break;
 
             case "unlock":
+            case "setunlocked":
                 smartLock.setLocked(false);
                 //System.out.println("unlocked");
                 break;

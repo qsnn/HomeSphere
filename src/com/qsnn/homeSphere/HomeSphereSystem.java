@@ -130,9 +130,9 @@ public class HomeSphereSystem {
         if (loginName == null || loginName.trim().isEmpty()) {
             throw new InvalidUserException("注册失败：用户名不能为空！");
         }
-        if (loginPassword == null || loginPassword.trim().isEmpty()) {
-            throw new InvalidUserException("注册失败：密码不能为空！");
-        }
+//        if (loginPassword == null || loginPassword.trim().isEmpty()) {
+//            throw new InvalidUserException("注册失败：密码不能为空！");
+//        }
         if (email == null) {
             throw new InvalidUserException("注册失败：邮箱不能为空！");
         }
