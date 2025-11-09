@@ -98,7 +98,7 @@ public class MyFrame extends JFrame implements ActionListener {
 
         scenePanel.add(sceneStr);
         scenePanel.add(sceneComboBox);
-        scenePanel.setBounds(250, 30, 400, 40);
+        scenePanel.setBounds(250, 30, 250, 40);
         this.add(scenePanel);
 
         //触发按钮
