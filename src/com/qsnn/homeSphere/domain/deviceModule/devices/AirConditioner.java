@@ -3,7 +3,6 @@ package com.qsnn.homeSphere.domain.deviceModule.devices;
 import com.alibaba.fastjson2.JSON;
 import com.qsnn.homeSphere.domain.deviceModule.Device;
 import com.qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
-import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 import com.qsnn.homeSphere.domain.deviceModule.services.RunningLog;
 
 import java.util.Date;
@@ -52,8 +51,8 @@ public class AirConditioner extends Device implements EnergyReporting {
      * @param name 设备名称
      * @param manufacturer 设备制造商信息
      */
-    public AirConditioner(Integer deviceID, String name, Manufacturer manufacturer) {
-        super(deviceID, name, manufacturer);
+    public AirConditioner(Integer deviceID, String name, int manufacturerId) {
+        super(deviceID, name, manufacturerId);
         setDeviceType(DeviceType.AIR_CONDITIONER);
     }
 
@@ -65,6 +64,14 @@ public class AirConditioner extends Device implements EnergyReporting {
      */
     public double getCurrTemp() {
         return currTemp;
+    }
+    /**
+     * 设置当前温度
+     *
+     * @param currTemp 新的当前温度值，单位：摄氏度
+     */
+    public void setCurrTemp(double currTemp) {
+        this.currTemp = currTemp;
     }
 
     /**
@@ -107,7 +114,7 @@ public class AirConditioner extends Device implements EnergyReporting {
         return "AirConditioner{" +
                 "deviceId=" + getDeviceId() +
                 ", name='" + getName() + '\'' +
-                ", manufacturer=" + getManufacturer() +
+                ", manufacturer=" + getManufacturerId() +
                 ", currTemp=" + currTemp +
                 ", targetTemp=" + targetTemp +
                 '}';

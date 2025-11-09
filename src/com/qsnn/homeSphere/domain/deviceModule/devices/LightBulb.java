@@ -3,7 +3,6 @@ package com.qsnn.homeSphere.domain.deviceModule.devices;
 import com.alibaba.fastjson2.JSON;
 import com.qsnn.homeSphere.domain.deviceModule.Device;
 import com.qsnn.homeSphere.domain.deviceModule.services.EnergyReporting;
-import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 import com.qsnn.homeSphere.domain.deviceModule.services.RunningLog;
 
 import java.util.Date;
@@ -51,8 +50,8 @@ public class LightBulb extends Device implements EnergyReporting {
      * @param name 设备名称
      * @param manufacturer 设备制造商信息
      */
-    public LightBulb(Integer deviceID, String name, Manufacturer manufacturer) {
-        super(deviceID, name, manufacturer);
+    public LightBulb(Integer deviceID, String name, int manufacturerId) {
+        super(deviceID, name, manufacturerId);
         setDeviceType(DeviceType.LIGHT_BULB);
     }
 
@@ -128,7 +127,7 @@ public class LightBulb extends Device implements EnergyReporting {
         return "LightBulb{" +
                 "deviceId=" + getDeviceId() +
                 ", name='" + getName() + '\'' +
-                ", manufacturer=" + getManufacturer() +
+                ", manufacturer=" + getManufacturerId() +
                 ", brightness=" + brightness +
                 ", colorTemp=" + colorTemp +
                 '}';

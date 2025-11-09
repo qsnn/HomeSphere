@@ -2,7 +2,6 @@ package com.qsnn.homeSphere.domain.deviceModule.devices;
 
 import com.alibaba.fastjson2.JSON;
 import com.qsnn.homeSphere.domain.deviceModule.Device;
-import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 
 /**
  * 体重秤设备类
@@ -42,8 +41,8 @@ public class BathroomScale extends Device {
      * @param name 设备名称
      * @param manufacturer 设备制造商信息
      */
-    public BathroomScale(Integer deviceID, String name, Manufacturer manufacturer) {
-        super(deviceID, name, manufacturer);
+    public BathroomScale(Integer deviceID, String name, int manufacturerId) {
+        super(deviceID, name, manufacturerId);
         setDeviceType(DeviceType.BATHROOM_SCALE);
     }
 
@@ -77,7 +76,7 @@ public class BathroomScale extends Device {
         return "BathroomScale{" +
                 "deviceId=" + getDeviceId() +
                 ", name='" + getName() + '\'' +
-                ", manufacturer=" + getManufacturer() +
+                ", manufacturer=" + getManufacturerId() +
                 ", bodyMass=" + bodyMass +
                 ", batteryLevel=" + batteryLevel +
                 '}';

@@ -103,7 +103,7 @@ public class HomeSphereSystem {
     public void login(String loginName, String loginPassword) throws InvalidUserException {
         logoff();
         User correctUser = household.containsUser(loginName);
-        if (correctUser == null || !correctUser.getLoginPassword().equals(loginPassword)) {
+        if (correctUser == null || !correctUser.getPassword().equals(loginPassword)) {
             throw new InvalidUserException("登录失败：用户名或密码错误！");
         }
         currentUser = correctUser;
@@ -173,7 +173,7 @@ public class HomeSphereSystem {
         sb.append("===家庭成员列表===\n");
         household.getUsers().values().forEach(user -> {
             sb.append("ID：").append(user.getUserId()).append("\n");
-            sb.append("用户名：").append(user.getLoginName()).append("\n");
+            sb.append("用户名：").append(user.getUsername()).append("\n");
             sb.append("邮箱：").append(user.getEmail()).append("\n");
             sb.append("管理员：").append(user.isAdmin() ? "是" : "否").append("\n");
             sb.append("-------------------\n");

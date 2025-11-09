@@ -1,7 +1,6 @@
 package com.qsnn.homeSphere.domain.deviceModule;
 
 import com.qsnn.homeSphere.domain.deviceModule.devices.DeviceType;
-import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 import com.qsnn.homeSphere.domain.deviceModule.services.RunningLog;
 
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public abstract class Device {
     private String name;
 
     /** 设备制造商信息 */
-    private Manufacturer manufacturer;
+    private int manufacturerId;
 
     /** 设备在线状态 */
     private boolean isOnline;
@@ -64,12 +63,12 @@ public abstract class Device {
      *
      * @param deviceId 设备唯一序列号
      * @param name 设备名称
-     * @param manufacturer 设备制造商信息
+     * @param manufacturerId 设备制造商信息
      */
-    public Device(Integer deviceId, String name, Manufacturer manufacturer) {
+    public Device(Integer deviceId, String name, int manufacturerId) {
         this.deviceId = deviceId;
         this.name = name;
-        this.manufacturer = manufacturer;
+        this.manufacturerId = manufacturerId;
         this.isOnline = false;
         this.powerStatus = false;
     }
@@ -108,18 +107,17 @@ public abstract class Device {
      *
      * @return 设备制造商信息
      */
-    public Manufacturer getManufacturer() {
-        return manufacturer;
+    public int getManufacturerId() {
+        return manufacturerId;
     }
 
     /**
      * 设置设备制造商
      *
-     * @param manufacturer 新的设备制造商
+     * @param manufacturerId 新的设备制造商
      */
-    public void setManufacturer(Manufacturer manufacturer) {
-        this.manufacturer = manufacturer;
-        manufacturer.addDevice(this);
+    public void setManufacturerId(int manufacturerId) {
+        this.manufacturerId = manufacturerId;
     }
 
     /**

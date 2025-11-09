@@ -28,10 +28,10 @@ public class User {
     private final int userId;
 
     /** 用户名，用于登录认证 */
-    private String loginName;
+    private String username;
 
     /** 用户密码，用于登录认证 */
-    private String loginPassword;
+    private String password;
 
     /** 用户邮箱地址 */
     private String email;
@@ -39,18 +39,20 @@ public class User {
     /** 管理员权限标识 */
     private boolean isAdmin;
 
+
+
     /**
      * 用户构造函数
      *
      * @param userId 用户唯一标识符
-     * @param loginName 用户名，用于登录
-     * @param loginPassword 用户密码
+     * @param username 用户名，用于登录
+     * @param password 用户密码
      * @param email 用户邮箱地址
      */
-    public User(int userId, String loginName, String loginPassword, String email, boolean isAdmin) {
+    public User(int userId, String username, String password, String email, boolean isAdmin) {
         this.userId = userId;
-        this.loginName = loginName;
-        this.loginPassword = loginPassword;
+        this.username = username;
+        this.password = password;
         this.email = email;
         this.isAdmin = isAdmin; // 默认不是管理员
     }
@@ -72,8 +74,8 @@ public class User {
      *
      * @return 用户名
      */
-    public String getLoginName() {
-        return loginName;
+    public String getUsername() {
+        return username;
     }
 
     /**
@@ -81,8 +83,8 @@ public class User {
      *
      * @return 用户密码
      */
-    public String getLoginPassword() {
-        return loginPassword;
+    public String getPassword() {
+        return password;
     }
 
 
@@ -109,19 +111,19 @@ public class User {
     /**
      * 设置用户名
      *
-     * @param loginName 新的用户名
+     * @param username 新的用户名
      */
-    public void setLoginName(String loginName) {
-        this.loginName = loginName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**
      * 设置用户密码
      *
-     * @param loginPassword 新的用户密码
+     * @param password 新的用户密码
      */
-    public void setLoginPassword(String loginPassword) {
-        this.loginPassword = loginPassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 
@@ -169,7 +171,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "userId=" + userId +
-                ", loginName='" + loginName + '\'' +
+                ", loginName='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", isAdmin=" + isAdmin +
                 '}';

@@ -2,6 +2,7 @@ package com.qsnn.homeSphere.domain.house;
 
 import com.qsnn.homeSphere.domain.automationScene.AutomationScene;
 import com.qsnn.homeSphere.domain.deviceModule.Device;
+import com.qsnn.homeSphere.domain.deviceModule.services.Manufacturer;
 import com.qsnn.homeSphere.domain.users.User;
 
 import java.util.HashMap;
@@ -43,6 +44,8 @@ public class Household {
     /** 家庭成员集合，键为用户ID，值为用户对象 */
     private final Map<Integer, User> users;
 
+    private int adminId;
+
     /** 下一个可用的用户ID */
     private int nextUserId = 1;
 
@@ -55,18 +58,23 @@ public class Household {
     /** 自动化场景集合，键为场景ID，值为场景对象 */
     private final Map<Integer, AutomationScene> autoScenes;
 
+
+    private final Map<Integer, Manufacturer> manufacturers;
+
     /**
      * 家庭构造函数
      *
      * @param householdId 家庭唯一标识符
      * @param address 家庭地址
      */
-    public Household(int householdId, String address) {
+    public Household(int householdId, String address, int adminId) {
         this.householdId = householdId;
         this.address = address;
+        this.adminId = adminId;
         this.users = new HashMap<>();
         this.rooms = new HashMap<>();
         this.autoScenes = new HashMap<>();
+        this.manufacturers = new HashMap<>();
     }
 
     /**
@@ -267,7 +275,7 @@ public class Household {
      */
     public User containsUser(String loginName) {
         for (User user : users.values()) {
-            if (user.getLoginName().equals(loginName)) {
+            if (user.getUsername().equals(loginName)) {
                 return user;
             }
         }
