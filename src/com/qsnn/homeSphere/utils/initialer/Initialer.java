@@ -18,10 +18,13 @@ public class Initialer {
         if (line == null || line.isEmpty()) {
             return;
         }
-        if (line.startsWith("User")) {
-            initialUser(formatLine(line));
-        } else if (line.startsWith("Household")) {
+        if (line.startsWith("Household")) {
             initialHousehold(formatLine(line));
+        }
+        else if (system == null){
+            throw new IllegalArgumentException("dat文件损坏：未初始化Household");
+        } else if (line.startsWith("User")) {
+            initialUser(formatLine(line));
         } else if (line.startsWith("Room")) {
             initialRoom(formatLine(line));
         } else if (line.startsWith("Manufacturer")) {
