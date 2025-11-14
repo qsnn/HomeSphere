@@ -20,8 +20,7 @@ public class Initialer {
         }
         if (line.startsWith("Household")) {
             initialHousehold(formatLine(line));
-        }
-        else if (system == null){
+        } else if (system == null){
             throw new IllegalArgumentException("dat文件损坏：未初始化Household");
         } else if (line.startsWith("User")) {
             initialUser(formatLine(line));
@@ -48,9 +47,9 @@ public class Initialer {
     }
 
     private static void initialHousehold(String line) {
-        int householdId = 0;
+        int householdId = -1;
         String address = null;
-        int adminId = 0;
+        int adminId = -1;
         for (String s : line.split(",")) {
             String key = s.split("=")[0].trim();
             String value = s.split("=")[1].trim();
@@ -62,13 +61,16 @@ public class Initialer {
                 adminId = Integer.parseInt(value);
             }
         }
+        if (householdId == -1 || address == null || adminId == -1) {
+            throw new IllegalArgumentException("dat文件损坏：Household信息不完整");
+        }
         Household h = new Household(householdId, address, adminId);
         HomeSphereSystem.initialize(h);
         system = HomeSphereSystem.getInstance();
     }
 
     private static void initialUser(String line) {
-        int userId = 0;
+        int userId = -1;
         String username = null;
         String password = null;
         String email = null;
@@ -89,13 +91,16 @@ public class Initialer {
                 isAdmin = Boolean.parseBoolean(value);
             }
         }
+        if (userId == -1 || username == null || email == null) {
+            throw new IllegalArgumentException("dat文件损坏：User信息不完整");
+        }
         system.register(userId, username, password, email, isAdmin);
     }
 
     private static void initialRoom(String line) {
-        int roomId = 0;
+        int roomId = -1;
         String name = null;
-        double area = 0.0;
+        double area = -1;
         for (String s : line.split(",")) {
             if (s.trim().isEmpty()) {
                 continue; // 跳过空字符串
@@ -110,11 +115,14 @@ public class Initialer {
                 area = Double.parseDouble(value);
             }
         }
+        if (roomId == -1 || name == null || area == -1) {
+            throw new IllegalArgumentException("dat文件损坏：Room信息不完整");
+        }
         system.createRoom(roomId, name, area);
     }
 
     private static void initialManufacturer(String line) {
-        int manufacturerId = 0;
+        int manufacturerId = -1;
         String name = null;
         String protocols = null;
         for (String s : line.split(",")) {
@@ -128,14 +136,17 @@ public class Initialer {
                 protocols = value.substring(1, value.length() - 1);
             }
         }
+        if (manufacturerId == -1 || name == null || protocols == null) {
+            throw new IllegalArgumentException("dat文件损坏：Manufacturer信息不完整");
+        }
         system.addManufacturer(manufacturerId, name, protocols);
     }
 
     private static void initialAirConditioner(String line) {
-        int deviceId = 0;
+        int deviceId = -1;
         String name = null;
-        int manufacturerId = 0;
-        int roomId = 0;
+        int manufacturerId = -1;
+        int roomId = -1;
         double currTemp = 0.0;
         double targetTemp = 0.0;
         for (String s : line.split(",")){
@@ -155,6 +166,9 @@ public class Initialer {
                 targetTemp = Double.parseDouble(value);
             }
         }
+        if (deviceId == -1 || name == null || manufacturerId == -1 || roomId == -1) {
+            throw new IllegalArgumentException("dat文件损坏：AirConditioner信息不完整");
+        }
         system.createDevice (deviceId, name, DeviceType.AIR_CONDITIONER, manufacturerId, roomId);
         AirConditioner ac = (AirConditioner) system.getDeviceById(deviceId);
         ac.setCurrTemp(currTemp);
@@ -162,9 +176,10 @@ public class Initialer {
     }
 
     private static void initialBathroomScale(String line) {
-        int deviceId = 0;
+        int deviceId = -1;
         String name = null;
-        int manufacturerId = 0;
+        int manufacturerId = -1;
+        int roomId = -1;
         double bodyMass = 0.0;
         int batteryLevel = 0;
         for (String s : line.split(",")){
@@ -174,6 +189,8 @@ public class Initialer {
                 deviceId = Integer.parseInt(value);
             } else if ("name".equals(key)) {
                 name = value.substring(1, value.length() - 1);
+            } else if ("roomId".equals(key)) {
+                roomId = Integer.parseInt(value);
             } else if ("manufacturerId".equals(key)) {
                 manufacturerId = Integer.parseInt(value);
             } else if ("bodyMass".equals(key)) {
@@ -182,17 +199,20 @@ public class Initialer {
                 batteryLevel = Integer.parseInt(value);
             }
         }
-        system.createDevice (deviceId, name, DeviceType.BATHROOM_SCALE, manufacturerId, 0);
+        if (deviceId == -1 || name == null || manufacturerId == -1 || roomId == -1) {
+            throw new IllegalArgumentException("dat文件损坏：BathroomScale信息不完整");
+        }
+        system.createDevice (deviceId, name, DeviceType.BATHROOM_SCALE, manufacturerId, roomId);
         BathroomScale bs = (BathroomScale) system.getDeviceById(deviceId);
         bs.setBodyMass(bodyMass);
         bs.setBatteryLevel(batteryLevel);
     }
 
     private static void initialLightBulb(String line) {
-        int deviceId = 0;
+        int deviceId = -1;
         String name = null;
-        int manufacturerId = 0;
-        int roomId = 0;
+        int manufacturerId = -1;
+        int roomId = -1;
         int brightness = 0;
         int colorTemp = 0;
         for (String s : line.split(",")){
@@ -212,6 +232,9 @@ public class Initialer {
                 colorTemp = Integer.parseInt(value);
             }
         }
+        if (deviceId == -1 || name == null || manufacturerId == -1 || roomId == -1) {
+            throw new IllegalArgumentException("dat文件损坏：LightBulb信息不完整");
+        }
         system.createDevice (deviceId, name, DeviceType.LIGHT_BULB, manufacturerId, roomId);
         LightBulb lb = (LightBulb) system.getDeviceById(deviceId);
         lb.setBrightness(brightness );
@@ -219,10 +242,10 @@ public class Initialer {
     }
 
     private static void initialSmartLock(String line) {
-        int deviceId = 0;
+        int deviceId = -1;
         String name = null;
-        int manufacturerId = 0;
-        int roomId = 0;
+        int manufacturerId = -1;
+        int roomId = -1;
         boolean isLocked = false;
         int batteryLevel = 0;
         for (String s : line.split(",")) {
@@ -242,6 +265,9 @@ public class Initialer {
                 batteryLevel = Integer.parseInt(value);
             }
         }
+        if (deviceId == -1 || name == null || manufacturerId == -1 || roomId == -1) {
+            throw new IllegalArgumentException("dat文件损坏：LightBulb信息不完整");
+        }
         system.createDevice (deviceId, name, DeviceType.SMART_LOCK, manufacturerId, roomId);
         SmartLock sl = (SmartLock) system.getDeviceById(deviceId);
         sl.setLocked(isLocked);
@@ -249,7 +275,7 @@ public class Initialer {
     }
 
     private static void initialAutomationScene(String line) {
-        int sceneId = 0;
+        int sceneId = -1;
         String name = null;
         String description = null;
         List<DeviceAction> actions;
@@ -272,6 +298,9 @@ public class Initialer {
         }
 
         actions = parseDeviceActions(actionsStr);
+        if (sceneId == -1 || name == null) {
+            throw new IllegalArgumentException("dat文件损坏：AutomationScene信息不完整");
+        }
         system.createScene(sceneId, name, description);
         AutomationScene scene = system.getSceneById(sceneId);
         for (DeviceAction action : actions) {
