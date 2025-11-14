@@ -14,7 +14,7 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-public class MyFrame extends JFrame implements ActionListener {
+public class RunningLogFrame extends JFrame implements ActionListener {
 
     //系统
     private HomeSphereSystem system = null;
@@ -42,7 +42,7 @@ public class MyFrame extends JFrame implements ActionListener {
     //输出区
     JTextArea logTextArea = new JTextArea();
 
-    public MyFrame() {
+    public RunningLogFrame() {
         //初始化窗口
         initFrame();
 
@@ -234,7 +234,7 @@ public class MyFrame extends JFrame implements ActionListener {
             }
         }else {
             JOptionPane.showMessageDialog(null,
-                    "请先加载数据！",
+                    "请先加载本地文件！",
                     "警告",
                     JOptionPane.WARNING_MESSAGE);
         }
